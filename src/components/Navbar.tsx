@@ -107,9 +107,9 @@ export default function Navbar() {
           </div>
         </div>
 
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-2.5 sm:px-6">
+        <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-2.5 sm:px-6 max-sm:justify-center">
           {/* Both logos, shown fully. No circles, no backgrounds, no cropping. */}
-          <Link href="/" className="flex min-w-0 items-center gap-3" aria-label="Home">
+          <Link href="/" className="flex min-w-0 items-center gap-3 max-sm:mx-auto" aria-label="Home">
             <Image
               src="/assets/nadwa-logo.png"
               alt="Nadwat Global Assembly logo"
@@ -206,7 +206,7 @@ export default function Navbar() {
             })}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 max-sm:absolute max-sm:right-5">
             <Link
               href="/register"
               className={`group hidden items-center gap-1.5 px-5 py-2.5 text-[13px] font-semibold transition-colors sm:inline-flex ${
@@ -239,7 +239,7 @@ export default function Navbar() {
             className="fixed inset-0 z-[60] flex flex-col bg-paper text-ink"
           >
             <div className="pattern-lattice absolute inset-0 opacity-60" aria-hidden />
-            <div className="relative flex items-center justify-between px-5 py-4">
+            <div className="relative flex items-center justify-center px-5 py-4">
               <div className="flex items-center gap-2">
                 <Image
                   src="/assets/nadwa-logo.png"
@@ -256,7 +256,7 @@ export default function Navbar() {
                   className="h-8 w-auto object-contain"
                 />
               </div>
-              <button onClick={() => setOpen(false)} aria-label="Close menu" className="p-2">
+              <button onClick={() => setOpen(false)} aria-label="Close menu" className="absolute right-5 p-2">
                 <X className="h-7 w-7" />
               </button>
             </div>

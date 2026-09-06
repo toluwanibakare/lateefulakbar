@@ -43,6 +43,27 @@ export const metadata: Metadata = {
     shortcut: "/favicon.ico",
     apple: "/icon.png",
   },
+  openGraph: {
+    type: "website",
+    title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
+    description:
+      "One morning. One square. Tens of thousands in white — breathing the same dhikr, asking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1901,
+        height: 945,
+        alt: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
+    description:
+      "One morning. One square. Tens of thousands in white — breathing the same dhikr, asking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
