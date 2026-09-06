@@ -40,5 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# raw source media
+# raw source media & client docs
 /raw_assets/
+/docs/
+prompt.txt
