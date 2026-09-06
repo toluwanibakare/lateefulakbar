@@ -1,0 +1,57 @@
+import type { Metadata } from "next";
+import { Cormorant_Garamond, Jost, Great_Vibes, Aref_Ruqaa } from "next/font/google";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import AiAssistant from "@/components/AiAssistant";
+import "./globals.css";
+
+const display = Cormorant_Garamond({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+  style: ["normal", "italic"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const body = Jost({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+  weight: ["300", "400", "500", "600"],
+});
+
+const script = Great_Vibes({
+  subsets: ["latin"],
+  variable: "--font-script",
+  display: "swap",
+  weight: ["400"],
+});
+
+const arabic = Aref_Ruqaa({
+  subsets: ["arabic", "latin"],
+  variable: "--font-arabic",
+  display: "swap",
+  weight: ["400", "700"],
+});
+
+export const metadata: Metadata = {
+  title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
+  description:
+    "A grand gathering of dhikr and du'a at Tafawa Balewa Square, Lagos. 24 January 2027. Register, give sadaqah, read the prayer book and join the global Yā Lateef tasbīh.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="en"
+      className={`${display.variable} ${body.variable} ${script.variable} ${arabic.variable}`}
+    >
+      <body className="bg-paper text-ink font-body antialiased">
+        <Navbar />
+        <div className="min-h-screen">{children}</div>
+        <Footer />
+        <AiAssistant />
+      </body>
+    </html>
+  );
+}

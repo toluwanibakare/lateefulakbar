@@ -1,0 +1,106 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cormorant Garamond", "Georgia", serif;
+  --font-body: "Jost", system-ui, sans-serif;
+  --font-script: "Great Vibes", cursive;
+  --font-arabic: "Aref Ruqaa", "Amiri", serif;
+
+  --color-paper: #ffffff;
+  --color-cream: #f7f9f5;
+  --color-mist: #eef4ec;
+  --color-sage: #dcebe0;
+  --color-mintline: #c9e2d1;
+  --color-fern: #1a5c45;
+  --color-vivid: #01923c;
+  --color-vivid-deep: #017a32;
+  --color-pine: #0b3d2e;
+  --color-ink: #0a2e23;
+  --color-faded: #4c6a5e;
+  --color-gilt: #9a7b2e;
+  --color-giltsoft: #c8ab5e;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-pine);
+  color: #fff;
+}
+
+/* thin elegant scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-cream); }
+::-webkit-scrollbar-thumb { background: var(--color-fern); border-radius: 0; }
+
+/* Subtle Islamic eight-point geometry - hairline only, restrained */
+.pattern-lattice {
+  background-image: url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%230B3D2E' stroke-opacity='0.10'%3E%3Cpath d='M36 6l7 11 13 1-9 9 2 13-13-6-13 6 2-13-9-9 13-1z'/%3E%3Ccircle cx='36' cy='36' r='2'/%3E%3Cpath d='M0 36h12M60 36h12M36 0v12M36 60v12'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 72px 72px;
+}
+
+.pattern-lattice-light {
+  background-image: url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-opacity='0.14'%3E%3Cpath d='M36 6l7 11 13 1-9 9 2 13-13-6-13 6 2-13-9-9 13-1z'/%3E%3Ccircle cx='36' cy='36' r='2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 72px 72px;
+}
+
+/* Editorial rules */
+.rule-gilt {
+  background: linear-gradient(90deg, var(--color-giltsoft), var(--color-gilt), var(--color-giltsoft));
+  height: 1px;
+}
+
+.text-balance { text-wrap: balance; }
+
+/* Calligraphy accents */
+.font-script {
+  font-family: var(--font-script);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Aref Ruqaa runs tall — give Arabic display text room to breathe */
+.font-arabic {
+  line-height: 2;
+}
+
+/* Image treatment - soft, true colour, no heavy filters */
+.img-true { filter: saturate(1.02) contrast(1.02); }
+
+/* Slow cinematic zoom */
+@keyframes kenburns {
+  0% { transform: scale(1.02); }
+  100% { transform: scale(1.12); }
+}
+.animate-kenburns { animation: kenburns 14s ease-out forwards; }
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-ticker { animation: ticker 36s linear infinite; }
+
+/* Outlined display type for footer / bands */
+.text-outline {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.35);
+  color: transparent;
+}
+.text-outline-pine {
+  -webkit-text-stroke: 1px rgba(11,61,46,0.35);
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-kenburns, .animate-ticker { animation: none; }
+  html { scroll-behavior: auto; }
+}
