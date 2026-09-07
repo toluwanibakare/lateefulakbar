@@ -11,8 +11,8 @@ export default function FounderPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Founder"
-        title={<>The call behind the gathering</>}
+        eyebrow="The Founder"
+        title={<>Shaikh Dr. Abdur Rahman Ade Lawal — The Founder & Visionary</>}
         intro="Shaikh Dr. Abdur Rahman Ade Lawal convenes Lateeful-Ul-Akbar as an act of return — away from noise, toward the quiet power of collective dhikr. Al-Azhar trained, Ph.D in Mass Communication, counsellor and author."
         image="/assets/crowd-15.jpg"
       />

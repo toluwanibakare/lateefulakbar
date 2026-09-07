@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
+import { ArrowUpRight, ChevronDown, Heart, Menu, X } from "lucide-react";
 import { EVENT } from "@/lib/site";
 
 /* Desktop: Sadaqah is intentionally NOT here — Donate leads instead.
@@ -140,6 +140,22 @@ export default function Navbar() {
             {LINKS.map((l) => {
               if (!l.children) {
                 const active = pathname === l.href;
+                if (l.label === "Donate") {
+                  return (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      className={`group inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[13px] font-bold tracking-wide transition-all shadow-sm ${
+                        solid
+                          ? "bg-vivid text-white hover:bg-vivid-deep"
+                          : "bg-vivid text-white hover:bg-vivid-deep border border-white/20"
+                      }`}
+                    >
+                      <Heart className="h-3.5 w-3.5 fill-white text-white animate-pulse" />
+                      <span>Donate</span>
+                    </Link>
+                  );
+                }
                 return (
                   <Link key={l.href} href={l.href} className={linkCls(active)}>
                     {l.live && (

@@ -141,7 +141,7 @@ export default function Home() {
               <Reveal delay={0.12}>
                 <div className="flex h-full flex-col bg-pine p-6 text-white sm:p-8">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sage">Sadaqah</p>
-                  <h3 className="font-display mt-2 text-3xl tracking-tight">Simple giving, like a tithe</h3>
+                  <h3 className="font-display mt-2 text-3xl tracking-tight">Simple voluntary giving</h3>
                   <p className="mt-3 text-sm leading-relaxed text-white/75">
                     Any amount, once or monthly — pooled where the gathering needs it most. Paid
                     in under a minute through Paystack.

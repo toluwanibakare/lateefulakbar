@@ -14,7 +14,7 @@ import { CountdownStrip } from "./ui";
 export default function Hero() {
   const [phase, setPhase] = useState<"film" | "stills">("film");
   const [frame, setFrame] = useState(0);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
@@ -23,11 +23,14 @@ export default function Hero() {
 
   useEffect(() => {
     if (phase === "film" && videoRef.current) {
+      try {
+        videoRef.current.currentTime = 0;
+      } catch {}
       videoRef.current.muted = muted;
       const promise = videoRef.current.play();
       if (promise !== undefined) {
         promise.catch((err) => {
-          console.warn("Autoplay attempt failed:", err);
+          console.warn("Autoplay with sound blocked by browser, falling back to muted play:", err);
           if (videoRef.current) {
             videoRef.current.muted = true;
             videoRef.current.play().catch(() => {});
@@ -102,7 +105,7 @@ export default function Hero() {
       {/* --- Foreground --- */}
       <motion.div
         style={{ y: yFg }}
-        className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col justify-end px-5 pb-14 pt-36 sm:px-6"
+        className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col justify-end px-5 pb-16 pt-32 sm:px-6 sm:pb-20"
       >
         <motion.p
           initial={{ opacity: 0, y: 16 }}
@@ -130,8 +133,8 @@ export default function Hero() {
           className="font-display text-balance mt-3 max-w-5xl text-[13vw] leading-[0.95] font-light tracking-tight sm:text-7xl md:text-8xl"
         >
           Lateeful-Ul-Akbar
-          <span className="font-script mt-2 block text-[0.5em] font-normal text-sage">
-            Li-A’azam — Yā Lateef, the Most Gentle
+          <span className="font-display mt-2 block text-[0.5em] font-light text-sage">
+            Li-A’azam — Yā Lateef, The Most Kind
           </span>
         </motion.h1>
 
@@ -142,8 +145,7 @@ export default function Hero() {
           className="mt-6 flex max-w-2xl flex-col gap-4"
         >
           <p className="text-[15px] leading-relaxed text-white/85 sm:text-lg">
-            One morning. One square. Tens of thousands in white - breathing the same dhikr,
-            asking with one voice.
+            The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice.
           </p>
           <p className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] font-medium tracking-wide text-white/80">
             <span className="inline-flex items-center gap-1.5">

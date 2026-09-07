@@ -23,7 +23,7 @@ const UPDATES = [
   {
     time: "Until the day",
     title: "Broadcast opens 08:00 WAT, 24 January 2027",
-    text: "The Nadwat TV feed appears at the top of this page. Keep it open — the tasbīh beside it runs all day.",
+    text: "The Nadwat TV feed appears at the top of this page. Keep it open for real-time broadcast and announcements.",
   },
   {
     time: "On the day",
@@ -136,6 +136,30 @@ export default function LivePage() {
               </div>
             </Reveal>
           </div>
+        </div>
+      </section>
+
+      {/* Open Giving Banner */}
+      <section className="border-t border-ink/10 bg-white">
+        <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6">
+          <Reveal>
+            <div className="flex flex-col items-start justify-between gap-5 border border-ink/15 bg-cream p-6 sm:flex-row sm:items-center sm:p-8">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">
+                  Prefer open giving?
+                </p>
+                <h2 className="font-display mt-2 text-2xl tracking-tight text-ink sm:text-3xl">
+                  Sadaqah is the simple, voluntary way — any amount via Paystack.
+                </h2>
+              </div>
+              <Link
+                href="/sadaqah"
+                className="shrink-0 bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep"
+              >
+                Go to Sadaqah
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
     </>

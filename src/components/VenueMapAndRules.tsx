@@ -114,7 +114,7 @@ export default function VenueMapAndRules() {
                     Locate me
                   </button>
                   <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${VENUE_LAT},${VENUE_LNG}`}
+                    href="https://www.google.com/maps/place/TAFAWA+BALEWA+SQUARE+MANAGEMENT+BOARD/@6.4470597,3.4022796,21z/data=!4m17!1m10!4m9!1m4!2m2!1d7.4705944!2d9.0802621!4e1!1m3!2m2!1d3.398!2d6.4475!3m5!1s0x103b8b171e80facf:0x3327c8431972bd22!8m2!3d6.447135!4d3.4024354!16s%2Fg%2F11k0tbk0kh?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D"
                     target="_blank"
                     rel="noreferrer"
                     className="bg-vivid px-4 py-2.5 text-[12px] font-semibold text-white hover:bg-vivid-deep"

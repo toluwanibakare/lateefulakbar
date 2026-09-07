@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Jost, Great_Vibes, Aref_Ruqaa } from "next/font/google";
+import { Cormorant_Garamond, Jost, Great_Vibes, Amiri } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AiAssistant from "@/components/AiAssistant";
@@ -27,11 +27,12 @@ const script = Great_Vibes({
   weight: ["400"],
 });
 
-const arabic = Aref_Ruqaa({
+const arabic = Amiri({
   subsets: ["arabic", "latin"],
   variable: "--font-arabic",
   display: "swap",
   weight: ["400", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {

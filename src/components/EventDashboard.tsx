@@ -48,7 +48,7 @@ export default function EventDashboard() {
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <Reveal delay={0.06}>
             <h2 className="font-display text-balance max-w-2xl text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
-              The Square, wherever you are
+              Watch and chant Yā Lateef wherever you are
             </h2>
           </Reveal>
           <Reveal delay={0.12}>

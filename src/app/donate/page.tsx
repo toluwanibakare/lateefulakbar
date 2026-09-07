@@ -12,11 +12,32 @@ export default function DonatePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Donate"
+        eyebrow="Donate & Sadaqah"
         title={<>Fund exactly what the Square needs</>}
-        intro="Donate is targeted giving: choose a campaign with a live target — mats, water, cooling, broadcast, tents — and watch the bar move. For open, tithe-style giving of any amount, see Sadaqah."
+        intro="Donate is targeted giving: choose a campaign with a live target — mats, water, cooling, broadcast, tents — and watch the bar move. For open, voluntary giving of any amount, see Sadaqah."
         image="/assets/crowd-31.jpg"
       />
+      <section className="bg-cream border-b border-ink/10 py-12">
+        <div className="mx-auto max-w-4xl px-5 text-center sm:px-6">
+          <Reveal>
+            <p className="text-xs uppercase font-semibold tracking-[0.24em] text-fern">
+              The Spiritual Reward of Giving
+            </p>
+            <blockquote className="font-display mt-4 text-xl sm:text-2xl font-light italic leading-relaxed text-ink">
+              “The example of those who spend their wealth in the way of Allah is like a seed [of grain] which grows seven spikes; in each spike is a hundred grains. And Allah multiplies [His reward] for whom He wills. And Allah is all-Encompassing and Knowing.”
+            </blockquote>
+            <p className="mt-2 text-xs font-semibold tracking-wider text-pine uppercase">[Surah Al-Baqarah 2:261]</p>
+            <div className="mt-6 space-y-2 text-sm leading-relaxed text-faded">
+              <p>
+                Giving Sadaqah (voluntary charity) for the sake of Allah brings immense rewards, multiplies like a growing harvest, and protects the giver from hardships.
+              </p>
+              <p className="font-medium text-ink italic">
+                The Prophet Muhammad ﷺ said: “Give charity without delay, for it stands in the way of calamity.” (Sunan al-Tirmidhi)
+              </p>
+            </div>
+          </Reveal>
+        </div>
+      </section>
       <SadaqahGiving />
       <section className="border-t border-ink/10 bg-white">
         <div className="mx-auto max-w-7xl px-5 py-14 sm:px-6">
@@ -27,7 +48,7 @@ export default function DonatePage() {
                   Prefer open giving?
                 </p>
                 <h2 className="font-display mt-2 text-2xl tracking-tight text-ink sm:text-3xl">
-                  Sadaqah is the simple, tithe-style way — any amount via Paystack.
+                  Sadaqah is the simple, voluntary way — any amount via Paystack.
                 </h2>
               </div>
               <Link

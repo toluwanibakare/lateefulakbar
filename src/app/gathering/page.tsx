@@ -10,10 +10,10 @@ export default function GatheringPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Gathering"
-        title={<>Not a programme. A single act of worship, by a city.</>}
+        eyebrow="The Gathering"
+        title={<>Thousands of hearts. Countless prayer points. One Merciful Lord.</>}
         arabic="يَا لَطِيفُ"
-        intro="Lateeful-Ul-Akbar Li-A’azam is Nadwat Global Assembly's grand sitting of dhikr — one morning, one square, tens of thousands in white under the Name Yā Lateef. This page explains the gathering in full."
+        intro="Lateeful-Ul-Akbar is a grand spiritual gathering centred on Du‘ā, Dhikr, Salawāt and seeking the infinite mercy and subtle kindness of Allah — Al-Lateef."
         image="/assets/crowd-67.jpg"
       />
       <Story />
