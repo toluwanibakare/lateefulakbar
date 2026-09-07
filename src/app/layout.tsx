@@ -36,6 +36,7 @@ const arabic = Amiri({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://lateefulakbar.com"),
   title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
   description:
     "A grand gathering of dhikr and du'a at Tafawa Balewa Square, Lagos. 24 January 2027. Register, give sadaqah, read the prayer book and join the global Yaa Lateef tasbīh.",
@@ -48,7 +49,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
     description:
-      "One morning. One square. Tens of thousands in white — breathing the same dhikr, asking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
+      "The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
     images: [
       {
         url: "/og-image.png",
@@ -62,7 +63,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
     description:
-      "One morning. One square. Tens of thousands in white — breathing the same dhikr, asking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
+      "The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
     images: ["/og-image.png"],
   },
 };

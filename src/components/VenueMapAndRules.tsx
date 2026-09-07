@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { Car, ChevronDown, MapPin, Navigation, ShieldCheck, Tent } from "lucide-react";
+import { ArrowUpRight, Car, ChevronDown, MapPin, Navigation, ShieldCheck, Tent } from "lucide-react";
 import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal } from "./ui";
 
@@ -102,25 +102,37 @@ export default function VenueMapAndRules() {
             </Reveal>
 
             <Reveal delay={0.1}>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-4 border border-ink/15 bg-white px-5 py-4">
-                <div className="flex items-center gap-3">
-                  <Navigation className="h-5 w-5 text-fern" />
-                  <p className="text-sm text-faded">
-                    {dist !== null ? `About ${dist} km from you, straight line.` : "See your distance to the Square."}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={locate} className="border border-ink/20 px-4 py-2.5 text-[12px] font-semibold text-ink hover:border-pine hover:text-pine">
-                    Locate me
-                  </button>
-                  <a
-                    href="https://www.google.com/maps/place/TAFAWA+BALEWA+SQUARE+MANAGEMENT+BOARD/@6.4470597,3.4022796,21z/data=!4m17!1m10!4m9!1m4!2m2!1d7.4705944!2d9.0802621!4e1!1m3!2m2!1d3.398!2d6.4475!3m5!1s0x103b8b171e80facf:0x3327c8431972bd22!8m2!3d6.447135!4d3.4024354!16s%2Fg%2F11k0tbk0kh?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="bg-vivid px-4 py-2.5 text-[12px] font-semibold text-white hover:bg-vivid-deep"
-                  >
-                    Google Maps
-                  </a>
+              <div className="mt-6 border-2 border-vivid bg-cream p-5 shadow-md sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center bg-vivid text-white shadow-sm">
+                      <Navigation className="h-5 w-5 animate-pulse" />
+                    </div>
+                    <div>
+                      <h4 className="font-display text-lg font-semibold text-ink">Find Your Route to Tafawa Balewa Square</h4>
+                      <p className="text-xs text-faded">
+                        {dist !== null ? `You are approximately ${dist} km from the venue.` : "Locate your live distance and open direct Google Maps directions."}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      onClick={locate}
+                      className="inline-flex items-center gap-2 bg-pine px-5 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-ink transition-colors"
+                    >
+                      <MapPin className="h-4 w-4 text-sage" />
+                      <span>Locate My Distance</span>
+                    </button>
+                    <a
+                      href="https://www.google.com/maps/place/TAFAWA+BALEWA+SQUARE+MANAGEMENT+BOARD/@6.4470597,3.4022796,21z/data=!4m17!1m10!4m9!1m4!2m2!1d7.4705944!2d9.0802621!4e1!1m3!2m2!1d3.398!2d6.4475!3m5!1s0x103b8b171e80facf:0x3327c8431972bd22!8m2!3d6.447135!4d3.4024354!16s%2Fg%2F11k0tbk0kh?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 bg-vivid px-5 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-vivid-deep transition-colors"
+                    >
+                      <span>Open Google Maps</span>
+                      <ArrowUpRight className="h-4 w-4" />
+                    </a>
+                  </div>
                 </div>
               </div>
             </Reveal>

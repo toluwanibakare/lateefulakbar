@@ -27,7 +27,7 @@ const LINKS: {
   { label: "About", href: "/about", children: ABOUT_LINKS },
   { label: "Gallery", href: "/gallery" },
   { label: "Donate", href: "/donate" },
-  { label: "Journal", href: "/journal" },
+  { label: "Blog", href: "/blog" },
   { label: "Venue", href: "/venue" },
   { label: "Live", href: "/live", live: true },
 ];
@@ -41,7 +41,7 @@ const ALL_LINKS = [
   { label: "Donate", href: "/donate" },
   { label: "Sadaqah", href: "/sadaqah" },
   { label: "Register", href: "/register" },
-  { label: "Journal", href: "/journal" },
+  { label: "Blog", href: "/blog" },
   { label: "Prayer Book", href: "/prayer-book" },
   { label: "Live", href: "/live" },
   { label: "Venue", href: "/venue" },

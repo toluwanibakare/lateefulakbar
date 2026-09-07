@@ -1,5 +1,5 @@
 export const EVENT = {
-  title: "Lateeful-Ul-Akbar",
+  title: "Lateef ul-il-Akbar-Il-A’azam",
   suffix: "Li-A’azam 2027",
   dateLong: "Sunday, 24th January 2027",
   dateShort: "24 . 01 . 2027",

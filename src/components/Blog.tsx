@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { BLOG_POSTS } from "@/lib/site";
@@ -8,10 +9,10 @@ import { Eyebrow, Reveal } from "./ui";
 export default function Blog() {
   const [lead, ...rest] = BLOG_POSTS;
   return (
-    <section id="journal" className="border-t border-ink/10 bg-white">
+    <section id="blog" className="border-t border-ink/10 bg-white">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
         <Reveal>
-          <Eyebrow>08 - Journal</Eyebrow>
+          <Eyebrow>08 - Blog</Eyebrow>
         </Reveal>
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <Reveal delay={0.06}>
@@ -28,7 +29,7 @@ export default function Blog() {
 
         <div className="mt-12 grid gap-10 lg:grid-cols-2">
           <Reveal>
-            <article className="group cursor-pointer">
+            <Link href={`/blog/${lead.slug}`} className="group block cursor-pointer">
               <div className="relative aspect-[16/10] overflow-hidden bg-mist">
                 <Image src={lead.image} alt={lead.title} fill sizes="(max-width: 1024px) 100vw, 50vw" className="img-true object-cover transition-transform duration-700 group-hover:scale-[1.04]" loading="lazy" />
               </div>
@@ -42,13 +43,13 @@ export default function Blog() {
               <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-pine">
                 Read the story <ArrowUpRight className="h-4 w-4" />
               </span>
-            </article>
+            </Link>
           </Reveal>
 
           <div className="flex flex-col divide-y divide-ink/10 border-y border-ink/10">
             {rest.map((p, i) => (
               <Reveal key={p.slug} delay={i * 0.06}>
-                <article className="group grid cursor-pointer gap-5 py-6 sm:grid-cols-[180px_1fr] sm:items-center">
+                <Link href={`/blog/${p.slug}`} className="group grid cursor-pointer gap-5 py-6 sm:grid-cols-[180px_1fr] sm:items-center">
                   <div className="relative aspect-[16/10] overflow-hidden bg-mist sm:aspect-[4/3]">
                     <Image src={p.image} alt={p.title} fill sizes="240px" className="img-true object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
                   </div>
@@ -61,14 +62,14 @@ export default function Blog() {
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-faded">{p.excerpt}</p>
                   </div>
-                </article>
+                </Link>
               </Reveal>
             ))}
 
             <div className="bg-cream p-6">
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Dispatches</p>
               <p className="mt-2 text-sm leading-relaxed text-faded">
-                Get gate announcements and new journal entries by email. One message a week, nothing else.
+                Get gate announcements and new blog posts by email. One message a week, nothing else.
               </p>
               <form onSubmit={(e) => e.preventDefault()} className="mt-4 flex gap-2">
                 <input type="email" required placeholder="you@example.com" aria-label="Email address" className="min-w-0 flex-1 border border-ink/20 bg-white px-4 py-3 text-sm text-ink placeholder:text-ink/35 focus:border-pine focus:outline-none" />

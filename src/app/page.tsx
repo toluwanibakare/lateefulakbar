@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import Hero from "@/components/Hero";
+import VenueMapAndRules from "@/components/VenueMapAndRules";
 import { CountdownStrip, Eyebrow, Reveal } from "@/components/ui";
 import { BLOG_POSTS, EVENT, GALLERY, PRAYER_PAGES } from "@/lib/site";
 
@@ -186,24 +187,29 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Journal teaser */}
+        {/* Location & Directions */}
+        <section className="border-t border-ink/10 bg-cream">
+          <VenueMapAndRules />
+        </section>
+
+        {/* Blog teaser */}
         <section className="border-t border-ink/10 bg-paper">
           <div className="mx-auto max-w-7xl px-5 py-16 sm:px-6 md:py-24">
             <div className="flex flex-wrap items-end justify-between gap-6">
               <Reveal>
-                <Eyebrow>Journal</Eyebrow>
+                <Eyebrow>Blog</Eyebrow>
                 <h2 className="font-display mt-4 text-4xl font-light tracking-tight sm:text-5xl">
                   Notes toward the Square
                 </h2>
               </Reveal>
               <Reveal delay={0.08}>
-                <ViewMore href="/journal">All entries</ViewMore>
+                <ViewMore href="/blog">All posts</ViewMore>
               </Reveal>
             </div>
             <div className="mt-10 grid gap-8 md:grid-cols-3">
               {BLOG_POSTS.map((p, i) => (
                 <Reveal key={p.slug} delay={i * 0.06}>
-                  <Link href={`/journal/${p.slug}`} className="group block">
+                  <Link href={`/blog/${p.slug}`} className="group block">
                     <span className="relative block aspect-[16/10] overflow-hidden bg-mist">
                       <Image src={p.image} alt={p.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="img-true object-cover transition-transform duration-700 group-hover:scale-[1.04]" loading="lazy" />
                     </span>
