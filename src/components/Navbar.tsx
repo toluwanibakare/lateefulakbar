@@ -145,14 +145,14 @@ export default function Navbar() {
                     <Link
                       key={l.href}
                       href={l.href}
-                      className={`group inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[13px] font-bold tracking-wide transition-all shadow-sm ${
+                      className={`group inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-[13px] font-bold leading-none tracking-wide transition-all shadow-sm ${
                         solid
                           ? "bg-vivid text-white hover:bg-vivid-deep"
                           : "bg-vivid text-white hover:bg-vivid-deep border border-white/20"
                       }`}
                     >
-                      <Heart className="h-3.5 w-3.5 fill-white text-white animate-pulse" />
-                      <span>Donate</span>
+                      <Heart className="h-3.5 w-3.5 shrink-0 fill-white text-white animate-pulse" />
+                      <span className="leading-none">Donate</span>
                     </Link>
                   );
                 }
