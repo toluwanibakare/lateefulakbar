@@ -130,10 +130,10 @@ export default function Hero() {
           initial={{ opacity: 0, y: 26 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.18 }}
-          className="font-display text-balance mt-3 max-w-5xl text-[11vw] leading-[0.95] font-light tracking-tight sm:text-7xl md:text-8xl"
+          className="font-display text-balance mt-3 max-w-5xl text-4xl sm:text-7xl md:text-8xl leading-[0.95] font-light tracking-tight break-words"
         >
           Lateef ul-il-Akbar-Il-A’azam
-          <span className="font-display mt-2 block text-[0.5em] font-light text-sage">
+          <span className="font-display mt-2 block text-[0.55em] font-light text-sage">
             Yaa Lateef, The Most Kind
           </span>
         </motion.h1>

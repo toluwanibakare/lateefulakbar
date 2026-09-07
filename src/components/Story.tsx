@@ -312,9 +312,9 @@ export default function Story() {
       <div className="border-y border-ink/10 bg-white">
         <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-ink/10 px-5 sm:px-6 lg:grid-cols-4">
           {STATS.map((s, i) => (
-            <Reveal key={s.l} delay={i * 0.06} className="px-5 py-8 sm:px-8 sm:py-10">
-              <p className="font-display text-5xl font-light text-pine sm:text-6xl">{s.n}</p>
-              <p className="mt-2 text-[13px] leading-snug text-faded">{s.l}</p>
+            <Reveal key={s.l} delay={i * 0.06} className="px-3 py-6 sm:px-8 sm:py-10">
+              <p className="font-display text-3xl font-light text-pine sm:text-6xl">{s.n}</p>
+              <p className="mt-2 text-xs sm:text-[13px] leading-snug text-faded">{s.l}</p>
             </Reveal>
           ))}
         </div>
