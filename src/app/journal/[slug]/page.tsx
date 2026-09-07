@@ -19,7 +19,7 @@ const BODIES: Record<string, string[]> = {
   "tbs-logistics": [
     "Brothers sit in the ordered canopy on one side, sisters under the great canopy on the other — stewarded by section, first come first served. Elders and guests with medical needs are seated nearest the service lanes; tell a steward at the gate and you will be walked there.",
     "Water moves through the rows all morning, funded by sadaqah. Fans hold the midday heat under the canopies. There are no vehicles inside the Bowl — all cars and buses use the perimeter lots outside the Square.",
-    "Gates open at 08:00 with accreditation and QR scanning. The opening and Bismillah follow at 09:30, the long Yā Lateef sitting at 10:30, reflections at midday, and the grand du‘ā — the day's peak — at 14:00. Dispersal is orderly, section by section.",
+    "Gates open at 08:00 with accreditation and QR scanning. The opening and Bismillah follow at 09:30, the long Yaa Lateef sitting at 10:30, reflections at midday, and the grand du‘ā — the day's peak — at 14:00. Dispersal is orderly, section by section.",
   ],
 };
 

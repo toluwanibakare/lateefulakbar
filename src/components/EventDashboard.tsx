@@ -48,12 +48,12 @@ export default function EventDashboard() {
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <Reveal delay={0.06}>
             <h2 className="font-display text-balance max-w-2xl text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
-              Watch and chant Yā Lateef wherever you are
+              Watch and chant Yaa Lateef wherever you are
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
             <p className="max-w-sm text-sm leading-relaxed text-faded">
-              Watch the broadcast on the day, and add your own Yā Lateef recitations to the
+              Watch the broadcast on the day, and add your own Yaa Lateef recitations to the
               worldwide tasbīh.
             </p>
           </Reveal>
@@ -103,7 +103,7 @@ export default function EventDashboard() {
                   التَّسْبِيح
                 </p>
                 <p className="relative mt-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/80">
-                  Worldwide Yā Lateef Tasbīh
+                  Worldwide Yaa Lateef Tasbīh
                 </p>
                 <p className="font-display relative mt-1 text-5xl font-light tabular-nums sm:text-6xl">
                   {global.toLocaleString()}

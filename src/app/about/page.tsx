@@ -22,7 +22,7 @@ const PILLARS = [
   {
     icon: Moon,
     t: "Dhikr",
-    d: "The long collective recitation of Yā Lateef — led from the stage, answered by the whole Square as one sound.",
+    d: "The long collective recitation of Yaa Lateef — led from the stage, answered by the whole Square as one sound.",
   },
   {
     icon: HeartHandshake,
@@ -48,7 +48,7 @@ export default function AboutPage() {
         eyebrow="About"
         title={<>About the event</>}
         arabic="لَطِيفُ الْخَبِير"
-        intro="Lateeful-Ul-Akbar Li-A’azam is Nadwat Global Assembly's grand sitting of dhikr and du‘ā — one morning, one square, tens of thousands in white, gathered under the Name Yā Lateef, the Most Gentle."
+        intro="Lateeful-Ul-Akbar Li-A’azam is Nadwat Global Assembly's grand sitting of dhikr and du‘ā — one morning, one square, tens of thousands in white, gathered under the Name Yaa Lateef, The Most Kind."
         image="/assets/crowd-49.jpg"
       />
 
@@ -85,7 +85,7 @@ export default function AboutPage() {
               </div>
             </Reveal>
             <Reveal delay={0.18}>
-              <p className="font-script mt-6 text-3xl text-fern">Yā Lateef, the Most Gentle</p>
+              <p className="font-script mt-6 text-3xl text-fern">Yaa Lateef, The Most Kind</p>
             </Reveal>
           </div>
           <Reveal delay={0.1}>

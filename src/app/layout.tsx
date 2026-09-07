@@ -38,7 +38,7 @@ const arabic = Amiri({
 export const metadata: Metadata = {
   title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
   description:
-    "A grand gathering of dhikr and du'a at Tafawa Balewa Square, Lagos. 24 January 2027. Register, give sadaqah, read the prayer book and join the global Yā Lateef tasbīh.",
+    "A grand gathering of dhikr and du'a at Tafawa Balewa Square, Lagos. 24 January 2027. Register, give sadaqah, read the prayer book and join the global Yaa Lateef tasbīh.",
   icons: {
     icon: "/icon.png",
     shortcut: "/favicon.ico",

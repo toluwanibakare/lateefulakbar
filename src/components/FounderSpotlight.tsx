@@ -62,7 +62,7 @@ export default function FounderSpotlight() {
                 <p>
                   Shaikh Dr. Lawal convenes Lateeful-Ul-Akbar as an act of return - away from
                   noise, toward the quiet power of collective dhikr. His call is simple: dress
-                  alike, sit together, and let the Name <em className="text-ink">Yā Lateef</em> do
+                  alike, sit together, and let the Name <em className="text-ink">Yaa Lateef</em> do
                   its work on hardened hearts.
                 </p>
                 <p>

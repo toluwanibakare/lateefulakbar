@@ -145,7 +145,7 @@ export default function Footer() {
           </div>
 
           <p aria-hidden className="font-display text-outline relative -mb-4 hidden w-full overflow-hidden text-center text-[13vw] leading-none font-semibold tracking-tight whitespace-nowrap select-none md:block">
-            YA LATEEF
+            YAA LATEEF
           </p>
 
           <div className="relative flex flex-col items-center justify-between gap-3 border-t border-white/15 py-6 text-[12px] text-white/60 sm:flex-row">

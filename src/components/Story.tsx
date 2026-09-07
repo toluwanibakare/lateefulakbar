@@ -9,7 +9,7 @@ import { Eyebrow, Reveal } from "./ui";
 
 function Ticker() {
   const words = [
-    "Yā Lateef", "-", "GRACE", "-", "LENIENCY", "-", "KINDNESS", "-", "DHIKR", "-", "DU‘Ā", "-", "THE GRANDEUR GATHERING OF SUBLIME MINDS", "-", "SEEKING WITH ONE VOICE", "-", "TBS LAGOS", "-", EVENT.dateShort, "-"
+    "Yaa Lateef", "-", "GRACE", "-", "LENIENCY", "-", "KINDNESS", "-", "DHIKR", "-", "DU‘Ā", "-", "THE GRANDEUR GATHERING OF SUBLIME MINDS", "-", "SEEKING WITH ONE VOICE", "-", "TBS LAGOS", "-", EVENT.dateShort, "-"
   ];
   const row = [...words, ...words, ...words];
   return (
@@ -39,8 +39,8 @@ function Ticker() {
 const STATS = [
   { n: "90k+", l: "Physical worshippers in white at TBS" },
   { n: "100k+", l: "Online participants joining live" },
-  { n: "4", l: "Canopies across Tafawa Balewa Square" },
-  { n: "Billions", l: "Yā Lateef tasbīh recitations" },
+  { n: "100% Free", l: "Open to every worshipper without cost" },
+  { n: "Billions", l: "Yaa Lateef tasbīh recitations" },
 ];
 
 const NEEDS = [
@@ -62,7 +62,7 @@ const EXPECT = [
   {
     icon: Volume2,
     t: "Collective Dhikr & Salawāt",
-    d: "The Yā Lateef recitation rises as one sound — led from the stage, answered by the whole Square.",
+    d: "The Yaa Lateef recitation rises as one sound — led from the stage, answered by the whole Square.",
     img: "/assets/crowd-48.jpg",
   },
   {
@@ -88,7 +88,7 @@ const EXPECT = [
 const ORDER = [
   { time: "08:00", title: "Gates & Settling", note: "Accreditation, seating by canopy, quiet recitation." },
   { time: "09:30", title: "Opening & Bismillah", note: "Welcome from Nadwat, intentions set together." },
-  { time: "10:30", title: "Yā Lateef — First Sitting", note: "The long collective dhikr. Water moves through rows." },
+  { time: "10:30", title: "Yaa Lateef — First Sitting", note: "The long collective dhikr. Water moves through rows." },
   { time: "12:30", title: "Reflection & Scholars", note: "Reminders from the founder and guest scholars." },
   { time: "14:00", title: "The Grand Du‘ā", note: "Tens of thousands asking as one. The day’s peak." },
   { time: "15:00", title: "Closing & Dispersal", note: "Orderly exit by section, lost-and-found at the gates." },
@@ -123,7 +123,7 @@ export default function Story() {
               <Reveal delay={0.16}>
                 <p className="mt-6 max-w-xl text-base leading-relaxed text-faded sm:text-lg">
                   What a Gathering is Lateef ul Akbar! Tens of thousands gathered under one banner:{" "}
-                  <strong className="font-semibold text-ink">Yā Lateef — Intercede for us with Your Grace and Kindness.</strong>
+                  <strong className="font-semibold text-ink">Yaa Lateef — Intercede for us with Your Grace and Kindness.</strong>
                 </p>
               </Reveal>
               <Reveal delay={0.22}>

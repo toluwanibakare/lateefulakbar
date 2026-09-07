@@ -32,7 +32,7 @@ function answer(q: string): string {
   if (s.includes("founder") || s.includes("missioner") || s.includes("lawal") || s.includes("sheikh") || s.includes("shaikh"))
     return "The Chief Missioner is Shaikh Dr. Abdur Rahman Ade Lawal: Al-Azhar trained, PhD in Mass Communication, IVLP alumnus, author and counsellor.";
   if (s.includes("stream") || s.includes("live") || s.includes("watch") || s.includes("online") || s.includes("count") || s.includes("tasbih") || s.includes("tasbīh") || s.includes("dhikr count"))
-    return "The live broadcast and worldwide Ya Lateef tasbīh live on the Live page (/live). Venue and route help is on /venue.";
+    return "The live broadcast and worldwide Yaa Lateef tasbīh live on the Live page (/live). Venue and route help is on /venue.";
   if (s.includes("salam") || s.includes("hello") || s.includes("hi"))
     return "Wa alaykum as-salam. Ask me about the date, venue, dress code, parking, registration or sadaqah.";
   return "Lateeful-Ul-Akbar Li-A'azam is Nadwat's grand dhikr gathering on 24 January 2027 at TBS Lagos. Ask me about the date, dress code, parking, registration or giving.";

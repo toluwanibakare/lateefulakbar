@@ -76,7 +76,7 @@ export default function RegistrationPortal() {
       ctx.fillText("Dress code: all white", 450, 850);
       ctx.fillStyle = "#0B3D2E";
       ctx.font = "400 30px Georgia, serif";
-      ctx.fillText("Ya Lateef, the Most Gentle", 450, 1050);
+      ctx.fillText("Yaa Lateef, The Most Kind", 450, 1050);
     };
     if (img) {
       const el = new window.Image();

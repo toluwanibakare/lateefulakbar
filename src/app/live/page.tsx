@@ -5,15 +5,15 @@ import { CountdownStrip, Eyebrow, Reveal } from "@/components/ui";
 import { EVENT } from "@/lib/site";
 
 export const metadata = {
-  title: "Live — Majlis Yā Lateef (Al-Majlis Al-Mubāshir)",
+  title: "Live — Majlis Yaa Lateef (Al-Majlis Al-Mubāshir)",
   description:
-    "The live dashboard for Lateeful-Ul-Akbar 2027: YouTube livestream from TBS, the worldwide Yā Lateef tasbīh, order of the day and live updates.",
+    "The live dashboard for Lateeful-Ul-Akbar 2027: YouTube livestream from TBS, the worldwide Yaa Lateef tasbīh, order of the day and live updates.",
 };
 
 const ORDER = [
   { time: "08:00", title: "Gates & settling", note: "Accreditation, seating by canopy." },
   { time: "09:30", title: "Opening & Bismillah", note: "Welcome from Nadwat, intentions set." },
-  { time: "10:30", title: "Yā Lateef — first sitting", note: "The long collective dhikr." },
+  { time: "10:30", title: "Yaa Lateef — first sitting", note: "The long collective dhikr." },
   { time: "12:30", title: "Reflection & scholars", note: "Reminders from the founder and guests." },
   { time: "14:00", title: "The grand du‘ā", note: "Tens of thousands asking as one." },
   { time: "15:00", title: "Closing & dispersal", note: "Orderly exit by section." },
@@ -33,7 +33,7 @@ const UPDATES = [
   {
     time: "After",
     title: "Final tasbīh & closing du‘ā replay",
-    text: "The worldwide Yā Lateef total is announced at closing and kept on this page.",
+    text: "The worldwide Yaa Lateef total is announced at closing and kept on this page.",
   },
 ];
 
@@ -42,9 +42,9 @@ export default function LivePage() {
     <>
       <PageHeader
         eyebrow="Live — Al-Majlis Al-Mubāshir"
-        title={<>Majlis Yā Lateef, live from the Square</>}
+        title={<>Majlis Yaa Lateef, live from the Square</>}
         arabic="المَجْلِسُ المُبَاشِر — يَا لَطِيف"
-        intro="The live dashboard — Majlis Yā Lateef as it happens. Watch the Nadwat TV broadcast from the Main Bowl, add your own recitations to the worldwide tasbīh, and follow the order of the day."
+        intro="The live dashboard — Majlis Yaa Lateef as it happens. Watch the Nadwat TV broadcast from the Main Bowl, add your own recitations to the worldwide tasbīh, and follow the order of the day."
         image="/assets/crowd-11.jpg"
       />
 

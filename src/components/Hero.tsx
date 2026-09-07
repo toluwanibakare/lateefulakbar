@@ -134,7 +134,7 @@ export default function Hero() {
         >
           Lateeful-Ul-Akbar
           <span className="font-display mt-2 block text-[0.5em] font-light text-sage">
-            Li-A’azam — Yā Lateef, The Most Kind
+            Li-A’azam — Yaa Lateef, The Most Kind
           </span>
         </motion.h1>
 

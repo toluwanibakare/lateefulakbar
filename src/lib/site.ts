@@ -74,9 +74,9 @@ export const BLOG_POSTS = [
   {
     slug: "ya-lateef",
     category: "Meaning",
-    title: "Yā Lateef: the Name we gather under",
+    title: "Yaa Lateef: the Name we gather under",
     excerpt:
-      "Subtlety, gentleness, the kindness that arrives before you ask. A short reading for first-time guests.",
+      "Subtlety, kindness, the grace that arrives before you ask. A short reading for first-time guests.",
     image: "/assets/crowd-18.jpg",
     date: "Dec 2026",
     read: "4 min",
@@ -104,11 +104,11 @@ export const PRAYER_PAGES = [
   },
   {
     page: 2,
-    title: "Yā Lateef - the gathering dhikr",
+    title: "Yaa Lateef - the gathering dhikr",
     arabic: "يَا لَطِيفُ يَا لَطِيفُ يَا لَطِيفُ",
-    transliteration: "Yā Lateef, Yā Lateef, Yā Lateef",
+    transliteration: "Yaa Lateef, Yaa Lateef, Yaa Lateef",
     translation:
-      "O Most Gentle, O Most Subtle - be gentle with us in all that destiny brings, seen and unseen.",
+      "O Most Kind, O Most Subtle - be gentle with us in all that destiny brings, seen and unseen.",
   },
   {
     page: 3,

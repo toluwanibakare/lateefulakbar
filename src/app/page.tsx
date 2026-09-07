@@ -37,7 +37,7 @@ export default function Home() {
               </h2>
               <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-faded">
                 Lateeful-Ul-Akbar Li-A’azam is Nadwat&apos;s grand sitting of dhikr — tens of
-                thousands in white under the Name Yā Lateef. No headline acts; the crowd&apos;s
+                thousands in white under the Name Yaa Lateef. No headline acts; the crowd&apos;s
                 recitation is the event.
               </p>
               <div className="mt-6">
