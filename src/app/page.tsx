@@ -204,7 +204,7 @@ export default function Home() {
                     <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sage">Sadaqah</p>
                     <h3 className="font-display mt-2 text-3xl tracking-tight">Simple voluntary giving</h3>
                     <p className="mt-3 text-sm leading-relaxed text-white/75">
-                      Any amount, once or monthly — pooled where the gathering needs it most.
+                      Any amount, given with sincerity — pooled where the gathering needs it most.
                     </p>
                     <p lang="ar" className="font-arabic mt-5 text-xl text-sage/90">يَـٰٓأَيُّهَا ٱللَّذِينَ ءَامَنُوٓا۟ إِن تَنصُرُوا۟ ٱللَّهَ يَنصُرْكُمْ وَيُثَبِّتْ أَقْدَامَكُمْ</p>
                     <div className="mt-6">
