@@ -20,7 +20,7 @@ export default function SadaqahPage() {
     <>
       <PageHeader
         eyebrow="Sadaqah"
-        title={<>Sadaqah is how to be</>}
+        title={<>Sadaqah is kept simple</>}
         arabic="وَمَا تُنفِقُوا مِنْ خَيْرٍ فَلِلَّهِ"
         intro="Whatever good you give is for Allah. Set aside any amount — once or monthly. This is open voluntary giving; campaigns with targets live under Support."
         image="/assets/crowd-08.jpg"

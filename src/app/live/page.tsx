@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import EventDashboard from "@/components/EventDashboard";
+import PrayerBookViewer from "@/components/PrayerBookViewer";
 import { CountdownStrip, Eyebrow, Reveal } from "@/components/ui";
 import { EVENT } from "@/lib/site";
 
@@ -72,6 +73,8 @@ export default function LivePage() {
       </section>
 
       <EventDashboard />
+
+      <PrayerBookViewer />
 
       {/* Order of the day + live updates */}
       <section className="border-t border-ink/10 bg-cream">
