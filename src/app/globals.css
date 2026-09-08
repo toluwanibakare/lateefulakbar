@@ -21,10 +21,9 @@
   --color-giltsoft: #c8ab5e;
 }
 
-html, body {
+html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
-  max-width: 100%;
+  overflow-x: hidden !important;
   width: 100%;
 }
 
@@ -33,6 +32,9 @@ body {
   color: var(--color-ink);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden !important;
+  width: 100%;
+  position: relative;
 }
 
 ::selection {

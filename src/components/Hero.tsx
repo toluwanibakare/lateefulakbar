@@ -74,7 +74,7 @@ export default function Hero() {
   }, [phase, reduce]);
 
   return (
-    <section id="top" className="relative flex min-h-[108svh] flex-col overflow-hidden bg-ink text-white">
+    <section id="top" className="relative flex min-h-screen w-full max-w-full flex-col overflow-hidden bg-ink text-white">
       {/* --- Backdrop --- */}
       <motion.div style={{ y: yBg }} className="absolute inset-0" aria-hidden>
         {phase === "film" ? (

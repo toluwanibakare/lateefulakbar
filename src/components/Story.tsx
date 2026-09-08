@@ -13,7 +13,7 @@ function Ticker() {
   ];
   const row = [...words, ...words, ...words];
   return (
-    <div className="overflow-hidden bg-vivid py-3" aria-hidden>
+    <div className="w-full max-w-full overflow-hidden bg-vivid py-3" aria-hidden>
       <div className="animate-ticker flex w-max items-center gap-6 whitespace-nowrap">
         {[0, 1].map((half) => (
           <div key={half} className="flex items-center gap-6">

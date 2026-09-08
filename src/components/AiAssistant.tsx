@@ -80,7 +80,7 @@ export default function AiAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 24, scale: 0.98 }}
             transition={{ duration: 0.3 }}
-            className="fixed right-4 bottom-22 z-[60] flex h-[540px] w-[calc(100vw-2rem)] max-w-md flex-col overflow-hidden border border-ink/15 bg-white shadow-2xl sm:right-6"
+            className="fixed right-4 bottom-22 z-[60] flex h-[540px] w-[calc(100%-2rem)] max-w-md flex-col overflow-hidden border border-ink/15 bg-white shadow-2xl sm:right-6"
           >
             <div className="flex items-center gap-3 border-b border-ink/10 bg-vivid px-5 py-4 text-white">
               <span className="relative block h-9 w-auto">
