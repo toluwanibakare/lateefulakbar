@@ -26,7 +26,7 @@ export default function PrayerBookViewer() {
             </Reveal>
             <Reveal delay={0.12}>
               <p className="mt-5 text-[15px] leading-relaxed text-faded">
-                The official Nadwat prayer booklet, set for the screen. Arabic, transliteration
+                The official Nadwat prayer book, set for the screen. Arabic, transliteration
                 and translation on every page. Reading stays inside the site so the text keeps
                 its accuracy.
               </p>
