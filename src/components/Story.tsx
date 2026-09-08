@@ -157,8 +157,8 @@ export default function Story() {
                 <TiltCard className="shadow-2xl">
                   <div className="relative aspect-[4/5] overflow-hidden bg-mist border border-ink/10">
                     <Image
-                      src="/assets/celebrity.jpg"
-                      alt="Celebrity guest seated at Tafawa Balewa Square"
+                      src="/assets/crowd-81.jpg"
+                      alt="Worshippers gathered at Tafawa Balewa Square"
                       fill
                       sizes="(max-width: 1024px) 100vw, 40vw"
                       className="img-true object-cover transition-transform duration-700 hover:scale-105"
