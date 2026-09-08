@@ -55,8 +55,8 @@ export const GALLERY: GalleryItem[] = [
 ];
 
 export const HERO_SEQUENCE = [
-  "/assets/crowd-11.jpg",
   "/assets/crowd-12.jpg",
+  "/assets/crowd-11.jpg",
   "/assets/event-screenshot.png",
 ];
 
