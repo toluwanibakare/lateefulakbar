@@ -164,7 +164,7 @@ export default function AboutPage() {
             </h2>
             <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-faded">
               <p>
-                Everyone -- Elders, youth, perpetual guests and first-timers, and physical (national and international) and virtual attendees. The seating is classified by demarcation of canopies for males and females “Islam abhors the free mixing of the opposite sex”
+                Everyone -- Elders, youth, perpetual guests, first-timers, physical (national and international), and virtual attendees. The seating is classified by demarcation of canopies for males and females “Islam abhors the free mixing of the opposite sex”
               </p>
               <p>
                 Come in clean, modest, all-white attire, with ablution and one private need
