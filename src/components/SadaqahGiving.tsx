@@ -128,7 +128,7 @@ export default function SadaqahGiving() {
             </div>
             <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-faded">
               <ShieldCheck className="h-4 w-4 text-fern" />
-              Secured checkout. Receipts by email and SMS.
+              Secured checkout. Receipts by email.
               <a href="/sadaqah" className="font-semibold text-pine underline underline-offset-4 hover:text-fern">
                 Prefer open Sadaqah giving?
               </a>

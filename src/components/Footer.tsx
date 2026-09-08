@@ -16,8 +16,8 @@ export default function Footer() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-fern">
               Final call
             </p>
-            <h2 className="font-display text-balance mt-4 text-4xl leading-tight font-light tracking-tight text-ink sm:text-6xl">
-              Come in white. Leave renewed.
+            <h2 className="font-display text-balance mt-4 text-3xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
+              Attend with a multitude of prayer points and feel fulfilled, inspired and certain of the efficacy of the supplications
             </h2>
           </Reveal>
           <Reveal delay={0.1}>

@@ -54,7 +54,7 @@ const NEEDS = [
 const REASONS_TO_ATTEND = [
   {
     title: "Come with your desires",
-    desc: "Lay down your requests in the presence of Allah.",
+    desc: "Lay down your heavy burdens, deepest desires, and personal requests in the quiet presence of Allah — trusting Him to grant relief through His gentle kindness.",
   },
   {
     title: "Come with your dreams",

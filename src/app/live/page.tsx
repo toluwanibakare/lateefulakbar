@@ -149,7 +149,7 @@ export default function LivePage() {
                   Prefer open giving?
                 </p>
                 <h2 className="font-display mt-2 text-2xl tracking-tight text-ink sm:text-3xl">
-                  Sadaqah is the simple, voluntary way.
+                  Sadaqah is kept simple.
                 </h2>
               </div>
               <Link

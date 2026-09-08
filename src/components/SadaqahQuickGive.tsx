@@ -206,7 +206,7 @@ export default function SadaqahQuickGive() {
                     Give Sadaqah — ₦{fmt(effective)}
                   </button>
                   <p className="mt-3 text-center text-[12px] text-faded">
-                    Card · Bank transfer — receipt by email & SMS.
+                    Card · Bank transfer — receipt by email.
                   </p>
                 </form>
               ) : (
