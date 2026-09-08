@@ -60,11 +60,11 @@ export function BackToTop() {
   );
 }
 
-/** Standard Scroll Reveal wrapper */
+/** Standard Scroll Reveal wrapper with noticeable slide, blur, and scale */
 export function Reveal({
   children,
   delay = 0,
-  y = 28,
+  y = 48,
   className,
 }: {
   children: React.ReactNode;
@@ -76,10 +76,10 @@ export function Reveal({
   if (reduce) return <div className={className}>{children}</div>;
   return (
     <motion.div
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y, scale: 0.97, filter: "blur(6px)" }}
+      whileInView={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.85, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -92,9 +92,9 @@ export function FadeIn({
   children,
   direction = "up",
   delay = 0,
-  duration = 0.8,
-  distance = 32,
-  blur = false,
+  duration = 0.85,
+  distance = 48,
+  blur = true,
   className,
 }: {
   children: React.ReactNode;
@@ -121,16 +121,18 @@ export function FadeIn({
       initial={{
         opacity: 0,
         ...offsets[direction],
+        scale: direction !== "none" ? 0.97 : 1,
         filter: blur ? "blur(8px)" : "blur(0px)",
       }}
       whileInView={{
         opacity: 1,
         x: 0,
         y: 0,
+        scale: 1,
         filter: "blur(0px)",
       }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -142,8 +144,8 @@ export function FadeIn({
 export function ScaleIn({
   children,
   delay = 0,
-  duration = 0.7,
-  scale = 0.92,
+  duration = 0.85,
+  scale = 0.88,
   className,
 }: {
   children: React.ReactNode;
@@ -156,10 +158,10 @@ export function ScaleIn({
   if (reduce) return <div className={className}>{children}</div>;
   return (
     <motion.div
-      initial={{ opacity: 0, scale }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, scale, y: 30, filter: "blur(8px)" }}
+      whileInView={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
       className={className}
     >
       {children}
@@ -170,7 +172,7 @@ export function ScaleIn({
 /** Stagger Parent Container */
 export function StaggerContainer({
   children,
-  staggerDelay = 0.1,
+  staggerDelay = 0.12,
   className,
 }: {
   children: React.ReactNode;
@@ -184,7 +186,7 @@ export function StaggerContainer({
     <motion.div
       initial="hidden"
       whileInView="show"
-      viewport={{ once: true, margin: "-60px" }}
+      viewport={{ once: true, margin: "-40px" }}
       variants={{
         hidden: {},
         show: {
@@ -214,11 +216,13 @@ export function StaggerItem({
   return (
     <motion.div
       variants={{
-        hidden: { opacity: 0, y: 24 },
+        hidden: { opacity: 0, y: 44, scale: 0.95, filter: "blur(6px)" },
         show: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+          scale: 1,
+          filter: "blur(0px)",
+          transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
         },
       }}
       className={className}
@@ -228,7 +232,7 @@ export function StaggerItem({
   );
 }
 
-/** Interactive Tilt Card */
+/** Interactive Tilt & Floating Card */
 export function TiltCard({
   children,
   className = "",
@@ -241,9 +245,9 @@ export function TiltCard({
 
   return (
     <motion.div
-      whileHover={{ y: -6, scale: 1.015 }}
-      transition={{ duration: 0.3, ease: "easeOut" }}
-      className={`transition-shadow duration-300 hover:shadow-2xl ${className}`}
+      whileHover={{ y: -8, scale: 1.025 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className={`transition-all duration-300 hover:shadow-2xl ${className}`}
     >
       {children}
     </motion.div>
@@ -253,7 +257,7 @@ export function TiltCard({
 /** Parallax Image Wrapper */
 export function ParallaxImage({
   children,
-  offset = 40,
+  offset = 60,
   className = "",
 }: {
   children: React.ReactNode;
@@ -266,16 +270,69 @@ export function ParallaxImage({
     offset: ["start end", "end start"],
   });
   const y = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
+  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.12, 1.05, 1.12]);
   const reduce = useReducedMotion();
 
   if (reduce) return <div className={`overflow-hidden ${className}`}>{children}</div>;
 
   return (
     <div ref={ref} className={`overflow-hidden ${className}`}>
-      <motion.div style={{ y }} className="h-full w-full">
+      <motion.div style={{ y, scale }} className="h-full w-full">
         {children}
       </motion.div>
     </div>
+  );
+}
+
+/** Word-by-word dynamic headline reveal */
+export function TextReveal({
+  text,
+  className = "",
+  delay = 0,
+}: {
+  text: string;
+  className?: string;
+  delay?: number;
+}) {
+  const reduce = useReducedMotion();
+  if (reduce) return <span className={className}>{text}</span>;
+
+  const words = text.split(" ");
+  return (
+    <motion.span
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-40px" }}
+      variants={{
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: 0.04,
+            delayChildren: delay,
+          },
+        },
+      }}
+      className={`inline-block ${className}`}
+    >
+      {words.map((word, i) => (
+        <span key={i} className="inline-block overflow-hidden pb-1 pr-2 align-bottom">
+          <motion.span
+            variants={{
+              hidden: { y: "100%", opacity: 0, filter: "blur(6px)" },
+              show: {
+                y: "0%",
+                opacity: 1,
+                filter: "blur(0px)",
+                transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
+              },
+            }}
+            className="inline-block"
+          >
+            {word}
+          </motion.span>
+        </span>
+      ))}
+    </motion.span>
   );
 }
 
