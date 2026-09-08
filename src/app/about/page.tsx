@@ -203,6 +203,43 @@ export default function AboutPage() {
           </Reveal>
         </div>
       </section>
+
+      {/* Why We Gather in White */}
+      <section className="border-t border-ink/10 bg-white">
+        <div className="mx-auto max-w-7xl px-5 py-16 sm:px-6 md:py-24">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            <Reveal className="lg:col-span-7">
+              <Eyebrow>Prophetic Tradition & Unity</Eyebrow>
+              <h2 className="font-display mt-4 text-3xl font-light tracking-tight text-ink sm:text-4xl">
+                Why We Gather in White?
+              </h2>
+              <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-faded">
+                <blockquote className="border-l-2 border-vivid bg-cream p-4 text-ink font-serif italic shadow-sm">
+                  The Messenger of Allah ﷺ said: “Wear white garments, for they are purer and better.” — Sunan an-Nasā’ī 5322; Sunan Ibn Mājah 3567
+                </blockquote>
+                <p>
+                  At Lateeful Akbar, our gathering in white reflects this Prophetic preference while carrying a beautiful message of purity, simplicity and unity. When thousands gather before Allah dressed alike, distinctions of status, wealth and background fade away—we stand together as servants seeking the mercy and subtle kindness of Al-Lateef.
+                </p>
+                <p>
+                  The sea of white becomes a reminder that as we beautify and purify our outward appearance, we have come with an even greater purpose: to purify our hearts, humble ourselves before Allah, and unite in Du‘ā, Dhikr and Salawāt.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delay={0.1} className="lg:col-span-5">
+              <div className="relative aspect-[4/3] overflow-hidden bg-mist border border-ink/15 shadow-md">
+                <Image
+                  src="/assets/crowd-31.jpg"
+                  alt="Row upon row of worshippers in white at Tafawa Balewa Square"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="img-true object-cover"
+                />
+              </div>
+              <p className="mt-2 text-xs text-faded italic">The sea of white at Tafawa Balewa Square.</p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
