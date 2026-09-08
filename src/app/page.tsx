@@ -45,7 +45,7 @@ export default function Home() {
             <StaggerContainer staggerDelay={0.15} className="grid grid-cols-2 gap-6 md:grid-cols-4">
               <StaggerItem className="flex flex-col items-center text-center">
                 <span className="font-display text-3xl sm:text-4xl font-light text-sage">
-                  <AnimatedCounter to={50000} suffix="+" />
+                  <AnimatedCounter to={200000} suffix="+" />
                 </span>
                 <span className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
                   Worshippers Expected
@@ -53,7 +53,7 @@ export default function Home() {
               </StaggerItem>
               <StaggerItem className="flex flex-col items-center text-center">
                 <span className="font-display text-3xl sm:text-4xl font-light text-sage">
-                  <AnimatedCounter to={12} suffix="k+" />
+                  <AnimatedCounter to={500} suffix="k+" />
                 </span>
                 <span className="mt-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
                   Supplications Raised
