@@ -48,8 +48,11 @@ export default function DonatePage() {
                   Prefer open giving?
                 </p>
                 <h2 className="font-display mt-2 text-2xl tracking-tight text-ink sm:text-3xl">
-                  Sadaqah is kept simple.
+                  Sadaqah is kept simple, but its reward with Allah is immeasurable.
                 </h2>
+                <p className="mt-2 text-sm leading-relaxed text-faded max-w-xl">
+                  May Allah accept every contribution, multiply its reward, and make it a means of mercy, protection and endless blessings for you and your household. Āmīn.
+                </p>
               </div>
               <Link
                 href="/sadaqah"

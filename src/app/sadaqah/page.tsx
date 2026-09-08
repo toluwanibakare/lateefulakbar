@@ -20,9 +20,9 @@ export default function SadaqahPage() {
     <>
       <PageHeader
         eyebrow="Sadaqah"
-        title={<>Sadaqah is kept simple</>}
+        title={<>Sadaqah is kept simple, but its reward with Allah is immeasurable.</>}
         arabic="وَمَا تُنفِقُوا مِنْ خَيْرٍ فَلِلَّهِ"
-        intro="Whatever good you give is for Allah. Set aside any amount — once or monthly. This is open voluntary giving; campaigns with targets live under Support."
+        intro="May Allah accept every contribution, multiply its reward, and make it a means of mercy, protection and endless blessings for you and your household. Āmīn."
         image="/assets/crowd-08.jpg"
       />
       <SadaqahQuickGive />

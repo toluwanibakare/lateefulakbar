@@ -54,9 +54,7 @@ export default function SadaqahQuickGive() {
           </Reveal>
           <Reveal delay={0.12}>
             <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-faded">
-              Sadaqah here is simple free-will giving — the way a tithe is set aside willingly,
-              not tied to one item. It pools into wherever the gathering needs it most: water,
-              mats, sound, shade, broadcast. Paid securely in under a minute.
+              Sadaqah is kept simple, but its reward with Allah is immeasurable. May Allah accept every contribution, multiply its reward, and make it a means of mercy, protection and endless blessings for you and your household. Āmīn.
             </p>
           </Reveal>
           <Reveal delay={0.16}>
