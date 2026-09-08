@@ -4,17 +4,17 @@ import SadaqahGiving from "@/components/SadaqahGiving";
 import { Reveal } from "@/components/ui";
 
 export const metadata = {
-  title: "Donate — Fund a Need at the Square",
-  description: "Pick a campaign — mats, water, fans, broadcast, tents — and give through Paystack with a live progress target.",
+  title: "Support — You can support our needs to host the event",
+  description: "Pick a campaign — mats, water, fans, broadcast, tents — with a live progress target.",
 };
 
 export default function DonatePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Donate & Sadaqah"
-        title={<>Fund exactly what the Square needs</>}
-        intro="Donate is targeted giving: choose a campaign with a live target — mats, water, cooling, broadcast, tents — and watch the bar move. For open, voluntary giving of any amount, see Sadaqah."
+        eyebrow="Support & Sadaqah"
+        title={<>You can support our needs to host the event</>}
+        intro="Support is targeted giving: choose a campaign with a live target — mats, water, cooling, broadcast, tents — and watch the bar move. For open, voluntary giving of any amount, see Sadaqah."
         image="/assets/crowd-31.jpg"
       />
       <section className="bg-cream border-b border-ink/10 py-12">
@@ -48,7 +48,7 @@ export default function DonatePage() {
                   Prefer open giving?
                 </p>
                 <h2 className="font-display mt-2 text-2xl tracking-tight text-ink sm:text-3xl">
-                  Sadaqah is the simple, voluntary way — any amount via Paystack.
+                  Sadaqah is the simple, voluntary way.
                 </h2>
               </div>
               <Link

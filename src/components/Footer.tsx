@@ -73,7 +73,7 @@ export default function Footer() {
                 {[
                   ["About the event", "/about"],
                   ["The gathering", "/gathering"],
-                  ["Founder", "/founder"],
+                  ["Convener", "/founder"],
                   ["Gallery", "/gallery"],
                   ["Registration", "/register"],
                   ["Venue", "/venue"],

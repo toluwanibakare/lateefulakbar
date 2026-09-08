@@ -78,14 +78,14 @@ export default function SadaqahGiving() {
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-faded">
               Every mat, every pack of water, every fan at the Square is funded by people who
-              could not attend but refused to miss the reward. Choose a need below and give
-              through Paystack. This is sadaqah jariyah, in the plainest sense.
+              could not attend but refused to miss the reward. Choose a need below and give.
+              This is sadaqah jariyah, in the plainest sense.
             </p>
             <p className="font-arabic mt-6 text-xl text-fern" lang="ar">
-              مَا عِندَكُمْ يَنفَدُ وَمَا عِندَ ٱللَّٰهِ بَاقٍ
+              يَـٰٓأَيُّهَا ٱللَّذِينَ ءَامَنُوٓا۟ إِن تَنصُرُوا۟ ٱللَّهَ يَنصُرْكُمْ وَيُثَبِّتْ أَقْدَامَكُمْ
             </p>
             <p className="mt-2 text-[13px] text-faded italic">
-              What you possess ends, and what is with Allah remains. (Qur’an 16:96)
+              “O believers! If you stand up for Allah, He will help you and make your steps firm.” (Qur’an 47:7)
             </p>
           </Reveal>
 
@@ -128,7 +128,7 @@ export default function SadaqahGiving() {
             </div>
             <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-faded">
               <ShieldCheck className="h-4 w-4 text-fern" />
-              Secured checkout via Paystack. Receipts by email and SMS.
+              Secured checkout. Receipts by email and SMS.
               <a href="/sadaqah" className="font-semibold text-pine underline underline-offset-4 hover:text-fern">
                 Prefer open Sadaqah giving?
               </a>
@@ -220,7 +220,7 @@ export default function SadaqahGiving() {
                   </div>
 
                   <button type="submit" className="mt-6 w-full bg-vivid py-4 text-sm font-semibold text-white transition-colors hover:bg-vivid-deep">
-                    Continue with Paystack
+                    Continue to Support
                   </button>
                 </form>
               ) : (

@@ -24,7 +24,7 @@ export default function Gallery() {
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <Reveal delay={0.06}>
             <h2 className="font-display text-balance max-w-2xl text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
-              Previous sittings, kept as they were
+              Previous seatings, kept as they were
             </h2>
           </Reveal>
           <Reveal delay={0.12}>

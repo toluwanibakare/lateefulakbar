@@ -16,7 +16,7 @@ export default function FounderSpotlight() {
     <section id="founder" className="overflow-hidden bg-cream">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
         <Reveal>
-          <Eyebrow>The vision - Founder</Eyebrow>
+          <Eyebrow>The vision - Convener</Eyebrow>
         </Reveal>
 
         <div className="mt-8 grid gap-12 lg:grid-cols-12 lg:gap-8">
@@ -38,7 +38,7 @@ export default function FounderSpotlight() {
                   Shaikh Dr. Abdur Rahman Ade Lawal
                 </span>
                 <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">
-                  Chief Missioner
+                  The Convener
                 </span>
               </figcaption>
               <p className="mt-2 text-xs leading-relaxed text-faded">
@@ -95,7 +95,7 @@ export default function FounderSpotlight() {
                   className="img-true object-cover"
                 />
               </div>
-              <p className="mt-2 text-xs text-faded italic">Leading the recitation - previous sitting.</p>
+              <p className="mt-2 text-xs text-faded italic">Leading the recitation - previous seating.</p>
             </Reveal>
           </div>
         </div>

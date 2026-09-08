@@ -18,7 +18,7 @@ const CHIPS = [
 function answer(q: string): string {
   const s = q.toLowerCase();
   if (s.includes("when") || s.includes("where") || s.includes("date") || s.includes("venue") || s.includes("time"))
-    return "Sunday, 24th January 2027 at Tafawa Balewa Square, Main Bowl, Lagos Island. Gates open early morning; the grand du'a peaks in the afternoon.";
+    return "Sunday, January 24, 2027 at Tafawa Balewa Square, Main Bowl, Lagos Island. Gates open early morning; the grand du'a peaks in the afternoon.";
   if (s.includes("wear") || s.includes("dress") || s.includes("white"))
     return "Strictly all white: clean, modest white attire for every attendee, brothers and sisters alike.";
   if (s.includes("park") || s.includes("car") || s.includes("bus") || s.includes("drive") || s.includes("venue") || s.includes("direction") || s.includes("location"))
@@ -26,16 +26,16 @@ function answer(q: string): string {
   if (s.includes("register") || s.includes("pass") || s.includes("accredit") || s.includes("ticket"))
     return "Registration is free on the Register page (/register). Three short steps and your printable pass artwork is generated with a referral code.";
   if (s.includes("sadaqah") || s.includes("tithe"))
-    return "Sadaqah is open, tithe-style giving of any amount on the Sadaqah page (/sadaqah), paid securely with Paystack.";
+    return "Sadaqah is open, tithe-style giving of any amount on the Sadaqah page (/sadaqah).";
   if (s.includes("donate") || s.includes("give") || s.includes("pay") || s.includes("support") || s.includes("fund"))
-    return "Donate funds a specific campaign — water, mats, fans, tents — on the Donate page (/donate) with live targets. For open giving of any amount, see Sadaqah (/sadaqah). Both check out with Paystack.";
-  if (s.includes("founder") || s.includes("missioner") || s.includes("lawal") || s.includes("sheikh") || s.includes("shaikh"))
-    return "The Chief Missioner is Shaikh Dr. Abdur Rahman Ade Lawal: Al-Azhar trained, PhD in Mass Communication, IVLP alumnus, author and counsellor.";
+    return "Support funds a specific campaign — water, mats, fans, tents — on the Support page (/donate) with live targets. For open giving of any amount, see Sadaqah (/sadaqah).";
+  if (s.includes("founder") || s.includes("convener") || s.includes("missioner") || s.includes("lawal") || s.includes("sheikh") || s.includes("shaikh"))
+    return "The Convener & Chief Missioner is Shaikh Dr. Abdur Rahman Ade Lawal: Al-Azhar trained, PhD in Mass Communication, IVLP alumnus, author and counsellor.";
   if (s.includes("stream") || s.includes("live") || s.includes("watch") || s.includes("online") || s.includes("count") || s.includes("tasbih") || s.includes("tasbīh") || s.includes("dhikr count"))
     return "The live broadcast and worldwide Yaa Lateef tasbīh live on the Live page (/live). Venue and route help is on /venue.";
   if (s.includes("salam") || s.includes("hello") || s.includes("hi"))
     return "Wa alaykum as-salam. Ask me about the date, venue, dress code, parking, registration or sadaqah.";
-  return "Lateeful-Ul-Akbar Li-A'azam is Nadwat's grand dhikr gathering on 24 January 2027 at TBS Lagos. Ask me about the date, dress code, parking, registration or giving.";
+  return "Lateef ul-il-Akbar-Il-A’azam is Nadwat's grand dhikr gathering on Sunday, January 24, 2027 at TBS Lagos. Ask me about the date, dress code, parking, registration or giving.";
 }
 
 export default function AiAssistant() {

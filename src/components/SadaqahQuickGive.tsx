@@ -56,15 +56,15 @@ export default function SadaqahQuickGive() {
             <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-faded">
               Sadaqah here is simple free-will giving — the way a tithe is set aside willingly,
               not tied to one item. It pools into wherever the gathering needs it most: water,
-              mats, sound, shade, broadcast. Paid securely through Paystack in under a minute.
+              mats, sound, shade, broadcast. Paid securely in under a minute.
             </p>
           </Reveal>
           <Reveal delay={0.16}>
             <p className="font-arabic mt-6 text-2xl leading-loose text-fern" lang="ar">
-              مَا عِندَكُمْ يَنفَدُ وَمَا عِندَ ٱللَّٰهِ بَاقٍ
+              يَـٰٓأَيُّهَا ٱللَّذِينَ ءَامَنُوٓا۟ إِن تَنصُرُوا۟ ٱللَّهَ يَنصُرْكُمْ وَيُثَبِّتْ أَقْدَامَكُمْ
             </p>
             <p className="mt-2 max-w-md text-[13px] text-faded italic">
-              What you possess ends, and what is with Allah remains. (Qur’an 16:96)
+              “O believers! If you stand up for Allah, He will help you and make your steps firm.” (Qur’an 47:7)
             </p>
           </Reveal>
           <div className="mt-8 space-y-0 border-y border-ink/10">
@@ -80,19 +80,19 @@ export default function SadaqahQuickGive() {
           <Reveal delay={0.1}>
             <p className="mt-6 flex items-start gap-2 text-[12px] leading-relaxed text-faded">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-fern" />
-              Funding a specific need instead — mats, fans, tents? Visit Donate to pick a
+              Funding a specific need instead — mats, fans, tents? Visit Support to pick a
               campaign with a live target. Sadaqah here is the open, general giving.
             </p>
             <a
               href="/donate"
               className="mt-3 inline-flex border-b border-pine/40 pb-0.5 text-sm font-semibold text-pine hover:border-pine"
             >
-              See Donate campaigns →
+              See Support campaigns →
             </a>
           </Reveal>
         </div>
 
-        {/* Right: Paystack card */}
+        {/* Right: Payment card */}
         <div className="lg:col-span-6">
           <Reveal delay={0.1}>
             <div className="border border-ink/15 bg-white shadow-[0_30px_60px_-40px_rgba(10,46,35,0.35)]">
@@ -101,7 +101,7 @@ export default function SadaqahQuickGive() {
                   <HeartHandshake className="h-4 w-4 text-sage" /> Give Sadaqah
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-[11px] text-white/70">
-                  <Lock className="h-3.5 w-3.5" /> Paystack secured
+                  <Lock className="h-3.5 w-3.5" /> Secure checkout
                 </span>
               </div>
 
@@ -203,10 +203,10 @@ export default function SadaqahQuickGive() {
                     disabled={effective < 100 || !name || !email}
                     className="mt-6 w-full bg-vivid py-4 text-sm font-semibold text-white transition-colors hover:bg-vivid-deep disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    Continue with Paystack — ₦{fmt(effective)}
+                    Give Sadaqah — ₦{fmt(effective)}
                   </button>
                   <p className="mt-3 text-center text-[12px] text-faded">
-                    Card · Bank transfer · USSD · Verve — receipt by email & SMS.
+                    Card · Bank transfer — receipt by email & SMS.
                   </p>
                 </form>
               ) : (
@@ -223,7 +223,7 @@ export default function SadaqahQuickGive() {
                       </h3>
                       <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-faded">
                         Your {monthly ? "monthly " : ""}sadaqah of ₦{fmt(effective)} has been
-                        recorded. A Paystack receipt is on its way to {email}. May Allah accept
+                        recorded. A receipt is on its way to {email}. May Allah accept
                         it and multiply it.
                       </p>
                       <div className="mt-8 flex flex-col gap-2 sm:flex-row">

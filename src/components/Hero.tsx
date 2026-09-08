@@ -145,7 +145,7 @@ export default function Hero() {
           className="mt-6 flex max-w-2xl flex-col gap-4"
         >
           <p className="text-[15px] leading-relaxed text-white/85 sm:text-lg">
-            The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice.
+            The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, Seeking Allah’s kindness in a unified tone.
           </p>
           <p className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] font-medium tracking-wide text-white/80">
             <span className="inline-flex items-center gap-1.5">
@@ -169,8 +169,15 @@ export default function Hero() {
             Reserve your place - free
           </a>
           <a
+            href="#venue"
+            className="bg-vivid text-white hover:bg-vivid-deep px-6 py-3.5 text-sm font-semibold transition-colors flex items-center gap-2 shadow-md"
+          >
+            <MapPin className="h-4 w-4" />
+            Locate Event & Venue
+          </a>
+          <a
             href="/gathering"
-            className="border border-white/40 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:border-white hover:bg-white/10"
+            className="border border-white/40 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:border-white hover:bg-white/10"
           >
             Feel the gathering
           </a>

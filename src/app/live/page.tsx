@@ -5,16 +5,16 @@ import { CountdownStrip, Eyebrow, Reveal } from "@/components/ui";
 import { EVENT } from "@/lib/site";
 
 export const metadata = {
-  title: "Live — Majlis Yaa Lateef (Al-Majlis Al-Mubāshir)",
+  title: "Live — Majilis Mubāshir",
   description:
-    "The live dashboard for Lateeful-Ul-Akbar 2027: YouTube livestream from TBS, the worldwide Yaa Lateef tasbīh, order of the day and live updates.",
+    "The live dashboard for Lateef ul-il-Akbar-Il-A’azam 2027: YouTube livestream from TBS, the worldwide Yaa Lateef tasbīh, order of the day and live updates.",
 };
 
 const ORDER = [
   { time: "08:00", title: "Gates & settling", note: "Accreditation, seating by canopy." },
   { time: "09:30", title: "Opening & Bismillah", note: "Welcome from Nadwat, intentions set." },
   { time: "10:30", title: "Yaa Lateef — first sitting", note: "The long collective dhikr." },
-  { time: "12:30", title: "Reflection & scholars", note: "Reminders from the founder and guests." },
+  { time: "12:30", title: "Reflection & scholars", note: "Reminders from the convener and guests." },
   { time: "14:00", title: "The grand du‘ā", note: "Tens of thousands asking as one." },
   { time: "15:00", title: "Closing & dispersal", note: "Orderly exit by section." },
 ];
@@ -41,9 +41,9 @@ export default function LivePage() {
   return (
     <>
       <PageHeader
-        eyebrow="Live — Al-Majlis Al-Mubāshir"
+        eyebrow="Majilis Mubāshir"
         title={<>Majlis Yaa Lateef, live from the Square</>}
-        arabic="المَجْلِسُ المُبَاشِر — يَا لَطِيف"
+        arabic="مجلس مباشر"
         intro="The live dashboard — Majlis Yaa Lateef as it happens. Watch the Nadwat TV broadcast from the Main Bowl, add your own recitations to the worldwide tasbīh, and follow the order of the day."
         image="/assets/crowd-11.jpg"
       />
@@ -102,7 +102,7 @@ export default function LivePage() {
 
           <div>
             <Reveal>
-              <Eyebrow>Live updates — Tanbīhāt</Eyebrow>
+              <Eyebrow>Live updates</Eyebrow>
             </Reveal>
             <Reveal delay={0.06}>
               <h2 className="font-display mt-4 text-3xl font-light tracking-tight sm:text-4xl">
@@ -149,7 +149,7 @@ export default function LivePage() {
                   Prefer open giving?
                 </p>
                 <h2 className="font-display mt-2 text-2xl tracking-tight text-ink sm:text-3xl">
-                  Sadaqah is the simple, voluntary way — any amount via Paystack.
+                  Sadaqah is the simple, voluntary way.
                 </h2>
               </div>
               <Link

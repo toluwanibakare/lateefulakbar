@@ -52,10 +52,20 @@ const NEEDS = [
 ];
 
 const REASONS_TO_ATTEND = [
-  { title: "Come with your worries", desc: "Lay down heavy burdens in the presence of Allah." },
-  { title: "Come with your dreams", desc: "Ask for what seems impossible — nothing is hard for Al-Lateef." },
-  { title: "Come with your unanswered prayers", desc: "Join tens of thousands in collective intercession." },
-  { title: "Come with gratitude", desc: "Praise Him for unseen subtle kindnesses received." },
+  {
+    title: "Come with your desires",
+    desc: "Lay down your requests in the presence of Allah.",
+  },
+  {
+    title: "Come with your dreams",
+    desc: "Put your hopes and dreams before the most kind and gentle to make its reality through his kindness YAA Lateef.",
+    quote: "Once you make a decision, put your trust in Allah. Surely Allah loves those who trust in Him. Q 3:159",
+  },
+  {
+    title: "Come with testimony",
+    desc: "Come give testimony out of your numerous request, through thanksgiving others shall be granted.",
+    quote: "And ˹remember˺ when your Lord proclaimed, ‘If you are grateful, I will certainly give you more. But if you are ungrateful, surely My punishment is severe.’ Q:14:7",
+  },
 ];
 
 const EXPECT = [
@@ -181,7 +191,6 @@ export default function Story() {
                   </p>
                 </div>
                 <div className="mt-8 border-t border-ink/10 pt-4 flex items-center gap-3 text-xs text-fern font-medium">
-                  <Sparkles className="h-4 w-4" />
                   <span>Du‘ā · Dhikr · Salawāt · Infinite Mercy</span>
                 </div>
               </div>
@@ -220,7 +229,7 @@ export default function Story() {
                   Why Do We Gather?
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-faded">
-                  Because there are moments when the Ummah must come together with different struggles but <strong className="font-semibold text-ink">one Lord, one hope and one collective Du‘ā.</strong>
+                  Because there are moments when the Ummah must come together with <strong className="font-semibold text-ink">different desires and request</strong>, gathered in a single court before the supreme judge of all judges <strong className="font-semibold text-pine">Lateef Al Lateef</strong> — with <strong className="font-semibold text-ink">one Lord, one hope and one collective Du‘ā.</strong>
                 </p>
               </Reveal>
 
@@ -280,13 +289,18 @@ export default function Story() {
               <h2 className="font-display mt-3 text-4xl font-light text-ink sm:text-5xl">
                 Why Should You Attend?
               </h2>
-              <p className="mt-3 text-base text-faded">
-                No matter where you are in your spiritual journey, the gates of TBS are open to you.
+              <p className="mt-3 text-base sm:text-lg text-faded leading-relaxed">
+                No matter where you are in your spiritual journey, all roads leads to TBS to accomodate you among the sublime minds.
               </p>
+              <div className="mt-4 border-l-2 border-vivid bg-white p-4 text-left shadow-sm">
+                <p className="text-xs sm:text-sm text-ink leading-relaxed italic">
+                  “A person may see the path clearly, then fail to reach it; for the journey toward goals is not by strength alone, but by a hidden assistance from Allah’s Subtle. Thus, Amir Nadwat Your Du’aau Plug; said: &quot;And every easy thing, if Allah does not grant success, is become difficult.&quot; Wamaa Taofiiqiii illa Billah (And my success is not but through Allah….)”
+                </p>
+              </div>
             </Reveal>
           </div>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {REASONS_TO_ATTEND.map((r, i) => (
               <Reveal key={r.title} delay={i * 0.06}>
                 <div className="h-full border border-ink/15 bg-white p-6 shadow-sm flex flex-col justify-between">
@@ -294,6 +308,11 @@ export default function Story() {
                     <div className="font-mono text-xs text-vivid font-bold">0{i + 1}</div>
                     <h3 className="font-display mt-3 text-xl font-medium text-ink">{r.title}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-faded">{r.desc}</p>
+                    {r.quote && (
+                      <p className="mt-4 text-xs font-serif italic text-pine border-t border-ink/10 pt-3">
+                        “{r.quote}”
+                      </p>
+                    )}
                   </div>
                 </div>
               </Reveal>
@@ -301,8 +320,8 @@ export default function Story() {
           </div>
 
           <Reveal delay={0.3} className="mt-10 text-center">
-            <div className="inline-block bg-vivid text-white px-8 py-5 text-xl sm:text-2xl font-display font-light shadow-md">
-              But above all, <strong className="font-normal underline decoration-sage decoration-2 underline-offset-4">come seeking Allah.</strong>
+            <div className="inline-block bg-vivid text-white px-8 py-6 text-base sm:text-lg font-light leading-relaxed max-w-4xl shadow-md">
+              Oh ! You who have fates hanging by supplication! What does that mean? It means that Allah has written for you a specific share in something— of goodness, abundance, success and grace— but it won&apos;t come down to you unless you supplicate, either singularly or by gathering amongst the sublime minds, So when you see that Allah has granted you success in supplicating for certain matters, it means He&apos;s already written a share for you in them! But you won&apos;t attain it unless you supplicate towards them being granted !
             </div>
           </Reveal>
         </div>

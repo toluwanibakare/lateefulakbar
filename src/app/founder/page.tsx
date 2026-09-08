@@ -3,17 +3,17 @@ import FounderSpotlight from "@/components/FounderSpotlight";
 import { Reveal } from "@/components/ui";
 
 export const metadata = {
-  title: "The Founder — Shaikh Dr. Abdur Rahman Ade Lawal",
-  description: "The vision behind Lateeful-Ul-Akbar: Shaikh Dr. Abdur Rahman Ade Lawal, Chief Missioner of Nadwat Global Assembly.",
+  title: "The Convener — Shaikh Dr. Abdur Rahman Ade Lawal",
+  description: "The vision behind Lateef ul-il-Akbar-Il-A’azam: Shaikh Dr. Abdur Rahman Ade Lawal, Convener & Chief Missioner of Nadwat Global Assembly.",
 };
 
 export default function FounderPage() {
   return (
     <>
       <PageHeader
-        eyebrow="The Founder"
-        title={<>Shaikh Dr. Abdur Rahman Ade Lawal — The Founder & Visionary</>}
-        intro="Shaikh Dr. Abdur Rahman Ade Lawal convenes Lateeful-Ul-Akbar as an act of return — away from noise, toward the quiet power of collective dhikr. Al-Azhar trained, Ph.D in Mass Communication, counsellor and author."
+        eyebrow="The Convener"
+        title={<>Shaikh Dr. Abdur Rahman Ade Lawal — The Convener & Visionary</>}
+        intro="Shaikh Dr. Abdur Rahman Ade Lawal convenes Lateef ul-il-Akbar-Il-A’azam as an act of return — away from noise, toward the quiet power of collective dhikr. Al-Azhar trained, Ph.D in Mass Communication, counsellor and author."
         image="/assets/crowd-15.jpg"
       />
       <FounderSpotlight />
@@ -34,7 +34,7 @@ export default function FounderPage() {
                 <p>
                   Under his leadership Nadwat Global Assembly has grown into a spiritual family
                   raised on the Qur&apos;an and Sunnah — educated, united, and committed to
-                  collective du&apos;ā as a civic act. Lateeful-Ul-Akbar is its largest expression:
+                  collective du&apos;ā as a civic act. Lateef ul-il-Akbar-Il-A’azam is its largest expression:
                   a city asking with one voice.
                 </p>
               </div>

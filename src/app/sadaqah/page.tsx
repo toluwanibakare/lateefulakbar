@@ -5,12 +5,12 @@ import { Reveal } from "@/components/ui";
 
 export const metadata = {
   title: "Sadaqah — Give Any Amount",
-  description: "Simple voluntary sadaqah: any amount, securely through Paystack. Pools into wherever the gathering needs it most.",
+  description: "Simple voluntary sadaqah: any amount. Pools into wherever the gathering needs it most.",
 };
 
 const FAQS = [
-  { q: "Is Sadaqah different from Donate?", a: "Yes. Sadaqah is open, free-will giving of any amount pooled where needed most. Donate funds a specific campaign (mats, water, fans) with a live target bar." },
-  { q: "How do I pay?", a: "Through Paystack — card, bank transfer, USSD or Verve. You get a receipt by email and SMS immediately." },
+  { q: "Is Sadaqah different from Support?", a: "Yes. Sadaqah is open, free-will giving of any amount pooled where needed most. Support funds a specific campaign (mats, water, fans) with a live target bar." },
+  { q: "How do I pay?", a: "Direct online payment — card or bank transfer. You get a receipt immediately." },
   { q: "Can I give monthly?", a: "Yes. Choose “Make it monthly” on the form and your sadaqah repeats until you cancel from your receipt link." },
   { q: "Can I give anonymously?", a: "Yes. Tick “Give anonymously” and your name is kept off every public mention. The reward remains with Allah." },
 ];
@@ -20,9 +20,9 @@ export default function SadaqahPage() {
     <>
       <PageHeader
         eyebrow="Sadaqah"
-        title={<>Sadaqah, kept simple</>}
+        title={<>Sadaqah is how to be</>}
         arabic="وَمَا تُنفِقُوا مِنْ خَيْرٍ فَلِلَّهِ"
-        intro="Whatever good you give is for Allah. Set aside any amount — once or monthly — and pay in under a minute through Paystack. This is open voluntary giving; campaigns with targets live under Donate."
+        intro="Whatever good you give is for Allah. Set aside any amount — once or monthly. This is open voluntary giving; campaigns with targets live under Support."
         image="/assets/crowd-08.jpg"
       />
       <SadaqahQuickGive />

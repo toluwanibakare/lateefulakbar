@@ -17,7 +17,7 @@ export default function Blog() {
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <Reveal delay={0.06}>
             <h2 className="font-display text-balance max-w-xl text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
-              Notes toward the Square
+              Blogs towards the gathering
             </h2>
           </Reveal>
           <Reveal delay={0.12}>

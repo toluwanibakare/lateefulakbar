@@ -6,9 +6,9 @@ import { Eyebrow, Reveal } from "@/components/ui";
 import { EVENT } from "@/lib/site";
 
 export const metadata = {
-  title: "About the Event — Lateeful-Ul-Akbar 2027",
+  title: "About the Event — Lateef ul-il-Akbar-Il-A’azam 2027",
   description:
-    "What Lateeful-Ul-Akbar Li-A’azam is, who hosts it, when and where it holds, who should come, and what the day feels like.",
+    "What Lateef ul-il-Akbar-Il-A’azam is, who hosts it, when and where it holds, who should come, and what the day feels like.",
 };
 
 const FACTS = [
@@ -32,7 +32,7 @@ const PILLARS = [
   {
     icon: BookOpenText,
     t: "Reflection",
-    d: "Short, weighty reminders from the founder and guest scholars between recitations. Every word placed with care.",
+    d: "Short, weighty reminders from the convener and guest scholars between recitations. Every word placed with care.",
   },
   {
     icon: Users,
@@ -48,7 +48,7 @@ export default function AboutPage() {
         eyebrow="About"
         title={<>About the event</>}
         arabic="لَطِيفُ الْخَبِير"
-        intro="Lateeful-Ul-Akbar Li-A’azam is Nadwat Global Assembly's grand sitting of dhikr and du‘ā — one morning, one square, tens of thousands in white, gathered under the Name Yaa Lateef, The Most Kind."
+        intro="Lateef ul-il-Akbar-Il-A’azam is Nadwat Global Assembly's grand seating of dhikr and du‘ā — one day, one square, tens of thousands in white, gathered under the Name Yaa Lateef, The Most Kind."
         image="/assets/crowd-49.jpg"
       />
 
@@ -61,7 +61,7 @@ export default function AboutPage() {
             </Reveal>
             <Reveal delay={0.06}>
               <h2 className="font-display text-balance mt-4 text-4xl leading-tight font-light tracking-tight sm:text-5xl">
-                A single act of worship, by a city
+                A single act of worship in a day, from different locations before the Lord of all angles
               </h2>
             </Reveal>
             <Reveal delay={0.12}>
@@ -69,7 +69,7 @@ export default function AboutPage() {
                 <p>
                   There are no headline acts and no sideshows. The crowd is the event: its
                   recitation, its stillness, its asking. Guests dress alike in all white, sit
-                  together in ordered canopies, and spend the morning in dhikr, reflection and
+                  together in ordered canopies, and spend the day in dhikr, reflection and
                   one grand du‘ā.
                 </p>
                 <p>
@@ -98,7 +98,7 @@ export default function AboutPage() {
                 className="img-true object-cover"
               />
             </div>
-            <p className="mt-2 text-xs text-faded italic">Previous sitting — the Square in white.</p>
+            <p className="mt-2 text-xs text-faded italic">Previous seating — the Square in white.</p>
           </Reveal>
         </div>
       </section>
@@ -164,14 +164,12 @@ export default function AboutPage() {
             </h2>
             <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-faded">
               <p>
-                Everyone — elders and youth, scholars and first-time guests, Lagos residents
-                and travellers, on-site or online. The seating is ordered by canopy (brothers
-                and sisters), stewarded by section, and water, shade and sound carry the rest.
+                Elders, youth, perpetual guests and first-timers, and physical (national and international) and virtual attendees. The seating is classified by demarcation of canopies for males and females “Islam abhors the free mixing of the opposite sex”
               </p>
               <p>
                 Come in clean, modest, all-white attire, with ablution and one private need
                 held lightly through the recitation. That is the whole preparation the
-                founder asks of newcomers.
+                convener asks of newcomers.
               </p>
             </div>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -196,7 +194,7 @@ export default function AboutPage() {
               </span>
               <span className="flex items-center justify-between p-5">
                 <span>
-                  <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">The founder</span>
+                  <span className="block text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">The convener</span>
                   <span className="font-display mt-1 block text-xl tracking-tight">Shaikh Dr. Abdur Rahman Ade Lawal</span>
                 </span>
                 <ArrowRight className="h-5 w-5 text-fern transition-transform group-hover:translate-x-1" />

@@ -14,7 +14,7 @@ import { EVENT } from "@/lib/site";
 const ABOUT_LINKS = [
   { label: "About the event", href: "/about", desc: "What, when, where — and why it matters" },
   { label: "The gathering", href: "/gathering", desc: "The day in full: atmosphere & order" },
-  { label: "Founder", href: "/founder", desc: "Shaikh Dr. Abdur Rahman Ade Lawal" },
+  { label: "Convener", href: "/founder", desc: "Shaikh Dr. Abdur Rahman Ade Lawal" },
 ];
 
 const LINKS: {
@@ -36,7 +36,7 @@ const ALL_LINKS = [
   { label: "Home", href: "/" },
   { label: "About the event", href: "/about" },
   { label: "The gathering", href: "/gathering" },
-  { label: "Founder", href: "/founder" },
+  { label: "Convener", href: "/founder" },
   { label: "Gallery", href: "/gallery" },
   { label: "Donate", href: "/donate" },
   { label: "Sadaqah", href: "/sadaqah" },
@@ -279,7 +279,7 @@ export default function Navbar() {
             <nav className="relative flex flex-1 flex-col justify-start gap-1 overflow-y-auto px-8 py-6" aria-label="Mobile">
               {ALL_LINKS.map((l, i) => {
                 const active = pathname === l.href;
-                const isSub = l.label === "The gathering" || l.label === "Founder";
+                const isSub = l.label === "The gathering" || l.label === "Convener";
                 return (
                   <motion.div
                     key={l.href + l.label}

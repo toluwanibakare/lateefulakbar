@@ -18,8 +18,8 @@ const PINS = [
 
 const RULES = [
   { icon: ShieldCheck, t: "All white", d: "Clean, modest, all white attire for every attendee, in the Nadwat tradition." },
-  { icon: Car, t: "No vehicles in the Bowl", d: "All cars and buses use the perimeter lots outside the Square." },
-  { icon: Tent, t: "Sit where guided", d: "Seats fill first come, first served. Stewards direct each section." },
+  { icon: Car, t: "No vehicles in the main Bowl", d: "All cars and buses use the perimeter lots outside the Square." },
+  { icon: Tent, t: "Seat where allocated", d: "Seats fill first come, first served. Stewards direct each section." },
   { icon: MapPin, t: "Respect restricted zones", d: "Stage, media and service lanes need official tags. Screening at entry." },
 ];
 
@@ -59,7 +59,7 @@ export default function VenueMapAndRules() {
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <Reveal delay={0.06}>
             <h2 className="font-display text-balance max-w-2xl text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
-              Tafawa Balewa Square, learned by heart
+              Tafawa Balewa Square, Lagos
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
@@ -129,7 +129,7 @@ export default function VenueMapAndRules() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 bg-vivid px-5 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-vivid-deep transition-colors"
                     >
-                      <span>Open Google Maps</span>
+                      <span>Take me to the event</span>
                       <ArrowUpRight className="h-4 w-4" />
                     </a>
                   </div>
@@ -141,7 +141,7 @@ export default function VenueMapAndRules() {
           <div className="lg:col-span-5">
             <Reveal delay={0.08}>
               <div className="border border-ink/15 bg-white p-6 sm:p-8">
-                <h3 className="font-display text-2xl tracking-tight text-ink">House rules of the Square</h3>
+                <h3 className="font-display text-2xl tracking-tight text-ink">Event Rules of the Square</h3>
                 <p className="mt-1 text-[13px] text-faded">{EVENT.dateLong} - {EVENT.venue}</p>
                 <div className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
                   {RULES.map((r, i) => (
@@ -160,7 +160,7 @@ export default function VenueMapAndRules() {
                 <div className="relative mt-6 aspect-video overflow-hidden bg-mist">
                   <video src="/assets/lateef-highlight-video.mp4" controls preload="none" poster="/assets/crowd-49.jpg" className="h-full w-full object-cover" aria-label="Venue walkthrough film" />
                 </div>
-                <p className="mt-2 text-[12px] text-faded italic">Walkthrough film from the previous sitting.</p>
+                <p className="mt-2 text-[12px] text-faded italic">Walkthrough film from the previous seating.</p>
               </div>
             </Reveal>
           </div>
