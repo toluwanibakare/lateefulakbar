@@ -71,7 +71,7 @@ export default function Navbar() {
   }, [pathname]);
 
   const linkCls = (active: boolean) =>
-    `text-[13px] font-medium tracking-wide transition-colors ${
+    `text-[12px] lg:text-[13px] font-medium tracking-wide transition-colors ${
       solid
         ? active
           ? "text-pine underline underline-offset-8 decoration-vivid"
@@ -136,7 +136,7 @@ export default function Navbar() {
             />
           </Link>
 
-          <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+          <nav className="hidden items-center gap-3 lg:gap-4 xl:gap-6 lg:flex" aria-label="Primary">
             {LINKS.map((l) => {
               if (!l.children) {
                 const active = pathname === l.href;
@@ -145,7 +145,7 @@ export default function Navbar() {
                     <Link
                       key={l.href}
                       href={l.href}
-                      className={`group inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-[13px] font-bold leading-none tracking-wide transition-all shadow-sm ${
+                      className={`group inline-flex items-center justify-center gap-1.5 px-2.5 lg:px-3.5 py-1.5 text-[12px] lg:text-[13px] font-bold leading-none tracking-wide transition-all shadow-sm ${
                         solid
                           ? "bg-vivid text-white hover:bg-vivid-deep"
                           : "bg-vivid text-white hover:bg-vivid-deep border border-white/20"
@@ -225,7 +225,7 @@ export default function Navbar() {
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <Link
               href="/register"
-              className={`group hidden items-center gap-1.5 px-5 py-2.5 text-[13px] font-semibold transition-colors sm:inline-flex ${
+              className={`group hidden items-center gap-1.5 px-3.5 lg:px-5 py-2 lg:py-2.5 text-[12px] lg:text-[13px] font-semibold transition-colors sm:inline-flex ${
                 solid ? "bg-vivid text-white hover:bg-vivid-deep" : "bg-white text-pine hover:bg-mist"
               }`}
             >
