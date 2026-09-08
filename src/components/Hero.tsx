@@ -22,6 +22,25 @@ export default function Hero() {
   const yFg = useTransform(scrollY, [0, 900], [0, -60]);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem("hero_film_muted");
+      if (saved !== null) {
+        setMuted(saved === "true");
+      }
+    } catch {}
+  }, []);
+
+  const toggleMuted = () => {
+    setMuted((m) => {
+      const next = !m;
+      try {
+        localStorage.setItem("hero_film_muted", String(next));
+      } catch {}
+      return next;
+    });
+  };
+
+  useEffect(() => {
     if (phase === "film" && videoRef.current) {
       try {
         videoRef.current.currentTime = 0;
@@ -185,7 +204,7 @@ export default function Hero() {
             {phase === "film" ? (
               <>
                 <button
-                  onClick={() => setMuted((m) => !m)}
+                  onClick={toggleMuted}
                   className="inline-flex h-11 w-11 items-center justify-center border border-white/30 text-white hover:bg-white/10"
                   aria-label={muted ? "Unmute film" : "Mute film"}
                 >

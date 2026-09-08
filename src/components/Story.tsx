@@ -99,7 +99,7 @@ const ORDER = [
   { time: "08:00", title: "Gates & Settling", note: "Accreditation, seating by canopy, quiet recitation." },
   { time: "09:30", title: "Opening & Bismillah", note: "Welcome from Nadwat, intentions set together." },
   { time: "10:30", title: "Yaa Lateef — First Sitting", note: "The long collective dhikr. Water moves through rows." },
-  { time: "12:30", title: "Reflection & Scholars", note: "Reminders from the founder and guest scholars." },
+  { time: "12:30", title: "Reflection & Scholars", note: "Reminders from the convener and guest scholars." },
   { time: "14:00", title: "The Grand Du‘ā", note: "Tens of thousands asking as one. The day’s peak." },
   { time: "15:00", title: "Closing & Dispersal", note: "Orderly exit by section, lost-and-found at the gates." },
 ];

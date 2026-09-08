@@ -40,7 +40,7 @@ export const GALLERY: GalleryItem[] = [
   { src: "/assets/crowd-08.jpg", label: "The sisters' canopy - thousands in white", category: "Gathering" },
   { src: "/assets/crowd-11.jpg", label: "Drone over Tafawa Balewa Square", category: "Drone" },
   { src: "/assets/crowd-80.jpg", label: "Arrival tide at the gates", category: "Gathering" },
-  { src: "/assets/crowd-15.jpg", label: "The founder at dhikr", category: "People" },
+  { src: "/assets/crowd-15.jpg", label: "The convener at dhikr", category: "People" },
   { src: "/assets/crowd-18.jpg", label: "Hands raised in du'a", category: "Atmosphere" },
   { src: "/assets/crowd-30.jpg", label: "Brothers in quiet reflection", category: "People" },
   { src: "/assets/crowd-31.jpg", label: "Row upon row of white", category: "Gathering" },

@@ -10,7 +10,7 @@ const PINS = [
   { id: "gate", name: "Main gate", x: "18%", y: "60%", text: "Accreditation and QR scanning. Arrive early." },
   { id: "brothers", name: "Brothers canopy", x: "44%", y: "38%", text: "Ordered seating for men, stewarded by section." },
   { id: "sisters", name: "Sisters canopy", x: "44%", y: "72%", text: "Ordered seating for women, with water points." },
-  { id: "stage", name: "Stage", x: "76%", y: "55%", text: "Founder, scholars and reciters. Restricted access." },
+  { id: "stage", name: "Stage", x: "76%", y: "55%", text: "Convener, scholars and reciters. Restricted access." },
   { id: "media", name: "Media zone", x: "64%", y: "28%", text: "Accredited cameras and the broadcast hub." },
   { id: "parking", name: "Parking", x: "12%", y: "22%", text: "Perimeter lots only. Nothing parks inside the Bowl." },
   { id: "medical", name: "Medical", x: "82%", y: "80%", text: "First aid, ambulance and help desk." },
