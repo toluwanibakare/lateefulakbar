@@ -155,9 +155,11 @@ export default function Footer() {
             </div>
           </div>
 
-          <p aria-hidden className="font-display text-outline relative -mb-4 hidden w-full overflow-hidden text-center text-[13vw] leading-none font-semibold tracking-tight whitespace-nowrap select-none md:block">
-            YAA LATEEF
-          </p>
+          <div className="w-full max-w-full overflow-hidden" aria-hidden>
+            <p className="font-display text-outline relative -mb-4 hidden w-full text-center text-[11vw] leading-none font-semibold tracking-tight whitespace-nowrap select-none md:block">
+              YAA LATEEF
+            </p>
+          </div>
 
           <div className="relative flex flex-col items-center justify-between gap-3 border-t border-white/15 py-6 text-[12px] text-white/60 sm:flex-row">
             <p>© {new Date().getFullYear()} Nadwat Global Assembly. All rights reserved.</p>

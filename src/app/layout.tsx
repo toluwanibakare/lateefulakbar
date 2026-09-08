@@ -72,11 +72,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${script.variable} ${arabic.variable}`}
+      className={`${display.variable} ${body.variable} ${script.variable} ${arabic.variable} overflow-x-hidden max-w-full`}
     >
-      <body className="bg-paper text-ink font-body antialiased">
+      <body className="bg-paper text-ink font-body antialiased overflow-x-hidden max-w-full w-full">
         <Navbar />
-        <div className="min-h-screen">{children}</div>
+        <div className="min-h-screen overflow-x-hidden max-w-full w-full">{children}</div>
         <Footer />
         <AiAssistant />
       </body>
