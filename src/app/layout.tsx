@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Jost, Great_Vibes, Amiri } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AiAssistant from "@/components/AiAssistant";
+import { BackToTop, ScrollProgress } from "@/components/ui";
 import "./globals.css";
 
 const display = Cormorant_Garamond({
@@ -75,10 +76,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${display.variable} ${body.variable} ${script.variable} ${arabic.variable} overflow-x-hidden max-w-full`}
     >
       <body className="bg-paper text-ink font-body antialiased overflow-x-hidden max-w-full w-full">
+        <ScrollProgress />
         <Navbar />
         <div className="min-h-screen overflow-x-hidden max-w-full w-full">{children}</div>
         <Footer />
         <AiAssistant />
+        <BackToTop />
       </body>
     </html>
   );

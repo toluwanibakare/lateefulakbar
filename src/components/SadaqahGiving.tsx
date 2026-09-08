@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Droplets, Layers, Video, Wifi, Wind, Home, ShieldCheck, X } from "lucide-react";
-import { Eyebrow, Reveal } from "./ui";
+import { Eyebrow, FadeIn, StaggerContainer, StaggerItem, TiltCard } from "./ui";
 
 type Campaign = {
   id: string;
@@ -68,11 +68,11 @@ export default function SadaqahGiving() {
   return (
     <section id="donate" className="border-t border-ink/10 bg-cream">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
-        <Reveal>
+        <FadeIn direction="up">
           <Eyebrow>Donate — fund a need</Eyebrow>
-        </Reveal>
+        </FadeIn>
         <div className="mt-5 grid gap-8 lg:grid-cols-12">
-          <Reveal delay={0.06} className="lg:col-span-5">
+          <FadeIn direction="right" delay={0.06} className="lg:col-span-5" blur>
             <h2 className="font-display text-balance text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
               Give water. Give shade. Share the reward.
             </h2>
@@ -87,17 +87,17 @@ export default function SadaqahGiving() {
             <p className="mt-2 text-[13px] text-faded italic">
               “O believers! If you stand up for Allah, He will help you and make your steps firm.” (Qur’an 47:7)
             </p>
-          </Reveal>
+          </FadeIn>
 
           <div className="lg:col-span-7">
-            <div className="divide-y divide-ink/10 border-y border-ink/10">
-              {campaigns.map((c, i) => {
+            <StaggerContainer staggerDelay={0.06} className="divide-y divide-ink/10 border-y border-ink/10">
+              {campaigns.map((c) => {
                 const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
                 return (
-                  <Reveal key={c.id} delay={Math.min(i * 0.05, 0.2)}>
-                    <article className="group grid gap-4 py-5 sm:grid-cols-[112px_1fr_auto] sm:items-center">
-                      <div className="relative hidden aspect-[4/3] overflow-hidden bg-mist sm:block">
-                        <Image src={c.image} alt="" fill sizes="160px" className="img-true object-cover" loading="lazy" />
+                  <StaggerItem key={c.id}>
+                    <article className="group grid gap-4 py-5 sm:grid-cols-[112px_1fr_auto] sm:items-center transition-colors hover:bg-white/40 px-2 rounded-lg">
+                      <div className="relative hidden aspect-[4/3] overflow-hidden bg-mist sm:block rounded shadow-sm">
+                        <Image src={c.image} alt="" fill sizes="160px" className="img-true object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -106,8 +106,14 @@ export default function SadaqahGiving() {
                           <span className="text-[11px] font-semibold text-fern">{pct}% funded</span>
                         </div>
                         <p className="mt-1 text-[13px] text-faded">{c.text}</p>
-                        <div className="mt-3 h-1 w-full bg-ink/10">
-                          <div className="h-full bg-vivid transition-all duration-700" style={{ width: `${pct}%` }} />
+                        <div className="mt-3 h-1.5 w-full bg-ink/10 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: `${pct}%` }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className="h-full bg-vivid rounded-full"
+                          />
                         </div>
                         <p className="mt-1.5 font-mono text-[11px] text-faded">
                           {c.unit
@@ -117,15 +123,15 @@ export default function SadaqahGiving() {
                       </div>
                       <button
                         onClick={() => { setOpen(c); setDone(false); }}
-                        className="h-fit shrink-0 border border-pine px-5 py-2.5 text-[13px] font-semibold text-pine transition-colors hover:bg-vivid hover:text-white"
+                        className="h-fit shrink-0 border border-pine px-5 py-2.5 text-[13px] font-semibold text-pine transition-all hover:bg-vivid hover:text-white hover:shadow-md"
                       >
                         Give
                       </button>
                     </article>
-                  </Reveal>
+                  </StaggerItem>
                 );
               })}
-            </div>
+            </StaggerContainer>
             <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-faded">
               <ShieldCheck className="h-4 w-4 text-fern" />
               Secured checkout. Receipts by email.
@@ -140,21 +146,21 @@ export default function SadaqahGiving() {
       {/* Giving dialog */}
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/60 p-0 sm:items-center sm:p-6" onClick={close}>
+          <div className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/60 backdrop-blur-sm p-0 sm:items-center sm:p-6" onClick={close}>
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
-              transition={{ duration: 0.35 }}
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 40, scale: 0.95 }}
+              transition={{ duration: 0.3 }}
               onClick={(e) => e.stopPropagation()}
-              className="max-h-[92vh] w-full max-w-lg overflow-y-auto bg-white p-6 sm:p-8"
+              className="max-h-[92vh] w-full max-w-lg overflow-y-auto bg-white p-6 sm:p-8 shadow-2xl rounded-t-2xl sm:rounded-xl"
             >
               {!done ? (
                 <form onSubmit={pay}>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Donate</p>
-                      <h3 className="font-display mt-1 text-2xl text-ink">{open.title}</h3>
+                      <h3 className="font-display mt-1 text-2xl text-ink font-medium">{open.title}</h3>
                     </div>
                     <button type="button" onClick={close} aria-label="Close" className="p-1 text-faded hover:text-ink">
                       <X className="h-5 w-5" />
@@ -172,8 +178,8 @@ export default function SadaqahGiving() {
                             key={n}
                             type="button"
                             onClick={() => setQty(n)}
-                            className={`border py-2.5 text-sm font-semibold transition-colors ${
-                              qty === n ? "border-pine bg-vivid text-white" : "border-ink/15 text-ink hover:border-pine"
+                            className={`border py-2.5 text-sm font-semibold transition-all ${
+                              qty === n ? "border-pine bg-vivid text-white shadow-sm" : "border-ink/15 text-ink hover:border-pine"
                             }`}
                           >
                             {n}
@@ -216,10 +222,10 @@ export default function SadaqahGiving() {
 
                   <div className="mt-6 flex items-center justify-between border-y border-ink/10 py-4">
                     <span className="text-sm text-faded">Total</span>
-                    <span className="font-display text-3xl text-pine">₦{fmt(total)}</span>
+                    <span className="font-display text-3xl text-pine font-light">₦{fmt(total)}</span>
                   </div>
 
-                  <button type="submit" className="mt-6 w-full bg-vivid py-4 text-sm font-semibold text-white transition-colors hover:bg-vivid-deep">
+                  <button type="submit" className="mt-6 w-full bg-vivid py-4 text-sm font-semibold text-white transition-all hover:bg-vivid-deep hover:shadow-lg">
                     Continue to Support
                   </button>
                 </form>
@@ -231,7 +237,7 @@ export default function SadaqahGiving() {
                     Your contribution to {open.title.toLowerCase()} has been recorded. May Allah
                     accept it and multiply it.
                   </p>
-                  <button onClick={close} className="mt-8 w-full border border-pine py-3.5 text-sm font-semibold text-pine hover:bg-vivid hover:text-white">
+                  <button onClick={close} className="mt-8 w-full border border-pine py-3.5 text-sm font-semibold text-pine hover:bg-vivid hover:text-white transition-all">
                     Return to the needs
                   </button>
                 </div>

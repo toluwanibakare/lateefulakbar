@@ -1,9 +1,66 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
-import React, { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring, useTransform } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
+import { ArrowUp } from "lucide-react";
 import { EVENT } from "@/lib/site";
 
+/** Smooth page scroll progress bar fixed at top of screen */
+export function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
+
+  return (
+    <motion.div
+      className="fixed top-0 left-0 right-0 z-[60] h-1 origin-left bg-gradient-to-r from-vivid via-fern to-gilt"
+      style={{ scaleX }}
+      aria-hidden
+    />
+  );
+}
+
+/** Floating smooth back to top button */
+export function BackToTop() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShow(window.scrollY > 400);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  return (
+    <AnimatePresence>
+      {show && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          whileHover={{ scale: 1.1, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={scrollToTop}
+          aria-label="Scroll back to top"
+          className="fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-pine text-white shadow-2xl transition-colors hover:bg-vivid border border-white/20"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+}
+
+/** Standard Scroll Reveal wrapper */
 export function Reveal({
   children,
   delay = 0,
@@ -21,12 +78,259 @@ export function Reveal({
     <motion.div
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
+      viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
     </motion.div>
+  );
+}
+
+/** Advanced Directional FadeIn Reveal */
+export function FadeIn({
+  children,
+  direction = "up",
+  delay = 0,
+  duration = 0.8,
+  distance = 32,
+  blur = false,
+  className,
+}: {
+  children: React.ReactNode;
+  direction?: "up" | "down" | "left" | "right" | "none";
+  delay?: number;
+  duration?: number;
+  distance?: number;
+  blur?: boolean;
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
+
+  const offsets = {
+    up: { y: distance, x: 0 },
+    down: { y: -distance, x: 0 },
+    left: { x: distance, y: 0 },
+    right: { x: -distance, y: 0 },
+    none: { x: 0, y: 0 },
+  };
+
+  return (
+    <motion.div
+      initial={{
+        opacity: 0,
+        ...offsets[direction],
+        filter: blur ? "blur(8px)" : "blur(0px)",
+      }}
+      whileInView={{
+        opacity: 1,
+        x: 0,
+        y: 0,
+        filter: "blur(0px)",
+      }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** ScaleIn Reveal */
+export function ScaleIn({
+  children,
+  delay = 0,
+  duration = 0.7,
+  scale = 0.92,
+  className,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  duration?: number;
+  scale?: number;
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Stagger Parent Container */
+export function StaggerContainer({
+  children,
+  staggerDelay = 0.1,
+  className,
+}: {
+  children: React.ReactNode;
+  staggerDelay?: number;
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
+
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-60px" }}
+      variants={{
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: staggerDelay,
+          },
+        },
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Stagger Child Item */
+export function StaggerItem({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
+
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 24 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+        },
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Interactive Tilt Card */
+export function TiltCard({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
+
+  return (
+    <motion.div
+      whileHover={{ y: -6, scale: 1.015 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      className={`transition-shadow duration-300 hover:shadow-2xl ${className}`}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Parallax Image Wrapper */
+export function ParallaxImage({
+  children,
+  offset = 40,
+  className = "",
+}: {
+  children: React.ReactNode;
+  offset?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
+  const reduce = useReducedMotion();
+
+  if (reduce) return <div className={`overflow-hidden ${className}`}>{children}</div>;
+
+  return (
+    <div ref={ref} className={`overflow-hidden ${className}`}>
+      <motion.div style={{ y }} className="h-full w-full">
+        {children}
+      </motion.div>
+    </div>
+  );
+}
+
+/** Animated Count-up for Numbers */
+export function AnimatedCounter({
+  from = 0,
+  to,
+  duration = 2,
+  prefix = "",
+  suffix = "",
+}: {
+  from?: number;
+  to: number;
+  duration?: number;
+  prefix?: string;
+  suffix?: string;
+}) {
+  const [count, setCount] = useState(from);
+  const ref = useRef<HTMLSpanElement>(null);
+  const [inView, setInView] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView) return;
+    let startTime: number | null = null;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
+      const current = Math.floor(progress * (to - from) + from);
+      setCount(current);
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    };
+    requestAnimationFrame(step);
+  }, [inView, from, to, duration]);
+
+  return (
+    <span ref={ref} className="tabular-nums">
+      {prefix}
+      {count.toLocaleString()}
+      {suffix}
+    </span>
   );
 }
 
