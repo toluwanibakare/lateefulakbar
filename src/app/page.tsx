@@ -207,6 +207,9 @@ export default function Home() {
                       Any amount, given with sincerity — pooled where the gathering needs it most.
                     </p>
                     <p lang="ar" className="font-arabic mt-5 text-xl text-sage/90">يَـٰٓأَيُّهَا ٱللَّذِينَ ءَامَنُوٓا۟ إِن تَنصُرُوا۟ ٱللَّهَ يَنصُرْكُمْ وَيُثَبِّتْ أَقْدَامَكُمْ</p>
+                    <p className="mt-2 text-xs italic text-sage/80">
+                      “O believers! If you stand up for Allah, He will help you and make your steps firm.” — Q 47:7
+                    </p>
                     <div className="mt-6">
                       <Link href="/sadaqah" className="inline-flex items-center gap-2 bg-white px-6 py-3 text-sm font-semibold text-pine hover:bg-mist transition-all hover:shadow-lg">
                         Give Sadaqah <ArrowUpRight className="h-4 w-4" />
