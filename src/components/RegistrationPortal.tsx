@@ -20,13 +20,17 @@ export default function RegistrationPortal() {
     gender: "Brother",
     phone: "",
     email: "",
+    ageRange: "26 - 35 years",
+    country: "Nigeria",
     city: "",
     attendance: "Physical at TBS",
+    isNadwatMember: "No",
     referral: "",
     intention: "",
+    consent: false,
   });
 
-  const set = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const set = (k: keyof typeof form, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
   const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -162,22 +166,32 @@ export default function RegistrationPortal() {
                       <h3 className="font-display text-2xl text-ink">Who is coming?</h3>
                       <div className="mt-6 grid gap-5 sm:grid-cols-2">
                         <div className="sm:col-span-2">
-                          <label className={labelCls} htmlFor="reg-name">Full name</label>
+                          <label className={labelCls} htmlFor="reg-name">Full name *</label>
                           <input id="reg-name" required value={form.fullName} onChange={(e) => set("fullName", e.target.value)} placeholder="e.g. Ibrahim Abubakar" className={`${inputCls} mt-1.5`} />
                         </div>
                         <div>
-                          <label className={labelCls} htmlFor="reg-email">Email</label>
+                          <label className={labelCls} htmlFor="reg-email">Email *</label>
                           <input id="reg-email" type="email" required value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="you@example.com" className={`${inputCls} mt-1.5`} />
                         </div>
                         <div>
-                          <label className={labelCls} htmlFor="reg-phone">Phone or WhatsApp</label>
+                          <label className={labelCls} htmlFor="reg-phone">Phone or WhatsApp *</label>
                           <input id="reg-phone" type="tel" required value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+234 800 000 0000" className={`${inputCls} mt-1.5`} />
                         </div>
-                        <div className="sm:col-span-2">
-                          <label className={labelCls} htmlFor="reg-gender">Seating canopy</label>
+                        <div>
+                          <label className={labelCls} htmlFor="reg-gender">Gender / Canopy *</label>
                           <select id="reg-gender" value={form.gender} onChange={(e) => set("gender", e.target.value)} className={`${inputCls} mt-1.5`}>
                             <option>Brother</option>
                             <option>Sister</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className={labelCls} htmlFor="reg-age">Age Range *</label>
+                          <select id="reg-age" value={form.ageRange} onChange={(e) => set("ageRange", e.target.value)} className={`${inputCls} mt-1.5`}>
+                            <option>18 - 25 years</option>
+                            <option>26 - 35 years</option>
+                            <option>36 - 50 years</option>
+                            <option>50+ years</option>
+                            <option>Under 18</option>
                           </select>
                         </div>
                       </div>
@@ -199,30 +213,56 @@ export default function RegistrationPortal() {
                       <h3 className="font-display text-2xl text-ink">How will you join?</h3>
                       <div className="mt-6 grid gap-5 sm:grid-cols-2">
                         <div>
-                          <label className={labelCls} htmlFor="reg-city">City</label>
+                          <label className={labelCls} htmlFor="reg-country">Country of Residence *</label>
+                          <input id="reg-country" required value={form.country} onChange={(e) => set("country", e.target.value)} placeholder="e.g. Nigeria, United Kingdom, USA" className={`${inputCls} mt-1.5`} />
+                        </div>
+                        <div>
+                          <label className={labelCls} htmlFor="reg-city">State / City *</label>
                           <input id="reg-city" required value={form.city} onChange={(e) => set("city", e.target.value)} placeholder="e.g. Ikeja, Lagos" className={`${inputCls} mt-1.5`} />
                         </div>
                         <div>
-                          <label className={labelCls} htmlFor="reg-att">Attendance</label>
+                          <label className={labelCls} htmlFor="reg-att">Attendance Type *</label>
                           <select id="reg-att" value={form.attendance} onChange={(e) => set("attendance", e.target.value)} className={`${inputCls} mt-1.5`}>
                             <option>Physical at TBS</option>
                             <option>Online via livestream</option>
                           </select>
                         </div>
                         <div>
-                          <label className={labelCls} htmlFor="reg-ref">Referral code (optional)</label>
-                          <input id="reg-ref" value={form.referral} onChange={(e) => set("referral", e.target.value)} placeholder="e.g. REF123" className={`${inputCls} mt-1.5`} />
+                          <label className={labelCls} htmlFor="reg-member">Nadwat Member? *</label>
+                          <select id="reg-member" value={form.isNadwatMember} onChange={(e) => set("isNadwatMember", e.target.value)} className={`${inputCls} mt-1.5`}>
+                            <option>Yes</option>
+                            <option>No</option>
+                          </select>
                         </div>
                         <div>
-                          <label className={labelCls} htmlFor="reg-int">Private intention (optional)</label>
-                          <input id="reg-int" value={form.intention} onChange={(e) => set("intention", e.target.value)} placeholder="Kept between you and Allah" className={`${inputCls} mt-1.5`} />
+                          <label className={labelCls} htmlFor="reg-ref">How did you hear about us?</label>
+                          <input id="reg-ref" value={form.referral} onChange={(e) => set("referral", e.target.value)} placeholder="e.g. Social Media, Friend, Mosque" className={`${inputCls} mt-1.5`} />
+                        </div>
+                        <div>
+                          <label className={labelCls} htmlFor="reg-int">Private Prayer Request / Intention (optional)</label>
+                          <input id="reg-int" value={form.intention} onChange={(e) => set("intention", e.target.value)} placeholder="Kept private between you and Allah" className={`${inputCls} mt-1.5`} />
                         </div>
                       </div>
+
+                      <div className="mt-6 border-t border-ink/10 pt-4">
+                        <label className="flex items-start gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={form.consent}
+                            onChange={(e) => set("consent", e.target.checked)}
+                            className="mt-0.5 h-4 w-4 accent-vivid shrink-0"
+                          />
+                          <span className="text-xs text-ink/80 leading-relaxed font-medium">
+                            I agree to general event guidelines and consent to receive event updates from Nadwat. *
+                          </span>
+                        </label>
+                      </div>
+
                       <div className="mt-8 flex items-center justify-between">
                         <button type="button" onClick={() => setStep(1)} className="inline-flex items-center gap-2 border border-ink/20 px-6 py-3.5 text-sm font-semibold text-ink hover:border-pine hover:text-pine">
                           <ArrowLeft className="h-4 w-4" /> Back
                         </button>
-                        <button type="button" onClick={() => setStep(3)} disabled={!form.city} className="inline-flex items-center gap-2 bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-40">
+                        <button type="button" onClick={() => setStep(3)} disabled={!form.city || !form.country || !form.consent} className="inline-flex items-center gap-2 bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-40">
                           Continue <ArrowRight className="h-4 w-4" />
                         </button>
                       </div>

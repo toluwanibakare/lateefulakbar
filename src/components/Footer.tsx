@@ -69,14 +69,15 @@ export default function Footer() {
 
             <StaggerItem className="md:col-span-3">
               <nav aria-label="Footer">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sage">Gathering</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sage">Gathering & Portals</p>
                 <ul className="mt-4 space-y-2.5 text-sm text-white/80">
                   {[
                     ["About the event", "/about"],
                     ["The gathering", "/gathering"],
                     ["Convener", "/founder"],
-                    ["Gallery", "/gallery"],
-                    ["Registration", "/register"],
+                    ["Guest Registration", "/register"],
+                    ["Vendor Registration", "/vendors"],
+                    ["Media Accreditation", "/media-accreditation"],
                     ["Venue", "/venue"],
                   ].map(([label, href]) => (
                     <li key={href}><Link href={href} className="hover:text-white transition-colors">{label}</Link></li>

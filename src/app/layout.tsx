@@ -29,11 +29,10 @@ const script = Great_Vibes({
 });
 
 const arabic = Amiri({
-  subsets: ["arabic", "latin"],
+  subsets: ["arabic"],
   variable: "--font-arabic",
   display: "swap",
   weight: ["400", "700"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
