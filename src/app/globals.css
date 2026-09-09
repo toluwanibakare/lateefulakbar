@@ -24,27 +24,52 @@
   --color-giltsoft: #c8ab5e;
 }
 
-/* Dark Mode Theme Tokens */
+/* Dark Mode Theme Tokens - Ultra-Crisp & High-Contrast */
 html.dark {
   color-scheme: dark;
+
+  /* Backgrounds */
   --color-paper: #061711;
-  --color-cream: #0a2019;
-  --color-mist: #0f2b22;
-  --color-sage: #16372c;
-  --color-mintline: #1e4538;
-  --color-ink: #eef6f2;
-  --color-faded: #9abdb0;
+  --color-cream: #092018;
+  --color-mist: #0e291f;
+  --color-sage: #15372b;
+  --color-mintline: #1c4537;
+
+  /* Text & Foreground Tokens */
+  --color-ink: #f5fcf8;        /* Pure crisp off-white for main text */
+  --color-faded: #a2c8b8;      /* Bright soft minty sage for secondary text */
+  --color-pine: #4ade80;       /* Bright vibrant emerald for headers & links */
+  --color-fern: #34d399;       /* Bright mint green for subheadings & eyebrows */
+  --color-gilt: #fbbf24;       /* Radiant gold accent */
+  --color-giltsoft: #fcd34d;   /* Warm soft gold */
 }
 
 html.dark body {
   background-color: #061711 !important;
-  color: #eef6f2 !important;
+  color: #f5fcf8 !important;
+}
+
+/* Explicit Dark Mode Overrides for text color utility classes */
+html.dark .text-ink {
+  color: #f5fcf8 !important;
+}
+
+html.dark .text-faded {
+  color: #a2c8b8 !important;
+}
+
+html.dark .text-pine {
+  color: #4ade80 !important;
+}
+
+html.dark .text-fern {
+  color: #34d399 !important;
 }
 
 /* Global Dark Mode Overrides for hardcoded background and text classes */
 html.dark .bg-white {
-  background-color: #0a221a !important;
-  color: #eef6f2;
+  background-color: #0b261e !important;
+  color: #f5fcf8;
 }
 
 html.dark .bg-paper {
@@ -52,39 +77,45 @@ html.dark .bg-paper {
 }
 
 html.dark .bg-cream {
-  background-color: #0c261d !important;
+  background-color: #092018 !important;
 }
 
 html.dark .bg-mist {
-  background-color: #102e24 !important;
+  background-color: #0e291f !important;
 }
 
-html.dark .text-ink {
-  color: #eef6f2 !important;
-}
-
-html.dark .text-faded {
-  color: #9cbdb0 !important;
+html.dark .bg-sage {
+  background-color: #15372b !important;
+  color: #f5fcf8;
 }
 
 html.dark .border-ink\/10,
 html.dark .border-ink\/15,
 html.dark .border-ink\/20,
-html.dark .border-ink\/25 {
-  border-color: rgba(238, 246, 242, 0.15) !important;
+html.dark .border-ink\/25,
+html.dark .border-ink\/30 {
+  border-color: rgba(245, 252, 248, 0.18) !important;
 }
 
 html.dark input,
 html.dark select,
 html.dark textarea {
-  background-color: #0e2d22 !important;
-  color: #eef6f2 !important;
-  border-color: rgba(238, 246, 242, 0.2) !important;
+  background-color: #0d2d23 !important;
+  color: #f5fcf8 !important;
+  border-color: rgba(245, 252, 248, 0.25) !important;
 }
 
 html.dark input::placeholder,
 html.dark textarea::placeholder {
-  color: rgba(238, 246, 242, 0.4) !important;
+  color: rgba(245, 252, 248, 0.45) !important;
+}
+
+/* Dropdown menus & floating cards in dark mode */
+html.dark .bg-white.shadow-2xl,
+html.dark .bg-white.shadow-xl,
+html.dark .bg-white.shadow-lg {
+  background-color: #0d2d23 !important;
+  border: 1px solid rgba(52, 211, 153, 0.25) !important;
 }
 
 ::selection {

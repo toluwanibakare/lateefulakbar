@@ -183,7 +183,7 @@ export default function Hero() {
         >
           <a
             href="/register"
-            className="bg-paper text-pine hover:bg-sage px-7 py-3.5 text-sm font-semibold transition-colors"
+            className="bg-white text-emerald-950 hover:bg-emerald-100 px-7 py-3.5 text-sm font-bold shadow-lg transition-colors"
           >
             Reserve your place - free
           </a>

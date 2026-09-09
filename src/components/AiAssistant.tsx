@@ -208,7 +208,7 @@ export default function AiAssistant() {
                 transition={{ duration: 0.2 }}
                 className="flex items-center justify-center"
               >
-                <Sparkles className="h-6 w-6" />
+                <MessageSquare className="h-6 w-6" />
               </motion.div>
             )}
           </AnimatePresence>

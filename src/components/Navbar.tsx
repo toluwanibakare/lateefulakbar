@@ -121,21 +121,25 @@ export default function Navbar() {
               height={48}
               className={`h-8 w-auto shrink-0 object-contain transition-all sm:h-11 ${
                 solid
-                  ? "brightness-100"
+                  ? "brightness-100 dark:brightness-0 dark:invert"
                   : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
               }`}
               priority
             />
             <span
               aria-hidden
-              className={`h-7 w-px shrink-0 transition-colors sm:h-9 ${solid ? "bg-ink/15" : "bg-white/30"}`}
+              className={`h-7 w-px shrink-0 transition-colors sm:h-9 ${solid ? "bg-ink/15 dark:bg-white/30" : "bg-white/30"}`}
             />
             <Image
               src="/assets/lateef-logo.png"
               alt="Lateeful Ul Akbar Il Aazam logo"
               width={220}
               height={60}
-              className="h-7 w-auto min-w-0 object-contain sm:h-10"
+              className={`h-7 w-auto min-w-0 object-contain sm:h-10 transition-all ${
+                solid
+                  ? "brightness-100 dark:brightness-0 dark:invert"
+                  : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
+              }`}
               priority
             />
           </Link>
