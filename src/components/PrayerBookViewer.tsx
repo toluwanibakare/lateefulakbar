@@ -1,22 +1,84 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, FileText, Lock, Maximize2, Minimize2, Search, SlidersHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, HelpCircle, Lock, Maximize2, Minimize2, MoveVertical, SlidersHorizontal, Touchpad, X } from "lucide-react";
 import { Eyebrow, Reveal } from "./ui";
 
 const TOTAL_PAGES = 208;
+const BASE_PDF_PATH = "/assets/asalatu-nadwat-prayer-book.pdf";
 
 export default function PrayerBookViewer() {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPage, setInputPage] = useState("1");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showInstructionOverlay, setShowInstructionOverlay] = useState(true);
+
+  const mainIframeRef = useRef<HTMLIFrameElement>(null);
+  const modalIframeRef = useRef<HTMLIFrameElement>(null);
+  const activeBtnRef = useRef<HTMLButtonElement>(null);
+  const modalActiveBtnRef = useRef<HTMLButtonElement>(null);
 
   const goToPage = (page: number) => {
     const clamped = Math.max(1, Math.min(TOTAL_PAGES, page));
     setCurrentPage(clamped);
     setInputPage(String(clamped));
   };
+
+  // Instant iframe page navigation using persistent DOM iframe without unmounting
+  useEffect(() => {
+    const targetUrl = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
+
+    if (mainIframeRef.current) {
+      try {
+        if (mainIframeRef.current.contentWindow) {
+          mainIframeRef.current.contentWindow.location.replace(targetUrl);
+        } else {
+          mainIframeRef.current.src = targetUrl;
+        }
+      } catch {
+        mainIframeRef.current.src = targetUrl;
+      }
+    }
+
+    if (modalIframeRef.current) {
+      try {
+        if (modalIframeRef.current.contentWindow) {
+          modalIframeRef.current.contentWindow.location.replace(targetUrl);
+        } else {
+          modalIframeRef.current.src = targetUrl;
+        }
+      } catch {
+        modalIframeRef.current.src = targetUrl;
+      }
+    }
+
+    // Auto-scroll active page button into view inside horizontal strip
+    if (activeBtnRef.current) {
+      activeBtnRef.current.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+    if (modalActiveBtnRef.current) {
+      modalActiveBtnRef.current.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+  }, [currentPage, isFullscreen]);
+
+  // Keyboard left/right arrow navigation & Escape dismiss
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowInstructionOverlay(false);
+        setIsFullscreen(false);
+      }
+      if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "SELECT") return;
+      if (e.key === "ArrowLeft") {
+        goToPage(currentPage - 1);
+      } else if (e.key === "ArrowRight") {
+        goToPage(currentPage + 1);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentPage]);
 
   const handleInputSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,7 +88,7 @@ export default function PrayerBookViewer() {
     }
   };
 
-  const pdfSrc = `/assets/asalatu-nadwat-prayer-book.pdf#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
+  const initialPdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
 
   return (
     <section id="prayer-book" className="border-t border-ink/10 bg-cream">
@@ -45,7 +107,7 @@ export default function PrayerBookViewer() {
               </Reveal>
               <Reveal delay={0.12}>
                 <p className="mt-5 text-[15px] leading-relaxed text-faded">
-                  Read the complete 208-page official Nadwat prayer book right inside your browser. Use the page controls, swipe strip, or jump to any page.
+                  Read the complete 208-page official Nadwat prayer book right inside your browser. Use the instant page flip controls, page input, or horizontal strip.
                 </p>
               </Reveal>
 
@@ -137,20 +199,29 @@ export default function PrayerBookViewer() {
             </div>
 
             <Reveal delay={0.24}>
-              <button
-                onClick={() => setIsFullscreen(true)}
-                className="mt-6 flex w-full items-center justify-center gap-2.5 bg-pine px-6 py-3.5 text-sm font-semibold text-white hover:bg-ink transition-all shadow-md rounded-lg"
-              >
-                <Maximize2 className="h-4 w-4 text-sage" />
-                <span>Open Fullscreen Reader</span>
-              </button>
+              <div className="mt-6 flex flex-col gap-2.5">
+                <button
+                  onClick={() => setIsFullscreen(true)}
+                  className="flex w-full items-center justify-center gap-2.5 bg-pine px-6 py-3.5 text-sm font-semibold text-white hover:bg-ink transition-all shadow-md rounded-lg"
+                >
+                  <Maximize2 className="h-4 w-4 text-sage" />
+                  <span>Open Fullscreen Reader</span>
+                </button>
+                <button
+                  onClick={() => setShowInstructionOverlay(true)}
+                  className="flex w-full items-center justify-center gap-2 border border-ink/20 bg-white px-5 py-2.5 text-xs font-semibold text-ink hover:border-pine hover:text-pine transition-all rounded-lg"
+                >
+                  <HelpCircle className="h-4 w-4 text-fern" />
+                  <span>How to Swipe & Scroll Book</span>
+                </button>
+              </div>
             </Reveal>
           </div>
 
           {/* Right Column: PDF Reader + Flip Navigation Bar */}
           <div className="lg:col-span-8">
             <Reveal delay={0.1}>
-              <div className="border border-ink/15 bg-white shadow-[0_30px_60px_-40px_rgba(10,46,35,0.35)] rounded-xl overflow-hidden">
+              <div className="border border-ink/15 bg-white shadow-[0_30px_60px_-40px_rgba(10,46,35,0.35)] rounded-xl overflow-hidden relative">
                 {/* Header Control Bar */}
                 <div className="flex flex-wrap items-center justify-between border-b border-ink/10 bg-pine px-5 py-3.5 text-white gap-3">
                   <div className="flex items-center gap-2.5">
@@ -183,13 +254,23 @@ export default function PrayerBookViewer() {
                     </button>
                   </div>
 
-                  <button
-                    onClick={() => setIsFullscreen(!isFullscreen)}
-                    className="inline-flex items-center gap-1.5 bg-vivid px-3 py-1.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded"
-                  >
-                    {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
-                    <span className="hidden sm:inline">{isFullscreen ? "Exit Fullscreen" : "Full Screen Reader"}</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setShowInstructionOverlay(true)}
+                      className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-white/90 hover:bg-white/20 transition-all rounded"
+                      title="Show Swipe/Scroll Instructions"
+                    >
+                      <HelpCircle className="h-3.5 w-3.5 text-sage" />
+                      <span className="hidden sm:inline">Guide</span>
+                    </button>
+                    <button
+                      onClick={() => setIsFullscreen(!isFullscreen)}
+                      className="inline-flex items-center gap-1.5 bg-vivid px-3 py-1.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded"
+                    >
+                      {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                      <span className="hidden sm:inline">{isFullscreen ? "Exit Fullscreen" : "Full Screen Reader"}</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Horizontal Swipeable / Scrollable Page Strip */}
@@ -201,6 +282,7 @@ export default function PrayerBookViewer() {
                     {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
                       <button
                         key={p}
+                        ref={currentPage === p ? activeBtnRef : null}
                         onClick={() => goToPage(p)}
                         className={`h-7 min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 ${
                           currentPage === p
@@ -214,18 +296,93 @@ export default function PrayerBookViewer() {
                   </div>
                 </div>
 
-                {/* Embedded PDF iframe */}
+                {/* Embedded PDF iframe & Container */}
                 <div
                   onContextMenu={(e) => e.preventDefault()}
                   className="relative w-full bg-slate-900 overflow-hidden select-none"
                   style={{ height: "760px" }}
                 >
                   <iframe
-                    key={currentPage}
-                    src={pdfSrc}
+                    ref={mainIframeRef}
+                    src={initialPdfSrc}
                     className="w-full h-full border-0 select-none"
-                    title={`Asalatu Nadwat Official Prayer Book PDF Viewer - Page ${currentPage}`}
+                    title="Asalatu Nadwat Official Prayer Book PDF Viewer"
                   />
+
+                  {/* Dimmed Overlay Guide Modal inside the PDF Reader */}
+                  <AnimatePresence>
+                    {showInstructionOverlay && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowInstructionOverlay(false)}
+                        className="absolute inset-0 z-30 flex items-center justify-center bg-ink/85 backdrop-blur-md p-6 cursor-pointer text-white"
+                      >
+                        <motion.div
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.9, opacity: 0 }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="relative max-w-md w-full bg-pine border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl text-center"
+                        >
+                          <button
+                            onClick={() => setShowInstructionOverlay(false)}
+                            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 transition-colors"
+                            aria-label="Close guide"
+                          >
+                            <X className="h-5 w-5" />
+                          </button>
+
+                          {/* Animated Vertical Swipe/Scroll Gesture Icon */}
+                          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-vivid/20 border border-vivid/40">
+                            <motion.div
+                              animate={{ y: [-14, 14, -14], opacity: [0.5, 1, 0.5] }}
+                              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                              className="flex flex-col items-center text-sage"
+                            >
+                              <ChevronLeft className="h-6 w-6 rotate-90" />
+                              <MoveVertical className="h-6 w-6 my-[-4px]" />
+                              <ChevronRight className="h-6 w-6 rotate-90" />
+                            </motion.div>
+                          </div>
+
+                          <h3 className="font-display mt-5 text-2xl font-light text-white tracking-tight">
+                            Swipe & Scroll to Read
+                          </h3>
+                          <p className="mt-3 text-sm leading-relaxed text-white/85">
+                            Scroll or swipe up/down inside the book to turn pages smoothly, or use the page bar and jump input above.
+                          </p>
+
+                          <div className="mt-6 grid grid-cols-3 gap-2 text-left text-[11px] border-t border-white/15 pt-4 text-white/80">
+                            <div className="flex flex-col items-center text-center">
+                              <span className="text-base">👆</span>
+                              <span className="mt-1 font-semibold">Swipe / Scroll</span>
+                              <span className="text-[10px] text-white/60">inside reader</span>
+                            </div>
+                            <div className="flex flex-col items-center text-center">
+                              <span className="text-base">🔢</span>
+                              <span className="mt-1 font-semibold">Page Bar</span>
+                              <span className="text-[10px] text-white/60">tap page #</span>
+                            </div>
+                            <div className="flex flex-col items-center text-center">
+                              <span className="text-base">↔️</span>
+                              <span className="mt-1 font-semibold">Arrow Keys</span>
+                              <span className="text-[10px] text-white/60">left / right</span>
+                            </div>
+                          </div>
+
+                          <button
+                            onClick={() => setShowInstructionOverlay(false)}
+                            className="mt-6 w-full bg-vivid py-3 text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep transition-all shadow-lg"
+                          >
+                            Got It — Start Reading
+                          </button>
+                          <p className="mt-2 text-[11px] text-white/50">Tap anywhere or press Esc to close</p>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
 
                 {/* Bottom Navigation Flip Bar */}
@@ -259,7 +416,7 @@ export default function PrayerBookViewer() {
         </div>
       </div>
 
-      {/* Fullscreen PDF Reader Modal with Flip & Selector */}
+      {/* Fullscreen PDF Reader Modal */}
       <AnimatePresence>
         {isFullscreen && (
           <motion.div
@@ -316,6 +473,7 @@ export default function PrayerBookViewer() {
                 {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
                   <button
                     key={p}
+                    ref={currentPage === p ? modalActiveBtnRef : null}
                     onClick={() => goToPage(p)}
                     className={`h-7 min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 ${
                       currentPage === p
@@ -329,16 +487,16 @@ export default function PrayerBookViewer() {
               </div>
             </div>
 
-            {/* Modal Iframe */}
+            {/* Modal Iframe (Persistent Node) */}
             <div
               onContextMenu={(e) => e.preventDefault()}
               className="relative flex-1 w-full bg-slate-900 select-none rounded-b-xl overflow-hidden"
             >
               <iframe
-                key={currentPage}
-                src={pdfSrc}
+                ref={modalIframeRef}
+                src={initialPdfSrc}
                 className="w-full h-full border-0 select-none"
-                title={`Fullscreen Asalatu Nadwat PDF Viewer - Page ${currentPage}`}
+                title="Fullscreen Asalatu Nadwat PDF Viewer"
               />
             </div>
           </motion.div>
