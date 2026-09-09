@@ -44,6 +44,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className="overflow-x-hidden max-w-full"
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="bg-paper text-ink font-body antialiased overflow-x-hidden max-w-full w-full">
         <ScrollProgress />
         <Navbar />
