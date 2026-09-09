@@ -1,39 +1,9 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Jost, Great_Vibes, Amiri } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AiAssistant from "@/components/AiAssistant";
 import { BackToTop, ScrollProgress } from "@/components/ui";
 import "./globals.css";
-
-const display = Cormorant_Garamond({
-  subsets: ["latin"],
-  variable: "--font-display",
-  display: "swap",
-  style: ["normal", "italic"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const body = Jost({
-  subsets: ["latin"],
-  variable: "--font-body",
-  display: "swap",
-  weight: ["300", "400", "500", "600"],
-});
-
-const script = Great_Vibes({
-  subsets: ["latin"],
-  variable: "--font-script",
-  display: "swap",
-  weight: ["400"],
-});
-
-const arabic = Amiri({
-  subsets: ["arabic"],
-  variable: "--font-arabic",
-  display: "swap",
-  weight: ["400", "700"],
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://lateefulakbar.com"),
@@ -72,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${display.variable} ${body.variable} ${script.variable} ${arabic.variable} overflow-x-hidden max-w-full`}
+      className="overflow-x-hidden max-w-full"
     >
       <body className="bg-paper text-ink font-body antialiased overflow-x-hidden max-w-full w-full">
         <ScrollProgress />
