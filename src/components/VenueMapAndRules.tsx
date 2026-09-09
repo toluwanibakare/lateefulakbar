@@ -3,9 +3,22 @@
 import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowUpRight, Car, ChevronDown, MapPin, Navigation, ShieldCheck, Tent } from "lucide-react";
+import {
+  ArrowUpRight,
+  Car,
+  ChevronDown,
+  Download,
+  Eye,
+  Layers,
+  MapPin,
+  Maximize2,
+  Navigation,
+  ShieldCheck,
+  Tent,
+  X,
+} from "lucide-react";
 import { EVENT } from "@/lib/site";
-import { Eyebrow, FadeIn, ScaleIn, StaggerContainer, StaggerItem, TiltCard } from "./ui";
+import { Eyebrow, FadeIn, TiltCard } from "./ui";
 
 const PINS = [
   { id: "gate", name: "Main gate", x: "18%", y: "60%", text: "Accreditation and QR scanning. Arrive early." },
@@ -31,6 +44,8 @@ export default function VenueMapAndRules() {
   const [pin, setPin] = useState("gate");
   const [openRule, setOpenRule] = useState<number | null>(0);
   const [dist, setDist] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"2d" | "aerial">("2d");
+  const [fullscreenMap, setFullscreenMap] = useState(false);
 
   const locate = () => {
     if (!("geolocation" in navigator)) return;
@@ -55,44 +70,117 @@ export default function VenueMapAndRules() {
     <section id="venue" className="border-t border-ink/10 bg-cream">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
         <FadeIn direction="up">
-          <Eyebrow>11 - Venue</Eyebrow>
+          <Eyebrow>11 - Venue Layout & Directions</Eyebrow>
         </FadeIn>
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <FadeIn direction="right" delay={0.06}>
             <h2 className="font-display text-balance max-w-2xl text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
-              Tafawa Balewa Square, Lagos
+              Tafawa Balewa Square 2D Map & Venue Guide
             </h2>
           </FadeIn>
           <FadeIn direction="left" delay={0.12}>
             <p className="max-w-sm text-sm leading-relaxed text-faded">
-              Gates, canopies, parking and help points. Study the Square before the morning.
+              Official 2D layout map, gate assignments, canopy seating, and route assistance for Tafawa Balewa Square.
             </p>
           </FadeIn>
         </div>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-12">
+          {/* Left Column: Interactive Map Viewer */}
           <div className="lg:col-span-7">
             <FadeIn direction="right">
               <TiltCard className="overflow-hidden border border-ink/15 bg-white shadow-lg">
-                <div className="relative aspect-[16/10]">
-                  <Image src="/assets/drone-wide.png" alt="Aerial view of Tafawa Balewa Square during the gathering" fill sizes="(max-width: 1024px) 100vw, 60vw" className="img-true object-cover" loading="lazy" />
+                {/* Map Control Bar */}
+                <div className="flex flex-wrap items-center justify-between border-b border-ink/10 bg-paper dark:bg-pine p-3 sm:px-5">
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setViewMode("2d")}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                        viewMode === "2d"
+                          ? "bg-vivid text-white shadow-sm"
+                          : "bg-mist dark:bg-white/10 text-ink dark:text-sage hover:bg-sage/50"
+                      }`}
+                    >
+                      <Layers className="h-3.5 w-3.5" />
+                      <span>Official 2D Map</span>
+                    </button>
+                    <button
+                      onClick={() => setViewMode("aerial")}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
+                        viewMode === "aerial"
+                          ? "bg-vivid text-white shadow-sm"
+                          : "bg-mist dark:bg-white/10 text-ink dark:text-sage hover:bg-sage/50"
+                      }`}
+                    >
+                      <Eye className="h-3.5 w-3.5" />
+                      <span>Aerial View</span>
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setFullscreenMap(true)}
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-vivid dark:text-emerald-400 hover:underline"
+                    >
+                      <Maximize2 className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Expand Fullscreen</span>
+                    </button>
+                    <a
+                      href="/assets/NADWAT 2D MAP.png"
+                      download="NADWAT-2D-VENUE-MAP.png"
+                      className="inline-flex items-center gap-1 text-xs font-semibold text-pine dark:text-sage hover:underline"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Download 2D Map</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Map Display Container */}
+                <div
+                  className="relative aspect-[16/10] bg-mist cursor-pointer group overflow-hidden"
+                  onClick={() => setFullscreenMap(true)}
+                >
+                  <Image
+                    src={viewMode === "2d" ? "/assets/NADWAT 2D MAP.png" : "/assets/drone-wide.png"}
+                    alt={
+                      viewMode === "2d"
+                        ? "Nadwat Official 2D Layout Map of Tafawa Balewa Square"
+                        : "Aerial view of Tafawa Balewa Square during assembly"
+                    }
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 60vw"
+                    className="img-true object-contain transition-transform duration-500 group-hover:scale-105"
+                    priority
+                  />
+
+                  {/* Point of Interest Overlay Pins */}
                   {PINS.map((p) => (
                     <button
                       key={p.id}
-                      onClick={() => setPin(p.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPin(p.id);
+                      }}
                       style={{ left: p.x, top: p.y }}
                       aria-label={p.name}
-                      className={`absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 px-2 py-1 text-[11px] font-semibold transition-all shadow-md ${
-                        pin === p.id ? "bg-vivid text-white scale-110" : "bg-white/95 text-pine hover:bg-white"
+                      className={`absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold transition-all shadow-md rounded-full ${
+                        pin === p.id
+                          ? "bg-vivid text-white scale-110 ring-2 ring-white z-20"
+                          : "bg-white/95 text-pine hover:bg-white z-10"
                       }`}
                     >
                       <MapPin className="h-3.5 w-3.5" />
                       <span className="hidden sm:inline">{p.name}</span>
                     </button>
                   ))}
+
+                  <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1 text-[11px] text-white rounded">
+                    Tap map to enlarge
+                  </div>
                 </div>
+
                 {current && (
-                  <div className="flex items-center justify-between gap-4 border-t border-ink/10 px-5 py-4">
+                  <div className="flex items-center justify-between gap-4 border-t border-ink/10 px-5 py-4 bg-paper dark:bg-pine">
                     <div>
                       <p className="text-sm font-semibold text-ink">{current.name}</p>
                       <p className="mt-0.5 text-[13px] text-faded">{current.text}</p>
@@ -102,6 +190,7 @@ export default function VenueMapAndRules() {
               </TiltCard>
             </FadeIn>
 
+            {/* Route Planning Widget */}
             <FadeIn direction="up" delay={0.15}>
               <div className="mt-6 border-2 border-vivid bg-cream p-5 shadow-md sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
@@ -110,9 +199,13 @@ export default function VenueMapAndRules() {
                       <Navigation className="h-5 w-5 animate-pulse" />
                     </div>
                     <div>
-                      <h4 className="font-display text-lg font-semibold text-ink">Find Your Route to Tafawa Balewa Square</h4>
+                      <h4 className="font-display text-lg font-semibold text-ink">
+                        Find Your Route to Tafawa Balewa Square
+                      </h4>
                       <p className="text-xs text-faded">
-                        {dist !== null ? `You are approximately ${dist} km from the venue.` : "Locate your live distance and open direct Google Maps directions."}
+                        {dist !== null
+                          ? `You are approximately ${dist} km from the venue.`
+                          : "Locate your live distance and open direct Google Maps directions."}
                       </p>
                     </div>
                   </div>
@@ -139,21 +232,33 @@ export default function VenueMapAndRules() {
             </FadeIn>
           </div>
 
+          {/* Right Column: House Rules & Walkthrough Video */}
           <div className="lg:col-span-5">
             <FadeIn direction="left" delay={0.08}>
               <TiltCard className="h-full">
                 <div className="border border-ink/15 bg-white p-6 sm:p-8 shadow-md">
-                  <h3 className="font-display text-2xl tracking-tight text-ink font-medium">Event Rules of the Square</h3>
-                  <p className="mt-1 text-[13px] text-faded">{EVENT.dateLong} - {EVENT.venue}</p>
+                  <h3 className="font-display text-2xl tracking-tight text-ink font-medium">
+                    Event Rules of the Square
+                  </h3>
+                  <p className="mt-1 text-[13px] text-faded">
+                    {EVENT.dateLong} - {EVENT.venue}
+                  </p>
                   <div className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
                     {RULES.map((r, i) => (
                       <div key={r.t}>
-                        <button onClick={() => setOpenRule(openRule === i ? null : i)} className="flex w-full items-center justify-between gap-3 py-4 text-left">
+                        <button
+                          onClick={() => setOpenRule(openRule === i ? null : i)}
+                          className="flex w-full items-center justify-between gap-3 py-4 text-left"
+                        >
                           <span className="flex items-center gap-3">
                             <r.icon className="h-5 w-5 text-fern" />
                             <span className="text-sm font-semibold text-ink">{r.t}</span>
                           </span>
-                          <ChevronDown className={`h-4 w-4 text-faded transition-transform duration-300 ${openRule === i ? "rotate-180 text-vivid" : ""}`} />
+                          <ChevronDown
+                            className={`h-4 w-4 text-faded transition-transform duration-300 ${
+                              openRule === i ? "rotate-180 text-vivid" : ""
+                            }`}
+                          />
                         </button>
                         <AnimatePresence>
                           {openRule === i && (
@@ -172,15 +277,78 @@ export default function VenueMapAndRules() {
                     ))}
                   </div>
                   <div className="relative mt-6 aspect-video overflow-hidden bg-mist rounded">
-                    <video src="/assets/lateef-highlight-video.mp4" controls preload="none" poster="/assets/crowd-49.jpg" className="h-full w-full object-cover" aria-label="Venue walkthrough film" />
+                    <video
+                      src="/assets/lateef-highlight-video.mp4"
+                      controls
+                      preload="none"
+                      poster="/assets/crowd-49.jpg"
+                      className="h-full w-full object-cover"
+                      aria-label="Venue walkthrough film"
+                    />
                   </div>
-                  <p className="mt-2 text-[12px] text-faded italic">Walkthrough film from the previous seating.</p>
+                  <p className="mt-2 text-[12px] text-faded italic">
+                    Walkthrough film from the previous seating.
+                  </p>
                 </div>
               </TiltCard>
             </FadeIn>
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Map Lightbox Modal */}
+      <AnimatePresence>
+        {fullscreenMap && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex flex-col bg-black/90 p-4 sm:p-8 backdrop-blur-md"
+            onClick={() => setFullscreenMap(false)}
+          >
+            <div className="flex items-center justify-between pb-4 text-white">
+              <div>
+                <h3 className="font-display text-xl font-semibold">
+                  Nadwat Official 2D Layout Map
+                </h3>
+                <p className="text-xs text-white/70">
+                  Tafawa Balewa Square Main Bowl Assembly Ground
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <a
+                  href="/assets/NADWAT 2D MAP.png"
+                  download="NADWAT-2D-VENUE-MAP.png"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1.5 bg-vivid px-4 py-2 text-xs font-semibold text-white rounded-lg hover:bg-vivid-deep"
+                >
+                  <Download className="h-4 w-4" />
+                  <span>Download High-Res 2D Map</span>
+                </a>
+                <button
+                  onClick={() => setFullscreenMap(false)}
+                  className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+            </div>
+
+            <div
+              className="relative flex-1 w-full h-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Image
+                src="/assets/NADWAT 2D MAP.png"
+                alt="Full resolution Nadwat 2D Layout Map"
+                fill
+                className="object-contain"
+                priority
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
