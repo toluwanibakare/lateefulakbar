@@ -23,8 +23,8 @@ const INITIAL: Campaign[] = [
   { id: "water", title: "Water", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/donation-water.jpg", target: 2000, raised: 1350, unit: "packs", unitPrice: 1500 },
   { id: "cooling", title: "Cooling fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 700, raised: 410, unit: "fans", unitPrice: 25000 },
   { id: "internet", title: "Broadcast internet", text: "Uplink for the millions watching worldwide.", icon: Wifi, image: "/assets/donation-internet.jpg", target: 2000000, raised: 1450000 },
-  { id: "media", title: "Media facility", text: "Cameras, drone and livestream production.", icon: Video, image: "/assets/media-facility-v2.jpg", target: 3500000, raised: 2800000 },
-  { id: "tents", title: "Tents and canopy", text: "The great white canopies over the Square.", icon: Home, image: "/assets/tents-canopy-v2.jpg", target: 5000000, raised: 3200000 },
+  { id: "media", title: "Media facility", text: "Cameras, drone and livestream production.", icon: Video, image: "/assets/donation-media.jpg", target: 3500000, raised: 2800000 },
+  { id: "tents", title: "Tents and canopy", text: "The great white canopies over the Square.", icon: Home, image: "/assets/donation-tents.jpg", target: 5000000, raised: 3200000 },
 ];
 
 function fmt(n: number) {
