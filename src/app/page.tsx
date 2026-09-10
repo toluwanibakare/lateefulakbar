@@ -295,7 +295,7 @@ export default function Home() {
             <StaggerItem>
               <TiltCard className="h-full">
                 <div className="flex h-full flex-col border border-ink/15 bg-cream p-0 overflow-hidden group">
-                  <div className="relative aspect-[16/10] overflow-hidden bg-mist">
+                  <div className="relative aspect-[3/4] max-h-[320px] sm:max-h-[360px] w-full overflow-hidden bg-mist">
                     <Image
                       src="/assets/prayerbook_cover.png"
                       alt="Official Asalatu Prayer Book Cover"
@@ -303,13 +303,16 @@ export default function Home() {
                       sizes="(max-width: 1024px) 100vw, 33vw"
                       className="img-true object-cover transition-transform duration-700 group-hover:scale-105"
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-3 left-3 text-white">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block">Official Prayer Book</span>
+                      <span className="text-xs font-semibold text-white/90">208 Pages</span>
+                    </div>
                   </div>
                   <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Prayer book</p>
-                      <h3 className="font-display mt-3 text-2xl tracking-tight text-ink">Read the supplications</h3>
-                      <p lang="ar" className="font-arabic mt-3 text-xl leading-loose text-pine">{PRAYER_PAGES[0].arabic}</p>
-                      <p className="mt-1 text-sm text-faded">{PRAYER_PAGES[0].transliteration}</p>
+                      <h3 className="font-display mt-2 text-2xl tracking-tight text-ink">Read the supplications</h3>
                     </div>
                     <div className="mt-6">
                       <ViewMore href="/prayer-book">Open the book</ViewMore>
