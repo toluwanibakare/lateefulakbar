@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, FileText, HelpCircle, Lock, Maximize2, Minimize2, MoveVertical, SlidersHorizontal, Touchpad, X } from "lucide-react";
-import { PRAYER_PAGES } from "@/lib/site";
 import { Eyebrow, Reveal } from "./ui";
 
 const TOTAL_PAGES = 208;
@@ -15,7 +14,6 @@ export default function PrayerBookViewer() {
   const [inputPage, setInputPage] = useState("1");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showInstructionOverlay, setShowInstructionOverlay] = useState(false);
-  const [viewMode, setViewMode] = useState<"digital" | "pdf">("pdf");
 
   const mainIframeRef = useRef<HTMLIFrameElement>(null);
   const modalIframeRef = useRef<HTMLIFrameElement>(null);
@@ -63,7 +61,7 @@ export default function PrayerBookViewer() {
     if (modalActiveBtnRef.current) {
       modalActiveBtnRef.current.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
-  }, [currentPage, isFullscreen, viewMode]);
+  }, [currentPage, isFullscreen]);
 
   // Keyboard left/right arrow navigation & Escape dismiss
   useEffect(() => {
@@ -93,43 +91,9 @@ export default function PrayerBookViewer() {
 
   const initialPdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
 
-  // Get mobile supplication snippet preview for Digital Reader mode
-  const activeSupplication = PRAYER_PAGES[(currentPage - 1) % PRAYER_PAGES.length];
-
   return (
     <section id="prayer-book" className="border-t border-ink/10 bg-cream">
       <div className="mx-auto max-w-7xl px-3.5 py-8 xs:px-5 sm:px-6 sm:py-16 md:py-24">
-        
-        {/* Mobile View Mode Switcher Header */}
-        <div className="mb-6 flex items-center justify-between gap-2 rounded-xl border border-ink/15 bg-white p-2 shadow-sm">
-          <div className="flex items-center gap-1.5 overflow-hidden">
-            <FileText className="h-4 w-4 text-fern shrink-0 ml-1" />
-            <span className="text-xs font-semibold text-ink truncate">Asalatu Nadwat Prayer Book</span>
-          </div>
-          <div className="flex items-center gap-1 bg-mist p-1 rounded-lg shrink-0 text-xs">
-            <button
-              onClick={() => setViewMode("pdf")}
-              className={`px-3 py-1.5 font-semibold rounded-md transition-all touch-manipulation ${
-                viewMode === "pdf"
-                  ? "bg-pine text-white shadow-sm"
-                  : "text-ink/70 hover:text-pine"
-              }`}
-            >
-              PDF Document
-            </button>
-            <button
-              onClick={() => setViewMode("digital")}
-              className={`px-3 py-1.5 font-semibold rounded-md transition-all touch-manipulation ${
-                viewMode === "digital"
-                  ? "bg-vivid text-white shadow-sm"
-                  : "text-ink/70 hover:text-pine"
-              }`}
-            >
-              Digital Mobile
-            </button>
-          </div>
-        </div>
-
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-10">
           {/* Left Column: Information & Page Selector */}
           <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
@@ -273,122 +237,68 @@ export default function PrayerBookViewer() {
             </Reveal>
           </div>
 
-          {/* Right Column: Mobile Digital Card View OR Interactive PDF Reader */}
+          {/* Right Column: PDF Document Reader */}
           <div className="lg:col-span-8">
             <Reveal delay={0.1}>
-              {viewMode === "digital" ? (
-                /* Digital Mobile Reader Card Mode */
-                <div className="border border-ink/15 bg-white shadow-lg rounded-xl overflow-hidden relative p-5 xs:p-6 sm:p-8 flex flex-col justify-between min-h-[500px]">
-                  <div>
-                    <div className="flex items-center justify-between border-b border-ink/10 pb-4">
-                      <span className="text-xs font-bold uppercase tracking-widest text-fern">
-                        Digital Supplication Card • Page {currentPage}
-                      </span>
-                      <span className="font-mono text-xs font-semibold text-pine bg-pine/10 px-2.5 py-1 rounded-full">
-                        {currentPage} / {TOTAL_PAGES}
+              <div className="border border-ink/15 bg-white shadow-[0_30px_60px_-40px_rgba(10,46,35,0.35)] rounded-xl overflow-hidden relative">
+                {/* Header Control Bar */}
+                <div className="flex flex-col xs:flex-row items-stretch xs:items-center justify-between border-b border-ink/10 bg-pine px-3 py-2.5 sm:px-5 sm:py-3.5 text-white gap-2">
+                  <div className="flex items-center justify-between xs:justify-start gap-2">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4 text-sage shrink-0" />
+                      <span className="text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.16em] text-sage truncate">
+                        Asalatu Nadwat PDF
                       </span>
                     </div>
-
-                    <div className="mt-6 text-center">
-                      <span className="text-xs font-semibold uppercase tracking-wider text-faded block">
-                        {activeSupplication.title}
-                      </span>
-                      <p lang="ar" className="font-arabic mt-6 text-2xl xs:text-3xl sm:text-4xl leading-loose text-pine px-2 select-all">
-                        {activeSupplication.arabic}
-                      </p>
-                      <p className="mt-6 text-sm xs:text-base font-medium text-ink/90 italic max-w-lg mx-auto">
-                        "{activeSupplication.transliteration}"
-                      </p>
-                      <p className="mt-4 text-xs xs:text-sm leading-relaxed text-faded max-w-xl mx-auto border-t border-ink/10 pt-4">
-                        {activeSupplication.translation}
-                      </p>
-                    </div>
+                    <button
+                      onClick={() => setIsFullscreen(true)}
+                      className="inline-flex xs:hidden items-center gap-1 bg-vivid px-2.5 py-1 text-[11px] font-semibold text-white rounded"
+                    >
+                      <Maximize2 className="h-3 w-3" /> Fullscreen
+                    </button>
                   </div>
 
-                  {/* Digital Mobile Reader Pagination Controls */}
-                  <div className="mt-8 pt-4 border-t border-ink/10 flex items-center justify-between gap-2">
+                  {/* Center Flip Controls */}
+                  <div className="flex items-center justify-center gap-2 bg-white/10 px-2.5 py-1 rounded-lg">
                     <button
                       onClick={() => goToPage(currentPage - 1)}
                       disabled={currentPage <= 1}
-                      className="inline-flex items-center gap-1.5 bg-mist border border-ink/20 px-3.5 py-2.5 text-xs font-semibold text-ink rounded-lg disabled:opacity-30 touch-manipulation hover:bg-pine/10"
+                      aria-label="Previous Page"
+                      className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
                     >
-                      <ChevronLeft className="h-4 w-4 text-pine" /> Previous
+                      <ChevronLeft className="h-4 w-4" />
                     </button>
-                    
-                    <span className="font-mono text-xs font-semibold text-pine">
-                      Page {currentPage} of {TOTAL_PAGES}
+                    <span className="font-mono text-[11px] sm:text-xs font-semibold px-1">
+                      Page <strong className="text-sage">{currentPage}</strong> / {TOTAL_PAGES}
                     </span>
-
                     <button
                       onClick={() => goToPage(currentPage + 1)}
                       disabled={currentPage >= TOTAL_PAGES}
-                      className="inline-flex items-center gap-1.5 bg-vivid px-3.5 py-2.5 text-xs font-semibold text-white rounded-lg disabled:opacity-30 touch-manipulation hover:bg-vivid-deep shadow-sm"
+                      aria-label="Next Page"
+                      className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
                     >
-                      Next <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  <div className="hidden xs:flex items-center gap-1.5">
+                    <button
+                      onClick={() => setShowInstructionOverlay(true)}
+                      className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-white/90 hover:bg-white/20 transition-all rounded touch-manipulation"
+                      title="Show Guide"
+                    >
+                      <HelpCircle className="h-3.5 w-3.5 text-sage" />
+                      <span>Guide</span>
+                    </button>
+                    <button
+                      onClick={() => setIsFullscreen(!isFullscreen)}
+                      className="inline-flex items-center gap-1.5 bg-vivid px-3 py-1.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded touch-manipulation"
+                    >
+                      {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                      <span>{isFullscreen ? "Exit" : "Fullscreen"}</span>
                     </button>
                   </div>
                 </div>
-              ) : (
-                /* PDF Document Viewer Mode */
-                <div className="border border-ink/15 bg-white shadow-[0_30px_60px_-40px_rgba(10,46,35,0.35)] rounded-xl overflow-hidden relative">
-                  {/* Header Control Bar */}
-                  <div className="flex flex-col xs:flex-row items-stretch xs:items-center justify-between border-b border-ink/10 bg-pine px-3 py-2.5 sm:px-5 sm:py-3.5 text-white gap-2">
-                    <div className="flex items-center justify-between xs:justify-start gap-2">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-sage shrink-0" />
-                        <span className="text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.16em] text-sage truncate">
-                          Asalatu Nadwat PDF
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setIsFullscreen(true)}
-                        className="inline-flex xs:hidden items-center gap-1 bg-vivid px-2.5 py-1 text-[11px] font-semibold text-white rounded"
-                      >
-                        <Maximize2 className="h-3 w-3" /> Fullscreen
-                      </button>
-                    </div>
-
-                    {/* Center Flip Controls */}
-                    <div className="flex items-center justify-center gap-2 bg-white/10 px-2.5 py-1 rounded-lg">
-                      <button
-                        onClick={() => goToPage(currentPage - 1)}
-                        disabled={currentPage <= 1}
-                        aria-label="Previous Page"
-                        className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
-                      >
-                        <ChevronLeft className="h-4 w-4" />
-                      </button>
-                      <span className="font-mono text-[11px] sm:text-xs font-semibold px-1">
-                        Page <strong className="text-sage">{currentPage}</strong> / {TOTAL_PAGES}
-                      </span>
-                      <button
-                        onClick={() => goToPage(currentPage + 1)}
-                        disabled={currentPage >= TOTAL_PAGES}
-                        aria-label="Next Page"
-                        className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
-                      >
-                        <ChevronRight className="h-4 w-4" />
-                      </button>
-                    </div>
-
-                    <div className="hidden xs:flex items-center gap-1.5">
-                      <button
-                        onClick={() => setShowInstructionOverlay(true)}
-                        className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-white/90 hover:bg-white/20 transition-all rounded touch-manipulation"
-                        title="Show Guide"
-                      >
-                        <HelpCircle className="h-3.5 w-3.5 text-sage" />
-                        <span>Guide</span>
-                      </button>
-                      <button
-                        onClick={() => setIsFullscreen(!isFullscreen)}
-                        className="inline-flex items-center gap-1.5 bg-vivid px-3 py-1.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded touch-manipulation"
-                      >
-                        {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
-                        <span>{isFullscreen ? "Exit" : "Fullscreen"}</span>
-                      </button>
-                    </div>
-                  </div>
 
                   {/* Horizontal Swipeable / Scrollable Page Strip */}
                   <div className="border-b border-ink/10 bg-mist px-3 py-2 flex items-center gap-2">
@@ -532,7 +442,6 @@ export default function PrayerBookViewer() {
                     </button>
                   </div>
                 </div>
-              )}
             </Reveal>
           </div>
         </div>
