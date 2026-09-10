@@ -6,6 +6,7 @@ export const EVENT = {
   venue: "Tafawa Balewa Square - Main Bowl, Lagos",
   targetISO: "2027-01-24T08:00:00+01:00",
   dressCode: "Strictly all white",
+  email: "info@lateefulakbar.com",
 };
 
 /* Every piece of provided media, blended across the site.
