@@ -52,27 +52,8 @@ export default function Footer() {
 
       {/* Main footer content */}
       <div className="relative overflow-hidden bg-[#0c4a34] dark:bg-[#030f0b] text-white border-t border-emerald-500/20">
-        {/* Star lattice pattern - enhanced visibility in light mode */}
-        <div className="pattern-lattice-light absolute inset-0 opacity-40 dark:opacity-20 pointer-events-none" aria-hidden />
-
-        {/* Elegant static star motifs in background */}
-        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden" aria-hidden>
-          <svg className="absolute top-10 left-[10%] h-5 w-5 text-amber-300/50 dark:text-emerald-400/30" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
-          </svg>
-          <svg className="absolute top-16 right-[16%] h-6 w-6 text-amber-200/60 dark:text-amber-300/35" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
-          </svg>
-          <svg className="absolute top-1/2 left-[5%] h-4 w-4 text-emerald-200/60 dark:text-emerald-300/35" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
-          </svg>
-          <svg className="absolute top-2/5 right-[7%] h-5 w-5 text-amber-300/55 dark:text-emerald-400/35" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
-          </svg>
-          <svg className="absolute bottom-20 left-[40%] h-4.5 w-4.5 text-amber-200/50 dark:text-amber-300/30" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2l2.4 7.2h7.6l-6 4.8 2.4 7.2-6-4.8-6 4.8 2.4-7.2-6-4.8h7.6z" />
-          </svg>
-        </div>
+        {/* Star lattice pattern */}
+        <div className="pattern-lattice-light absolute inset-0 opacity-30 dark:opacity-20 pointer-events-none" aria-hidden />
 
         <div className="relative mx-auto max-w-7xl px-5 pt-14 sm:px-6">
           <StaggerContainer staggerDelay={0.08} className="grid gap-10 pb-12 md:grid-cols-12">
