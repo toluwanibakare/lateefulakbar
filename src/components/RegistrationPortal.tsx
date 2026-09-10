@@ -363,7 +363,7 @@ export default function RegistrationPortal() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Alhamdulillah - registered</p>
                 <h3 className="font-display mt-2 text-3xl text-ink">Your pass is ready</h3>
                 <p className="mx-auto mt-2 max-w-md text-sm text-faded">
-                  Pass Code: <strong className="font-mono text-teal-700">{pass.id}</strong>. An email pass confirmation has been issued.
+                  Pass Code: <strong className="font-mono text-pine">{pass.id}</strong>. An email pass confirmation has been issued.
                 </p>
                 <div className="mx-auto mt-6 max-w-sm">
                   <canvas ref={canvasRef} className="w-full border border-ink/15 bg-white shadow-lg" />

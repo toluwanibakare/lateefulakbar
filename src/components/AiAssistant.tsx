@@ -142,7 +142,7 @@ export default function AiAssistant() {
         <button
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? "Close AI Guide chat" : "Open AI Guide chat"}
-          className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-teal-600 text-white shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-teal-700 focus:outline-none focus:ring-4 focus:ring-teal-600/30 active:scale-95"
+          className="group relative flex h-14 w-14 items-center justify-center rounded-full bg-vivid text-white shadow-2xl transition-all duration-300 hover:scale-110 hover:bg-vivid-deep focus:outline-none focus:ring-4 focus:ring-vivid/30 active:scale-95"
         >
           {!open && (
             <span className="absolute -top-1 -right-1 flex h-4 w-4">
@@ -186,10 +186,10 @@ export default function AiAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 28, scale: 0.95 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed right-4 bottom-22 z-[60] flex h-[580px] w-[calc(100%-2rem)] max-w-sm sm:max-w-md flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl sm:right-6"
+            className="fixed right-4 bottom-22 z-[60] flex h-[580px] w-[calc(100%-2rem)] max-w-sm sm:max-w-md flex-col overflow-hidden rounded-2xl border border-ink/15 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl sm:right-6"
           >
             {/* Header */}
-            <div className="relative flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-600 px-5 py-4 text-white">
+            <div className="relative flex items-center justify-between border-b border-white/10 bg-pine px-5 py-4 text-white">
               <div className="relative flex items-center gap-3">
                 <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur-md border border-white/20">
                   <Bot className="h-6 w-6 text-white" />
@@ -219,7 +219,7 @@ export default function AiAssistant() {
             </div>
 
             {/* Chat Messages Body */}
-            <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50 dark:bg-slate-950 px-4 py-5 scrollbar-thin">
+            <div className="flex-1 space-y-4 overflow-y-auto bg-cream dark:bg-slate-950 px-4 py-5 scrollbar-thin">
               {msgs.map((m) => (
                 <motion.div
                   key={m.id}
@@ -234,8 +234,8 @@ export default function AiAssistant() {
                   <div
                     className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs ${
                       m.from === "user"
-                        ? "bg-teal-600 text-white"
-                        : "bg-slate-800 text-emerald-400 dark:bg-slate-800 dark:text-emerald-300"
+                        ? "bg-vivid text-white"
+                        : "bg-pine text-sage dark:bg-slate-800 dark:text-emerald-300"
                     }`}
                   >
                     {m.from === "user" ? (
@@ -249,21 +249,21 @@ export default function AiAssistant() {
                   <div
                     className={`group relative max-w-[85%] rounded-2xl px-4 py-3 text-[13px] leading-relaxed shadow-sm ${
                       m.from === "user"
-                        ? "rounded-br-xs bg-teal-600 text-white"
-                        : "rounded-bl-xs border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100"
+                        ? "rounded-br-xs bg-vivid text-white"
+                        : "rounded-bl-xs border border-ink/10 dark:border-slate-800 bg-white dark:bg-slate-900 text-ink dark:text-slate-100"
                     }`}
                   >
                     <div>{m.text}</div>
 
                     {/* Interactive Navigation Quick Action Buttons */}
                     {m.buttons && m.buttons.length > 0 && (
-                      <div className="mt-3 pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex flex-wrap gap-1.5">
+                      <div className="mt-3 pt-2.5 border-t border-ink/10 dark:border-slate-800/80 flex flex-wrap gap-1.5">
                         {m.buttons.map((btn, idx) => (
                           btn.action === 'support' ? (
                             <button
                               key={idx}
                               onClick={() => send("Switch to customer support", true)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 transition-all"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 transition-all"
                             >
                               {btn.label}
                             </button>
@@ -272,7 +272,7 @@ export default function AiAssistant() {
                               key={idx}
                               href={btn.target}
                               onClick={() => setOpen(false)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 hover:bg-teal-100 dark:hover:bg-teal-900/80 border border-teal-200 dark:border-teal-800 transition-all"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-mist dark:bg-slate-800 text-pine dark:text-emerald-300 hover:bg-sage dark:hover:bg-slate-700 border border-ink/15 dark:border-slate-700 transition-all"
                             >
                               {btn.label} <ArrowUpRight className="h-3 w-3" />
                             </Link>
@@ -283,7 +283,7 @@ export default function AiAssistant() {
 
                     <span
                       className={`mt-1 block text-[10px] ${
-                        m.from === "user" ? "text-white/70 text-right" : "text-slate-400 dark:text-slate-500"
+                        m.from === "user" ? "text-white/70 text-right" : "text-faded dark:text-slate-500"
                       }`}
                     >
                       {m.time}
@@ -299,17 +299,17 @@ export default function AiAssistant() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-end gap-2"
                 >
-                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-800 text-emerald-400">
+                  <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-pine text-sage">
                     <Bot className="h-3.5 w-3.5" />
                   </div>
-                  <div className="rounded-2xl rounded-bl-xs border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-xs text-slate-500 dark:text-slate-400 shadow-sm">
+                  <div className="rounded-2xl rounded-bl-xs border border-ink/10 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-xs text-faded dark:text-slate-400 shadow-sm">
                     <div className="flex items-center gap-1.5">
                       <span className="text-[11px] font-medium">Noor AI is thinking</span>
                       <span className="flex gap-1">
                         {[0, 1, 2].map((d) => (
                           <span
                             key={d}
-                            className="h-1.5 w-1.5 animate-bounce rounded-full bg-teal-600"
+                            className="h-1.5 w-1.5 animate-bounce rounded-full bg-vivid"
                             style={{ animationDelay: `${d * 0.15}s` }}
                           />
                         ))}
@@ -323,8 +323,8 @@ export default function AiAssistant() {
             </div>
 
             {/* Quick Prompt Chips */}
-            <div className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-1">
+            <div className="border-t border-ink/10 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-2.5">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-faded dark:text-slate-500 px-1">
                 Suggested Quick Topics
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -334,9 +334,9 @@ export default function AiAssistant() {
                     <button
                       key={c.label}
                       onClick={() => send(c.query, c.label === "Customer Support")}
-                      className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 text-[11px] font-medium text-slate-700 dark:text-slate-200 transition-all hover:border-teal-600 hover:bg-teal-50 dark:hover:bg-teal-950/40 hover:text-teal-700 dark:hover:text-teal-300"
+                      className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-ink/15 dark:border-slate-800 bg-cream dark:bg-slate-800/60 px-3 py-1.5 text-[11px] font-medium text-ink dark:text-slate-200 transition-all hover:border-vivid hover:bg-vivid/10 hover:text-vivid dark:hover:text-emerald-300"
                     >
-                      <Icon className="h-3 w-3 text-teal-600 dark:text-teal-400 group-hover:text-teal-700" />
+                      <Icon className="h-3 w-3 text-vivid dark:text-emerald-400 group-hover:text-vivid-deep" />
                       <span>{c.label}</span>
                     </button>
                   );
@@ -350,20 +350,20 @@ export default function AiAssistant() {
                 e.preventDefault();
                 send();
               }}
-              className="flex items-center gap-2 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3"
+              className="flex items-center gap-2 border-t border-ink/10 dark:border-slate-800 bg-white dark:bg-slate-900 p-3"
             >
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask Noor AI about passes, venue, schedule..."
                 aria-label="Ask about the event"
-                className="min-w-0 flex-1 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 px-4 py-2.5 text-xs text-slate-800 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600/20"
+                className="min-w-0 flex-1 rounded-xl border border-ink/20 dark:border-slate-700 bg-white dark:bg-slate-800/80 px-4 py-2.5 text-xs text-ink dark:text-white placeholder:text-faded dark:placeholder:text-slate-500 focus:border-vivid focus:outline-none focus:ring-2 focus:ring-vivid/20"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || typing}
                 aria-label="Send message"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-600 text-white transition-all hover:bg-teal-700 disabled:opacity-40 disabled:hover:bg-teal-600 shadow-sm"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-vivid text-white transition-all hover:bg-vivid-deep disabled:opacity-40 disabled:hover:bg-vivid shadow-sm"
               >
                 <Send className="h-4 w-4" />
               </button>

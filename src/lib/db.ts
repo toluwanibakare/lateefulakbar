@@ -62,14 +62,14 @@ async function initSchema(p: mysql.Pool) {
     await p.query(`
       CREATE TABLE IF NOT EXISTS tasbih (
         id INT PRIMARY KEY DEFAULT 1,
-        count BIGINT NOT NULL DEFAULT 128450,
+        count BIGINT NOT NULL DEFAULT 0,
         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
     // Seed default tasbih row if empty
     await p.query(`
-      INSERT IGNORE INTO tasbih (id, count) VALUES (1, 128450);
+      INSERT IGNORE INTO tasbih (id, count) VALUES (1, 0);
     `);
 
     // Donations table

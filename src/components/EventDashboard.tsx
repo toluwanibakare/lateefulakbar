@@ -8,7 +8,7 @@ import { Eyebrow, Reveal } from "./ui";
 export default function EventDashboard() {
   const [taps, setTaps] = useState(0);
   const [manual, setManual] = useState("");
-  const [global, setGlobal] = useState(128450);
+  const [global, setGlobal] = useState(0);
   const [thanks, setThanks] = useState(false);
   const [mode, setMode] = useState<"tap" | "manual">("tap");
 
@@ -17,7 +17,7 @@ export default function EventDashboard() {
     fetch("/api/tasbih")
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && data.count) {
+        if (data.success && data.count !== undefined) {
           setGlobal(data.count);
         }
       })
@@ -45,7 +45,7 @@ export default function EventDashboard() {
         body: JSON.stringify({ increment: currentTaps }),
       });
       const data = await res.json();
-      if (data.success && data.count) {
+      if (data.success && data.count !== undefined) {
         setGlobal(data.count);
       }
     } catch (err) {
@@ -74,7 +74,7 @@ export default function EventDashboard() {
         body: JSON.stringify({ increment: v }),
       });
       const data = await res.json();
-      if (data.success && data.count) {
+      if (data.success && data.count !== undefined) {
         setGlobal(data.count);
       }
     } catch (err) {
@@ -133,9 +133,9 @@ export default function EventDashboard() {
             </div>
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border border-ink/15 dark:border-slate-800 bg-cream dark:bg-slate-800 px-5 py-4">
               <p className="inline-flex items-center gap-2 text-sm font-medium text-ink dark:text-white">
-                <Radio className="h-4 w-4 text-teal-600 dark:text-teal-400" /> Main Auditorium Feed - Abuja
+                <Radio className="h-4 w-4 text-vivid dark:text-emerald-400" /> Main Auditorium Feed - Abuja
               </p>
-              <a href="/venue" className="text-[13px] font-semibold text-teal-700 dark:text-teal-400 underline-offset-4 hover:underline">
+              <a href="/venue" className="text-[13px] font-semibold text-pine dark:text-emerald-400 underline-offset-4 hover:underline">
                 Plan your route
               </a>
             </div>
@@ -144,7 +144,7 @@ export default function EventDashboard() {
           {/* Tasbīh */}
           <Reveal delay={0.1} className="lg:col-span-5">
             <div className="flex h-full flex-col border border-ink/15 dark:border-slate-800 bg-cream dark:bg-slate-800">
-              <div className="relative overflow-hidden bg-teal-700 px-6 py-6 text-center text-white">
+              <div className="relative overflow-hidden bg-vivid px-6 py-6 text-center text-white">
                 <div className="pattern-lattice-light absolute inset-0 opacity-40" aria-hidden />
                 <p lang="ar" className="font-arabic relative text-xl text-white/85">
                   التَّسْبِيح
@@ -152,7 +152,7 @@ export default function EventDashboard() {
                 <p className="relative mt-1 text-[11px] font-semibold uppercase tracking-[0.24em] text-white/80">
                   Worldwide Yaa Lateef Tasbīh (Live)
                 </p>
-                <p className="font-display relative mt-1 text-5xl font-light tabular-nums sm:text-6xl text-amber-300">
+                <p className="font-display relative mt-1 text-5xl font-light tabular-nums sm:text-6xl text-white">
                   {global.toLocaleString()}
                 </p>
               </div>
@@ -163,7 +163,7 @@ export default function EventDashboard() {
                     key={m}
                     onClick={() => setMode(m)}
                     className={`flex-1 py-2 text-[12px] font-semibold tracking-wide transition-colors ${
-                      mode === m ? "bg-teal-700 text-white" : "text-faded dark:text-slate-400 hover:text-teal-700"
+                      mode === m ? "bg-vivid text-white" : "text-faded dark:text-slate-400 hover:text-pine"
                     }`}
                   >
                     {m === "tap" ? "Tap Tasbīh" : "Manual entry"}
@@ -179,13 +179,13 @@ export default function EventDashboard() {
                       <button
                         onClick={() => setTaps((t) => Math.max(0, t - 1))}
                         aria-label="Subtract one"
-                        className="flex h-12 w-12 items-center justify-center border border-ink/20 dark:border-slate-700 text-ink dark:text-white hover:border-teal-700 hover:text-teal-700"
+                        className="flex h-12 w-12 items-center justify-center border border-ink/20 dark:border-slate-700 text-ink dark:text-white hover:border-vivid hover:text-vivid"
                       >
                         <Minus className="h-5 w-5" />
                       </button>
                       <button
                         onClick={tap}
-                        className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-teal-700 text-white shadow-[0_18px_40px_-18px_rgba(11,61,46,0.7)] transition-transform hover:scale-[1.03] active:scale-95"
+                        className="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-vivid text-white shadow-[0_18px_40px_-18px_rgba(1,146,60,0.7)] transition-transform hover:scale-[1.03] active:scale-95 hover:bg-vivid-deep"
                       >
                         <Plus className="h-7 w-7" />
                         <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.2em]">Tap +1</span>
@@ -195,7 +195,7 @@ export default function EventDashboard() {
                     <button
                       onClick={submitTaps}
                       disabled={!taps}
-                      className="inline-flex w-full items-center justify-center gap-2 bg-teal-700 py-3.5 text-sm font-semibold text-white hover:bg-teal-800 disabled:opacity-30"
+                      className="inline-flex w-full items-center justify-center gap-2 bg-vivid py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-30"
                     >
                       <Send className="h-4 w-4" /> Submit {taps} recitations
                     </button>
@@ -212,10 +212,10 @@ export default function EventDashboard() {
                         onChange={(e) => setManual(e.target.value)}
                         placeholder="e.g. 1,250"
                         inputMode="numeric"
-                        className="mt-2 w-full border border-ink/20 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3.5 font-mono text-xl text-ink dark:text-white focus:border-teal-700 focus:outline-none"
+                        className="mt-2 w-full border border-ink/20 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-3.5 font-mono text-xl text-ink dark:text-white focus:border-vivid focus:outline-none"
                       />
                     </div>
-                    <button type="submit" disabled={!manual} className="inline-flex w-full items-center justify-center gap-2 bg-teal-700 py-3.5 text-sm font-semibold text-white hover:bg-teal-800 disabled:opacity-30">
+                    <button type="submit" disabled={!manual} className="inline-flex w-full items-center justify-center gap-2 bg-vivid py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-30">
                       <Send className="h-4 w-4" /> Submit manual tasbīh
                     </button>
                   </form>
@@ -227,9 +227,9 @@ export default function EventDashboard() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="mt-5 flex items-center justify-center gap-2 border border-teal-500/30 bg-teal-50 dark:bg-teal-950/60 px-4 py-3 text-[13px] font-medium text-teal-800 dark:text-teal-200"
+                      className="mt-5 flex items-center justify-center gap-2 border border-vivid/30 bg-mist dark:bg-slate-800 px-4 py-3 text-[13px] font-medium text-pine dark:text-emerald-300"
                     >
-                      <CheckCircle2 className="h-4 w-4 text-teal-600" /> JazakAllah khair. Added to the worldwide total.
+                      <CheckCircle2 className="h-4 w-4 text-vivid" /> JazakAllah khair. Added to the worldwide total.
                     </motion.p>
                   )}
                 </AnimatePresence>

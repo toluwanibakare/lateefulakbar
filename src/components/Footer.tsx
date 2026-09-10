@@ -120,6 +120,7 @@ export default function Footer() {
                     ["Blog", "/blog"],
                     ["Prayer book", "/prayer-book"],
                     ["Live Stream", "/live"],
+                    ["Admin Console", "/admin"],
                   ].map(([label, href]) => (
                     <li key={href}>
                       <Link href={href} className="hover:text-emerald-300 transition-colors">
