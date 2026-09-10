@@ -57,7 +57,6 @@ export default function MediaAccreditationForm() {
     crewCount: "1",
     crewDetails: "",
     equipment: "",
-    mediaZone: "Yes",
     interviewAccess: "No",
     specialRequests: "",
     agreements: Array(COMPLIANCE_ITEMS.length).fill(false),
@@ -433,21 +432,7 @@ export default function MediaAccreditationForm() {
                           />
                         </div>
 
-                        <div>
-                          <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
-                            Require access to Media Zone?
-                          </label>
-                          <select
-                            value={form.mediaZone}
-                            onChange={(e) => set("mediaZone", e.target.value)}
-                            className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
-                          >
-                            <option value="Yes">Yes — Elevated Media Platform</option>
-                            <option value="No">No — General Press Area</option>
-                          </select>
-                        </div>
-
-                        <div>
+                        <div className="sm:col-span-2">
                           <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
                             Interview Access Required?
                           </label>
