@@ -128,7 +128,7 @@ export default function VenueMapAndRules() {
                   onClick={() => setFullscreenMap(true)}
                 >
                   <Image
-                    src={viewMode === "2d" ? "/assets/NADWAT 2D MAP.png" : "/assets/drone-wide.png"}
+                    src={viewMode === "2d" ? "/assets/NADWAT 2D MAP.png" : "/assets/lateefulakbar-poster.jpg"}
                     alt={
                       viewMode === "2d"
                         ? "Nadwat Official 2D Layout Map of Tafawa Balewa Square"
