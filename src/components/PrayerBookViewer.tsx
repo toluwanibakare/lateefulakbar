@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, FileText, Lock, Maximize2, Minimize2, SlidersHorizontal } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, HelpCircle, Lock, Maximize2, Minimize2, MoveVertical, SlidersHorizontal, X } from "lucide-react";
 import { Eyebrow, Reveal } from "./ui";
 
 const TOTAL_PAGES = 208;
@@ -13,6 +13,7 @@ export default function PrayerBookViewer() {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPage, setInputPage] = useState("1");
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showInstructionOverlay, setShowInstructionOverlay] = useState(false);
 
   const mainIframeRef = useRef<HTMLIFrameElement>(null);
   const modalIframeRef = useRef<HTMLIFrameElement>(null);
@@ -63,6 +64,7 @@ export default function PrayerBookViewer() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
+        setShowInstructionOverlay(false);
         setIsFullscreen(false);
       }
       if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "SELECT") return;
@@ -195,6 +197,15 @@ export default function PrayerBookViewer() {
               <div className="flex flex-col gap-2 pt-2">
                 <button
                   type="button"
+                  onClick={() => setShowInstructionOverlay(true)}
+                  className="flex w-full items-center justify-center gap-2 border border-ink/20 bg-white px-4 py-3 text-xs sm:text-sm font-semibold text-ink hover:bg-mist transition-all shadow-sm rounded-lg touch-manipulation min-h-[44px]"
+                >
+                  <HelpCircle className="h-4 w-4 text-pine" />
+                  <span>View Reader Controls & Guide</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => setIsFullscreen(true)}
                   className="flex w-full items-center justify-center gap-2 bg-pine px-4 py-3.5 text-xs sm:text-sm font-semibold text-white hover:bg-ink transition-all shadow-md rounded-lg touch-manipulation min-h-[44px]"
                 >
@@ -224,14 +235,26 @@ export default function PrayerBookViewer() {
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => setIsFullscreen(true)}
-                    className="inline-flex items-center justify-center gap-1.5 bg-vivid hover:bg-vivid-deep text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm touch-manipulation"
-                  >
-                    <Maximize2 className="h-3.5 w-3.5" />
-                    <span>Open Fullscreen</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowInstructionOverlay(true)}
+                      className="inline-flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all touch-manipulation"
+                    >
+                      <HelpCircle className="h-3.5 w-3.5 text-sage" />
+                      <span className="hidden sm:inline">Controls & Guide</span>
+                      <span className="inline sm:hidden">Guide</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsFullscreen(true)}
+                      className="inline-flex items-center justify-center gap-1.5 bg-vivid hover:bg-vivid-deep text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm touch-manipulation"
+                    >
+                      <Maximize2 className="h-3.5 w-3.5" />
+                      <span>Open Fullscreen</span>
+                    </button>
+                  </div>
                 </div>
 
                 {/* Page Number Pills Strip */}
@@ -264,6 +287,7 @@ export default function PrayerBookViewer() {
                   className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden"
                 >
                   <iframe
+                    key={`main-pdf-page-${currentPage}`}
                     ref={mainIframeRef}
                     src={pdfSrc}
                     className="w-full h-full border-0 select-none"
@@ -302,6 +326,82 @@ export default function PrayerBookViewer() {
           </div>
         </div>
       </div>
+
+      {/* Control Instructions Modal */}
+      <AnimatePresence>
+        {showInstructionOverlay && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowInstructionOverlay(false)}
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-ink/80 backdrop-blur-md p-4 cursor-pointer text-white"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-md w-full bg-pine border border-white/20 p-5 sm:p-8 rounded-2xl shadow-2xl text-center max-h-[90vh] overflow-y-auto"
+            >
+              <button
+                type="button"
+                onClick={() => setShowInstructionOverlay(false)}
+                className="absolute top-3.5 right-3.5 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 transition-colors"
+                aria-label="Close guide"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-vivid/20 border border-vivid/40">
+                <motion.div
+                  animate={{ y: [-8, 8, -8], opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="flex flex-col items-center text-sage"
+                >
+                  <ChevronLeft className="h-5 w-5 rotate-90" />
+                  <MoveVertical className="h-5 w-5 my-[-4px]" />
+                  <ChevronRight className="h-5 w-5 rotate-90" />
+                </motion.div>
+              </div>
+
+              <h3 className="font-display mt-4 text-xl sm:text-2xl font-light text-white tracking-tight">
+                Prayer Book Reader Controls
+              </h3>
+              <p className="mt-2 text-xs sm:text-sm leading-relaxed text-white/85">
+                Use these simple controls to read the official 208-page Asalatu Nadwat prayer book effortlessly:
+              </p>
+
+              <div className="mt-4 grid grid-cols-3 gap-2 text-left text-[10px] sm:text-[11px] border-t border-white/15 pt-3.5 text-white/80">
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-lg">👆</span>
+                  <span className="mt-1 font-semibold">Swipe / Scroll</span>
+                  <span className="text-[9px] text-white/60">inside PDF reader</span>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-lg">🔢</span>
+                  <span className="mt-1 font-semibold">Page Bar</span>
+                  <span className="text-[9px] text-white/60">tap page 1 to 208</span>
+                </div>
+                <div className="flex flex-col items-center text-center">
+                  <span className="text-lg">↔️</span>
+                  <span className="mt-1 font-semibold">Arrow Keys</span>
+                  <span className="text-[9px] text-white/60">left / right keys</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowInstructionOverlay(false)}
+                className="mt-5 w-full bg-vivid py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep transition-all shadow-lg touch-manipulation"
+              >
+                Got It — Start Reading
+              </button>
+              <p className="mt-2 text-[10px] text-white/50">Tap anywhere or press Esc to close</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Fullscreen PDF Modal */}
       <AnimatePresence>
@@ -384,6 +484,7 @@ export default function PrayerBookViewer() {
               className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none rounded-b-xl overflow-hidden"
             >
               <iframe
+                key={`modal-pdf-page-${currentPage}`}
                 ref={modalIframeRef}
                 src={pdfSrc}
                 className="w-full h-full border-0 select-none"
