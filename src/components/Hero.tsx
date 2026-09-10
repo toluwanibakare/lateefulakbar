@@ -115,10 +115,10 @@ export default function Hero() {
             </motion.div>
           </AnimatePresence>
         )}
-        {/* legibility veils - deep green kept over the images */}
-        <div className="absolute inset-0 bg-pine/35 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-pine/20" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/55 via-transparent to-transparent" />
+        {/* Deep dark emerald & obsidian veils for 100% text legibility */}
+        <div className="absolute inset-0 bg-black/65 backdrop-brightness-75" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#04120d] via-[#04120d]/85 to-[#04120d]/55" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#04120d]/90 via-[#04120d]/60 to-transparent" />
       </motion.div>
 
       {/* --- Foreground --- */}
@@ -131,7 +131,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9 }}
           lang="ar"
-          className="font-arabic text-xl text-white/85 sm:text-2xl"
+          className="font-arabic text-xl text-white sm:text-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]"
         >
           بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
         </motion.p>
@@ -140,7 +140,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.1 }}
-          className="mt-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-sage"
+          className="mt-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-emerald-300 drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]"
         >
           Nadwat Global Assembly presents
         </motion.p>
@@ -151,10 +151,10 @@ export default function Hero() {
           transition={{ duration: 1, delay: 0.18 }}
           className="font-display mt-3 max-w-full font-light tracking-tight leading-none"
         >
-          <span className="block whitespace-nowrap text-[clamp(1.25rem,5vw,4.5rem)] font-light leading-none">
+          <span className="block whitespace-nowrap text-[clamp(1.25rem,5vw,4.5rem)] font-light leading-none text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)]">
             Lateef ul-il-Akbar-Il-A’azam
           </span>
-          <span className="font-display mt-3 block text-[clamp(0.9rem,2.8vw,2rem)] font-light text-sage tracking-normal">
+          <span className="font-display mt-3 block text-[clamp(0.9rem,2.8vw,2rem)] font-light text-emerald-300 tracking-normal drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
             Yaa Lateef, The Most Kind
           </span>
         </motion.h1>
@@ -165,14 +165,14 @@ export default function Hero() {
           transition={{ duration: 0.9, delay: 0.32 }}
           className="mt-6 flex max-w-2xl flex-col gap-4"
         >
-          <p className="text-[15px] leading-relaxed text-white/85 sm:text-lg">
+          <p className="text-[15px] leading-relaxed text-white/95 sm:text-lg font-normal drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
             The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, Seeking Allah’s kindness in a unified tone.
           </p>
-          <p className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] font-medium tracking-wide text-white/80">
+          <p className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] font-medium tracking-wide text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
             <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-sage" /> {EVENT.venue}
+              <MapPin className="h-4 w-4 text-emerald-400" /> {EVENT.venue}
             </span>
-            <span className="hidden h-3 w-px bg-white/30 sm:block" aria-hidden />
+            <span className="hidden h-3 w-px bg-white/40 sm:block" aria-hidden />
             <span>{EVENT.dateLong}</span>
           </p>
         </motion.div>
