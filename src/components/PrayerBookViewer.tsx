@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, FileText, HelpCircle, Lock, Maximize2, Minimize2, MoveVertical, SlidersHorizontal, Touchpad, X } from "lucide-react";
@@ -109,6 +110,24 @@ export default function PrayerBookViewer() {
                 <p className="mt-4 sm:mt-5 text-sm sm:text-[15px] leading-relaxed text-faded">
                   Read the complete 208-page official Nadwat prayer book right inside your browser. Use the instant page flip controls, page input, or horizontal strip.
                 </p>
+              </Reveal>
+
+              {/* Prayer Book Cover Image Card */}
+              <Reveal delay={0.14}>
+                <div className="relative mt-5 overflow-hidden rounded-xl border border-ink/15 shadow-md group aspect-[3/4] max-w-[200px] sm:max-w-[220px]">
+                  <Image
+                    src="/assets/prayerbook_cover.png"
+                    alt="Asalatu Nadwat Prayer Book Cover"
+                    fill
+                    sizes="(max-width: 768px) 200px, 240px"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block">Prayer Book Cover</span>
+                    <span className="text-xs font-semibold text-white/90">208 Pages • Read-Only</span>
+                  </div>
+                </div>
               </Reveal>
 
               {/* Jump to Page Box */}

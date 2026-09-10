@@ -14,7 +14,7 @@ export default function PrayerBookPage() {
         title={<>Read the supplications here</>}
         arabic="بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ"
         intro="The official Nadwat prayer book, set for the screen. Arabic, transliteration and translation on every page — reading stays inside the site so the text keeps its accuracy."
-        image="/assets/crowd-54.jpg"
+        image="/assets/prayerbook_cover.png"
       />
       <PrayerBookViewer />
     </>
