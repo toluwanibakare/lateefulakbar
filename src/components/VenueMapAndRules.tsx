@@ -20,16 +20,6 @@ import {
 import { EVENT } from "@/lib/site";
 import { Eyebrow, FadeIn, TiltCard } from "./ui";
 
-const PINS = [
-  { id: "gate", name: "Main gate", x: "18%", y: "60%", text: "Accreditation and QR scanning. Arrive early." },
-  { id: "brothers", name: "Brothers canopy", x: "44%", y: "38%", text: "Ordered seating for men, stewarded by section." },
-  { id: "sisters", name: "Sisters canopy", x: "44%", y: "72%", text: "Ordered seating for women, with water points." },
-  { id: "stage", name: "Stage", x: "76%", y: "55%", text: "Convener, scholars and reciters. Restricted access." },
-  { id: "media", name: "Media zone", x: "64%", y: "28%", text: "Accredited cameras and the broadcast hub." },
-  { id: "parking", name: "Parking", x: "12%", y: "22%", text: "Perimeter lots only. Nothing parks inside the Bowl." },
-  { id: "medical", name: "Medical", x: "82%", y: "80%", text: "First aid, ambulance and help desk." },
-];
-
 const RULES = [
   { icon: ShieldCheck, t: "All white", d: "Clean, modest, all white attire for every attendee, in the Nadwat tradition." },
   { icon: Car, t: "No vehicles in the main Bowl", d: "All cars and buses use the perimeter lots outside the Square." },
@@ -41,7 +31,6 @@ const VENUE_LAT = 6.4475;
 const VENUE_LNG = 3.398;
 
 export default function VenueMapAndRules() {
-  const [pin, setPin] = useState("gate");
   const [openRule, setOpenRule] = useState<number | null>(0);
   const [dist, setDist] = useState<number | null>(null);
   const [viewMode, setViewMode] = useState<"2d" | "aerial">("2d");
@@ -64,8 +53,6 @@ export default function VenueMapAndRules() {
     );
   };
 
-  const current = PINS.find((p) => p.id === pin);
-
   return (
     <section id="venue" className="border-t border-ink/10 bg-cream">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
@@ -86,7 +73,7 @@ export default function VenueMapAndRules() {
         </div>
 
         <div className="mt-12 grid gap-8 lg:grid-cols-12">
-          {/* Left Column: Interactive Map Viewer */}
+          {/* Left Column: Map Viewer */}
           <div className="lg:col-span-7">
             <FadeIn direction="right">
               <TiltCard className="overflow-hidden border border-ink/15 bg-white shadow-lg">
@@ -153,40 +140,10 @@ export default function VenueMapAndRules() {
                     priority
                   />
 
-                  {/* Point of Interest Overlay Pins */}
-                  {PINS.map((p) => (
-                    <button
-                      key={p.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPin(p.id);
-                      }}
-                      style={{ left: p.x, top: p.y }}
-                      aria-label={p.name}
-                      className={`absolute flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 px-2.5 py-1 text-[11px] font-semibold transition-all shadow-md rounded-full ${
-                        pin === p.id
-                          ? "bg-vivid text-white scale-110 ring-2 ring-white z-20"
-                          : "bg-white/95 text-pine hover:bg-white z-10"
-                      }`}
-                    >
-                      <MapPin className="h-3.5 w-3.5" />
-                      <span className="hidden sm:inline">{p.name}</span>
-                    </button>
-                  ))}
-
                   <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1 text-[11px] text-white rounded">
                     Tap map to enlarge
                   </div>
                 </div>
-
-                {current && (
-                  <div className="flex items-center justify-between gap-4 border-t border-ink/10 px-5 py-4 bg-paper dark:bg-pine">
-                    <div>
-                      <p className="text-sm font-semibold text-ink">{current.name}</p>
-                      <p className="mt-0.5 text-[13px] text-faded">{current.text}</p>
-                    </div>
-                  </div>
-                )}
               </TiltCard>
             </FadeIn>
 
