@@ -50,35 +50,9 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Deep dark green closing statement with starlight twinkling stars */}
-      <div className="relative overflow-hidden bg-[#051a13] dark:bg-[#030f0b] text-white border-t border-emerald-500/20">
-        {/* Twinkling starlight background accents */}
-        <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="pattern-lattice-light absolute inset-0 opacity-20" />
-
-          {/* Ambient Glowing Stars */}
-          <div className="absolute top-10 left-[15%] h-1.5 w-1.5 rounded-full bg-emerald-300 animate-pulse shadow-[0_0_10px_#34d399]" />
-          <div
-            className="absolute top-24 right-[20%] h-2 w-2 rounded-full bg-amber-200 animate-ping shadow-[0_0_12px_#fbbf24]"
-            style={{ animationDuration: "3.5s" }}
-          />
-          <div
-            className="absolute bottom-32 left-[30%] h-1 w-1 rounded-full bg-white animate-pulse shadow-[0_0_8px_#ffffff]"
-            style={{ animationDuration: "2s" }}
-          />
-          <div
-            className="absolute top-1/2 right-[10%] h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_#34d399]"
-            style={{ animationDuration: "4s" }}
-          />
-          <div
-            className="absolute bottom-16 right-[38%] h-2 w-2 rounded-full bg-amber-300 animate-pulse shadow-[0_0_14px_#fbbf24]"
-            style={{ animationDuration: "2.8s" }}
-          />
-          <div
-            className="absolute top-12 left-[45%] h-1 w-1 rounded-full bg-emerald-200 animate-pulse shadow-[0_0_6px_#a7f3d0]"
-            style={{ animationDuration: "3.2s" }}
-          />
-        </div>
+      {/* Main footer content */}
+      <div className="relative overflow-hidden bg-[#0c4a34] dark:bg-[#030f0b] text-white border-t border-emerald-500/20">
+        <div className="pattern-lattice-light absolute inset-0 opacity-15 pointer-events-none" aria-hidden />
 
         <div className="relative mx-auto max-w-7xl px-5 pt-14 sm:px-6">
           <StaggerContainer staggerDelay={0.08} className="grid gap-10 pb-12 md:grid-cols-12">
