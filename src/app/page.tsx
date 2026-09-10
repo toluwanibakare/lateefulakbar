@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Heart, Users, MapPin, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Heart, Users, MapPin } from "lucide-react";
 import Hero from "@/components/Hero";
 import VenueMapAndRules from "@/components/VenueMapAndRules";
 import {

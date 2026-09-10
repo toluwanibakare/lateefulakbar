@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, CreditCard, Download, Layers, Lock, ShieldCheck, Sparkles, Store, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CreditCard, Download, Layers, Lock, ShieldCheck, Store, Zap } from "lucide-react";
 import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal, TiltCard } from "./ui";
 

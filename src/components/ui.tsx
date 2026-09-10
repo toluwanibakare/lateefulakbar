@@ -429,27 +429,27 @@ export function CountdownStrip({ dark = false }: { dark?: boolean }) {
   const cells = [
     { v: t.days, l: "Days" },
     { v: t.hours, l: "Hours" },
-    { v: t.minutes, l: "Minutes" },
-    { v: t.seconds, l: "Seconds" },
+    { v: t.minutes, l: "Mins" },
+    { v: t.seconds, l: "Secs" },
   ];
   return (
-    <div className={`flex items-stretch justify-start ${dark ? "text-white" : "text-ink"}`} aria-label="Countdown">
+    <div className={`flex w-full items-center justify-between ${dark ? "text-white" : "text-ink"}`} aria-label="Countdown">
       {cells.map((c, i) => (
-        <div key={c.l} className="flex items-center">
-          <div className="flex flex-col items-center justify-center px-4 sm:px-7 text-center min-w-[64px] sm:min-w-[84px]">
-            <span className="font-display text-4xl font-light tabular-nums sm:text-5xl leading-none">
+        <div key={c.l} className="flex flex-1 items-center justify-center">
+          <div className="flex flex-col items-center justify-center text-center px-1 sm:px-3">
+            <span className="font-display text-3xl sm:text-4xl lg:text-5xl font-light tabular-nums leading-none">
               {String(c.v).padStart(2, "0")}
             </span>
             <span
-              className={`mt-2 block text-[10px] font-semibold uppercase tracking-[0.22em] ${
-                dark ? "text-white/70" : "text-faded"
+              className={`mt-1.5 block text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.16em] sm:tracking-[0.2em] ${
+                dark ? "text-white/80" : "text-faded"
               }`}
             >
               {c.l}
             </span>
           </div>
           {i < cells.length - 1 && (
-            <span aria-hidden className={`h-10 w-px shrink-0 ${dark ? "bg-white/25" : "bg-ink/20"}`} />
+            <span aria-hidden className={`h-8 sm:h-10 w-px shrink-0 ${dark ? "bg-white/30" : "bg-ink/20"}`} />
           )}
         </div>
       ))}

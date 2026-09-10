@@ -137,8 +137,8 @@ export default function Navbar() {
               height={60}
               className={`h-7 w-auto min-w-0 object-contain sm:h-10 transition-all ${
                 solid
-                  ? "brightness-100 dark:brightness-0 dark:invert"
-                  : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
+                  ? "brightness-100 dark:brightness-110 dark:drop-shadow-[0_1px_6px_rgba(255,255,255,0.35)]"
+                  : "brightness-110 drop-shadow-[0_1px_8px_rgba(255,255,255,0.5)]"
               }`}
               priority
             />

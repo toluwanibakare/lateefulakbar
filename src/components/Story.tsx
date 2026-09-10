@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, Heart, Sparkles, Volume2, Users } from "lucide-react";
+import { ArrowRight, BookOpen, Heart, Volume2, Users } from "lucide-react";
 import { EVENT, PHOTOS } from "@/lib/site";
 import { AnimatedCounter, Eyebrow, FadeIn, Reveal, ScaleIn, StaggerContainer, StaggerItem, TiltCard } from "./ui";
 
@@ -76,7 +76,7 @@ const EXPECT = [
     img: "/assets/crowd-48.jpg",
   },
   {
-    icon: Sparkles,
+    icon: BookOpen,
     t: "Qur’anic Reflection & Guidance",
     d: "Short, weighty reminders between recitations. No noise — every word placed with care.",
     img: "/assets/crowd-54.jpg",

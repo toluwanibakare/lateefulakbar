@@ -14,7 +14,6 @@ import {
   Radio,
   Send,
   Shirt,
-  Sparkles,
   Ticket,
   User,
   X,
