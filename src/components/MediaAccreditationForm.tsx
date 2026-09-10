@@ -59,19 +59,12 @@ export default function MediaAccreditationForm() {
     equipment: "",
     interviewAccess: "No",
     specialRequests: "",
-    agreements: Array(COMPLIANCE_ITEMS.length).fill(false),
     declaration: false,
   });
 
   const set = (k: keyof typeof form, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
-  const toggleAgreement = (idx: number) => {
-    const next = [...form.agreements];
-    next[idx] = !next[idx];
-    set("agreements", next);
-  };
-
-  const allAgreed = form.agreements.every(Boolean) && form.declaration;
+  const allAgreed = form.declaration;
 
   const onLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -472,30 +465,26 @@ export default function MediaAccreditationForm() {
                       <h3 className="font-display text-2xl text-ink">Media Compliance & Guidelines Agreement</h3>
                       <p className="mt-1 text-sm text-faded">Please review and check all official press accreditation rules.</p>
 
-                      <div className="mt-6 space-y-3 border border-ink/15 bg-mist p-5 rounded-xl">
-                        {COMPLIANCE_ITEMS.map((item, idx) => (
-                          <label key={idx} className="flex items-start gap-3 cursor-pointer py-1.5 border-b border-ink/10 last:border-0">
+                      <div className="mt-6 border border-ink/15 bg-mist p-5 sm:p-6 rounded-xl space-y-5">
+                        <ul className="list-disc pl-5 space-y-2.5 text-xs text-ink leading-relaxed font-medium">
+                          {COMPLIANCE_ITEMS.map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+
+                        <div className="border-t border-ink/15 pt-4">
+                          <label className="flex items-start gap-3 cursor-pointer">
                             <input
                               type="checkbox"
-                              checked={form.agreements[idx]}
-                              onChange={() => toggleAgreement(idx)}
-                              className="mt-0.5 h-4 w-4 accent-vivid shrink-0"
+                              checked={form.declaration}
+                              onChange={(e) => set("declaration", e.target.checked)}
+                              className="mt-0.5 h-4 w-4 accent-vivid shrink-0 cursor-pointer"
                             />
-                            <span className="text-xs text-ink leading-relaxed font-medium">{item} *</span>
+                            <span className="text-xs font-bold text-pine leading-relaxed">
+                              Declaration: I confirm that all information provided is accurate and agree to abide by all the Lateeful Akbar Media Accreditation Guidelines and compliance rules listed above. *
+                            </span>
                           </label>
-                        ))}
-
-                        <label className="flex items-start gap-3 pt-3 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={form.declaration}
-                            onChange={(e) => set("declaration", e.target.checked)}
-                            className="mt-0.5 h-4 w-4 accent-vivid shrink-0"
-                          />
-                          <span className="text-xs font-bold text-pine leading-relaxed">
-                            Declaration: I confirm that the information provided is accurate and agree to abide by the Lateeful Akbar Media Accreditation Guidelines. *
-                          </span>
-                        </label>
+                        </div>
                       </div>
 
                       <div className="mt-8 flex items-center justify-between">
