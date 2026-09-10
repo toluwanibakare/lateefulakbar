@@ -19,12 +19,12 @@ type Campaign = {
 };
 
 const INITIAL: Campaign[] = [
-  { id: "mats", title: "Prayer mats", text: "Clean mats for the canopies, laid before dawn.", icon: Layers, image: "/assets/crowd-31.jpg", target: 1000, raised: 640, unit: "mats", unitPrice: 3500 },
-  { id: "water", title: "Water", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/crowd-08.jpg", target: 2000, raised: 1350, unit: "packs", unitPrice: 1500 },
-  { id: "cooling", title: "Cooling fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/crowd-52.jpg", target: 700, raised: 410, unit: "fans", unitPrice: 25000 },
-  { id: "internet", title: "Broadcast internet", text: "Uplink for the millions watching worldwide.", icon: Wifi, image: "/assets/crowd-11.jpg", target: 2000000, raised: 1450000 },
-  { id: "media", title: "Media facility", text: "Cameras, drone and livestream production.", icon: Video, image: "/assets/crowd-49.jpg", target: 3500000, raised: 2800000 },
-  { id: "tents", title: "Tents and canopy", text: "The great white canopies over the Square.", icon: Home, image: "/assets/drone-wide.png", target: 5000000, raised: 3200000 },
+  { id: "mats", title: "Prayer mats", text: "Clean mats for the canopies, laid before dawn.", icon: Layers, image: "/assets/praying_mat.jpeg", target: 1000, raised: 640, unit: "mats", unitPrice: 3500 },
+  { id: "water", title: "Water", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/donation-water.jpg", target: 2000, raised: 1350, unit: "packs", unitPrice: 1500 },
+  { id: "cooling", title: "Cooling fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 700, raised: 410, unit: "fans", unitPrice: 25000 },
+  { id: "internet", title: "Broadcast internet", text: "Uplink for the millions watching worldwide.", icon: Wifi, image: "/assets/donation-internet.jpg", target: 2000000, raised: 1450000 },
+  { id: "media", title: "Media facility", text: "Cameras, drone and livestream production.", icon: Video, image: "/assets/donation-media.jpg", target: 3500000, raised: 2800000 },
+  { id: "tents", title: "Tents and canopy", text: "The great white canopies over the Square.", icon: Home, image: "/assets/donation-tents.jpg", target: 5000000, raised: 3200000 },
 ];
 
 function fmt(n: number) {
@@ -95,35 +95,37 @@ export default function SadaqahGiving() {
                 const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
                 return (
                   <StaggerItem key={c.id}>
-                    <article className="group grid gap-4 py-5 sm:grid-cols-[112px_1fr_auto] sm:items-center transition-colors hover:bg-white/40 px-2 rounded-lg">
-                      <div className="relative hidden aspect-[4/3] overflow-hidden bg-mist sm:block rounded shadow-sm">
-                        <Image src={c.image} alt="" fill sizes="160px" className="img-true object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <c.icon className="h-4 w-4 text-fern" />
-                          <h3 className="text-[15px] font-semibold text-ink">{c.title}</h3>
-                          <span className="text-[11px] font-semibold text-fern">{pct}% funded</span>
+                    <article className="group flex flex-col xs:flex-row items-start xs:items-center justify-between gap-4 py-5 transition-colors hover:bg-white/40 px-2 rounded-lg">
+                      <div className="flex items-start xs:items-center gap-4 min-w-0 flex-1">
+                        <div className="relative aspect-[4/3] w-24 xs:w-28 sm:w-32 shrink-0 overflow-hidden bg-mist rounded-lg shadow-sm border border-ink/10">
+                          <Image src={c.image} alt={c.title} fill sizes="160px" className="img-true object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                         </div>
-                        <p className="mt-1 text-[13px] text-faded">{c.text}</p>
-                        <div className="mt-3 h-1.5 w-full bg-ink/10 rounded-full overflow-hidden">
-                          <motion.div
-                            initial={{ width: 0 }}
-                            whileInView={{ width: `${pct}%` }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 1, ease: "easeOut" }}
-                            className="h-full bg-vivid rounded-full"
-                          />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <c.icon className="h-4 w-4 text-fern shrink-0" />
+                            <h3 className="text-[15px] font-semibold text-ink truncate">{c.title}</h3>
+                            <span className="text-[11px] font-semibold text-fern shrink-0">{pct}% funded</span>
+                          </div>
+                          <p className="mt-1 text-[13px] text-faded leading-normal">{c.text}</p>
+                          <div className="mt-2.5 h-1.5 w-full bg-ink/10 rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${pct}%` }}
+                              viewport={{ once: true }}
+                              transition={{ duration: 1, ease: "easeOut" }}
+                              className="h-full bg-vivid rounded-full"
+                            />
+                          </div>
+                          <p className="mt-1.5 font-mono text-[11px] text-faded">
+                            {c.unit
+                              ? `${fmt(c.raised)} of ${fmt(c.target)} ${c.unit} - ₦${fmt(c.unitPrice!)} each`
+                              : `₦${fmt(c.raised)} of ₦${fmt(c.target)}`}
+                          </p>
                         </div>
-                        <p className="mt-1.5 font-mono text-[11px] text-faded">
-                          {c.unit
-                            ? `${fmt(c.raised)} of ${fmt(c.target)} ${c.unit} - ₦${fmt(c.unitPrice!)} each`
-                            : `₦${fmt(c.raised)} of ₦${fmt(c.target)}`}
-                        </p>
                       </div>
                       <button
                         onClick={() => { setOpen(c); setDone(false); }}
-                        className="h-fit shrink-0 border border-pine px-5 py-2.5 text-[13px] font-semibold text-pine transition-all hover:bg-vivid hover:text-white hover:shadow-md"
+                        className="h-fit shrink-0 border border-pine px-5 py-2.5 text-[13px] font-semibold text-pine transition-all hover:bg-vivid hover:text-white hover:shadow-md rounded-lg self-end xs:self-center"
                       >
                         Give
                       </button>
@@ -158,9 +160,14 @@ export default function SadaqahGiving() {
               {!done ? (
                 <form onSubmit={pay}>
                   <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Donate</p>
-                      <h3 className="font-display mt-1 text-2xl text-ink font-medium">{open.title}</h3>
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg border border-ink/10 shadow-sm bg-mist">
+                        <Image src={open.image} alt={open.title} fill className="object-cover" />
+                      </div>
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Donate</p>
+                        <h3 className="font-display mt-0.5 text-xl sm:text-2xl text-ink font-medium">{open.title}</h3>
+                      </div>
                     </div>
                     <button type="button" onClick={close} aria-label="Close" className="p-1 text-faded hover:text-ink">
                       <X className="h-5 w-5" />
