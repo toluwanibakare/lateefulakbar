@@ -433,23 +433,23 @@ export function CountdownStrip({ dark = false }: { dark?: boolean }) {
     { v: t.seconds, l: "Seconds" },
   ];
   return (
-    <div className={`flex items-stretch ${dark ? "text-white" : "text-ink"}`} aria-label="Countdown">
+    <div className={`flex items-stretch justify-start ${dark ? "text-white" : "text-ink"}`} aria-label="Countdown">
       {cells.map((c, i) => (
-        <div key={c.l} className="flex items-stretch">
-          <div className="flex flex-col items-start px-5 first:pl-0 last:pr-0 sm:px-7">
-            <span className="font-display text-4xl font-light tabular-nums sm:text-5xl">
+        <div key={c.l} className="flex items-center">
+          <div className="flex flex-col items-center justify-center px-4 sm:px-7 text-center min-w-[64px] sm:min-w-[84px]">
+            <span className="font-display text-4xl font-light tabular-nums sm:text-5xl leading-none">
               {String(c.v).padStart(2, "0")}
             </span>
             <span
-              className={`mt-1 text-[10px] font-semibold uppercase tracking-[0.24em] ${
-                dark ? "text-white/60" : "text-faded"
+              className={`mt-2 block text-[10px] font-semibold uppercase tracking-[0.22em] ${
+                dark ? "text-white/70" : "text-faded"
               }`}
             >
               {c.l}
             </span>
           </div>
           {i < cells.length - 1 && (
-            <span aria-hidden className={`w-px self-stretch ${dark ? "bg-white/20" : "bg-ink/15"}`} />
+            <span aria-hidden className={`h-10 w-px shrink-0 ${dark ? "bg-white/25" : "bg-ink/20"}`} />
           )}
         </div>
       ))}
