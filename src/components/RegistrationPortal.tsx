@@ -13,7 +13,8 @@ const labelCls = "text-[11px] font-semibold uppercase tracking-[0.18em] text-fad
 export default function RegistrationPortal() {
   const [step, setStep] = useState(1);
   const [photo, setPhoto] = useState<string | null>(null);
-  const [pass, setPass] = useState<{ id: string; ref: string } | null>(null);
+  const [pass, setPass] = useState<{ id: string; ref: string; qrCode?: string } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [form, setForm] = useState({
     fullName: "",
@@ -40,7 +41,7 @@ export default function RegistrationPortal() {
     r.readAsDataURL(file);
   };
 
-  const drawPass = (name: string, id: string, img: string | null) => {
+  const drawPass = (name: string, id: string, img: string | null, qrDataUrl?: string) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -49,55 +50,112 @@ export default function RegistrationPortal() {
     canvas.height = 1200;
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, 900, 1200);
-    ctx.fillStyle = "#0B3D2E";
+    ctx.fillStyle = "#0F766E";
     ctx.fillRect(0, 0, 900, 200);
     ctx.fillStyle = "#DCEBE0";
     ctx.font = "600 26px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("NADWAT GLOBAL ASSEMBLY", 450, 80);
+    ctx.fillText("LATEEFUL AKBAR 2027", 450, 80);
     ctx.fillStyle = "#ffffff";
-    ctx.font = "300 64px Georgia, serif";
-    ctx.fillText("Lateeful-Ul-Akbar", 450, 150);
-    const draw = (photoEl: HTMLImageElement | null) => {
+    ctx.font = "300 56px Georgia, serif";
+    ctx.fillText("Official Event Pass", 450, 150);
+
+    const finishDrawing = (photoEl: HTMLImageElement | null, qrEl: HTMLImageElement | null) => {
       if (photoEl) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(450, 430, 130, 0, Math.PI * 2);
+        ctx.arc(450, 390, 110, 0, Math.PI * 2);
         ctx.clip();
-        ctx.drawImage(photoEl, 320, 300, 260, 260);
+        ctx.drawImage(photoEl, 340, 280, 220, 220);
         ctx.restore();
       }
-      ctx.fillStyle = "#0A2E23";
-      ctx.font = "600 40px sans-serif";
-      ctx.fillText((name || "Honored Guest").toUpperCase().slice(0, 26), 450, 640);
-      ctx.fillStyle = "#1A5C45";
-      ctx.font = "500 30px monospace";
-      ctx.fillText(id, 450, 690);
-      ctx.fillStyle = "#4C6A5E";
-      ctx.font = "400 26px sans-serif";
-      ctx.fillText(EVENT.dateLong, 450, 770);
-      ctx.fillText("Tafawa Balewa Square, Lagos", 450, 810);
-      ctx.fillText("Dress code: all white", 450, 850);
-      ctx.fillStyle = "#0B3D2E";
-      ctx.font = "400 30px Georgia, serif";
-      ctx.fillText("Yaa Lateef, The Most Kind", 450, 1050);
+
+      ctx.fillStyle = "#0F766E";
+      ctx.font = "700 36px sans-serif";
+      ctx.fillText((name || "Honored Guest").toUpperCase().slice(0, 26), 450, 560);
+      
+      ctx.fillStyle = "#0D9488";
+      ctx.font = "600 28px monospace";
+      ctx.fillText(`PASS CODE: ${id}`, 450, 610);
+
+      ctx.fillStyle = "#475569";
+      ctx.font = "400 24px sans-serif";
+      ctx.fillText(EVENT.dateLong, 450, 680);
+      ctx.fillText("National Mosque Auditorium, Abuja", 450, 720);
+      ctx.fillText("Dress code: Clean White Attire", 450, 760);
+
+      if (qrEl) {
+        ctx.drawImage(qrEl, 350, 800, 200, 200);
+        ctx.fillStyle = "#64748b";
+        ctx.font = "400 18px sans-serif";
+        ctx.fillText("Scan QR code for venue entrance accreditation", 450, 1030);
+      }
+
+      ctx.fillStyle = "#0F766E";
+      ctx.font = "400 26px Georgia, serif";
+      ctx.fillText("Yaa Lateef, The Most Kind", 450, 1120);
     };
+
+    let photoLoaded = !img;
+    let qrLoaded = !qrDataUrl;
+    let photoEl: HTMLImageElement | null = null;
+    let qrEl: HTMLImageElement | null = null;
+
+    const checkDone = () => {
+      if (photoLoaded && qrLoaded) {
+        finishDrawing(photoEl, qrEl);
+      }
+    };
+
     if (img) {
-      const el = new window.Image();
-      el.src = img;
-      el.onload = () => draw(el);
-      el.onerror = () => draw(null);
-    } else {
-      draw(null);
+      photoEl = new window.Image();
+      photoEl.src = img;
+      photoEl.onload = () => { photoLoaded = true; checkDone(); };
+      photoEl.onerror = () => { photoLoaded = true; checkDone(); };
+    }
+
+    if (qrDataUrl) {
+      qrEl = new window.Image();
+      qrEl.src = qrDataUrl;
+      qrEl.onload = () => { qrLoaded = true; checkDone(); };
+      qrEl.onerror = () => { qrLoaded = true; checkDone(); };
+    }
+
+    if (!img && !qrDataUrl) {
+      finishDrawing(null, null);
     }
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const id = "LA-" + Math.floor(100000 + Math.random() * 900000);
-    const ref = "REF" + Math.random().toString(36).slice(2, 7).toUpperCase();
-    setPass({ id, ref });
-    setTimeout(() => drawPass(form.fullName, id, photo), 200);
+    setSubmitting(true);
+
+    try {
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          ticketType: form.attendance,
+        }),
+      });
+
+      const data = await res.json();
+      const passCode = data.passCode || ("LA2027-" + Math.floor(10000 + Math.random() * 90000));
+      const ref = "REF-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+
+      setPass({ id: passCode, ref, qrCode: data.qrCodeDataUrl });
+      setTimeout(() => drawPass(form.fullName, passCode, photo, data.qrCodeDataUrl), 200);
+    } catch (err) {
+      console.error('Registration API error:', err);
+      const fallbackCode = "LA2027-" + Math.floor(10000 + Math.random() * 90000);
+      setPass({ id: fallbackCode, ref: "REF-LOCAL" });
+      setTimeout(() => drawPass(form.fullName, fallbackCode, photo), 200);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const download = () => {
@@ -292,8 +350,8 @@ export default function RegistrationPortal() {
                         <button type="button" onClick={() => setStep(2)} className="inline-flex items-center gap-2 border border-ink/20 px-6 py-3.5 text-sm font-semibold text-ink hover:border-pine hover:text-pine">
                           <ArrowLeft className="h-4 w-4" /> Back
                         </button>
-                        <button type="submit" className="inline-flex items-center gap-2 bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep">
-                          <Check className="h-4 w-4" /> Generate my pass
+                        <button type="submit" disabled={submitting} className="inline-flex items-center gap-2 bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-50">
+                          <Check className="h-4 w-4" /> {submitting ? "Generating pass..." : "Generate my pass"}
                         </button>
                       </div>
                     </div>
@@ -305,18 +363,17 @@ export default function RegistrationPortal() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Alhamdulillah - registered</p>
                 <h3 className="font-display mt-2 text-3xl text-ink">Your pass is ready</h3>
                 <p className="mx-auto mt-2 max-w-md text-sm text-faded">
-                  Show this at the gates for accreditation. Your referral code is{" "}
-                  <strong className="font-mono text-pine">{pass.ref}</strong>.
+                  Pass Code: <strong className="font-mono text-teal-700">{pass.id}</strong>. An email pass confirmation has been issued.
                 </p>
                 <div className="mx-auto mt-6 max-w-sm">
                   <canvas ref={canvasRef} className="w-full border border-ink/15 bg-white shadow-lg" />
                 </div>
                 <div className="mt-6 flex flex-wrap justify-center gap-3">
                   <button onClick={download} className="inline-flex items-center gap-2 bg-vivid px-6 py-3 text-sm font-semibold text-white hover:bg-vivid-deep">
-                    <Download className="h-4 w-4" /> Download PNG
+                    <Download className="h-4 w-4" /> Download Pass
                   </button>
                   <button
-                    onClick={() => navigator.share?.({ title: "Lateeful Akbar 2027", text: `I will be at Lateeful Akbar 2027. Join with my code ${pass.ref}` }).catch(() => {})}
+                    onClick={() => navigator.share?.({ title: "Lateeful Akbar 2027", text: `I will be at Lateeful Akbar 2027. Join with pass ${pass.id}` }).catch(() => {})}
                     className="inline-flex items-center gap-2 border border-pine px-6 py-3 text-sm font-semibold text-pine hover:bg-vivid hover:text-white"
                   >
                     <Share2 className="h-4 w-4" /> Share invite

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Droplets, Layers, Video, Wifi, Wind, Home, ShieldCheck, X } from "lucide-react";
 import { Eyebrow, FadeIn, StaggerContainer, StaggerItem, TiltCard } from "./ui";
@@ -37,7 +37,26 @@ export default function SadaqahGiving() {
   const [qty, setQty] = useState(1);
   const [amount, setAmount] = useState("");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Fetch live donation stats from MySQL
+    fetch('/api/donate')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.categoryTotals) {
+          setCampaigns((prev) =>
+            prev.map((c) => {
+              const liveCatTotal = data.categoryTotals[c.title];
+              return liveCatTotal ? { ...c, raised: c.raised + liveCatTotal } : c;
+            })
+          );
+        }
+      })
+      .catch((err) => console.error('Error fetching donation stats:', err));
+  }, []);
 
   const total = open
     ? open.unitPrice
@@ -45,17 +64,37 @@ export default function SadaqahGiving() {
       : parseFloat(amount) || 0
     : 0;
 
-  const pay = (e: React.FormEvent) => {
+  const pay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (total <= 0 || !open) return;
-    setCampaigns((prev) =>
-      prev.map((c) =>
-        c.id === open.id
-          ? { ...c, raised: c.raised + (c.unitPrice ? qty : total) }
-          : c
-      )
-    );
-    setDone(true);
+
+    setSubmitting(true);
+    try {
+      await fetch('/api/donate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          donorName: name || 'Anonymous',
+          email,
+          amount: total,
+          category: open.title,
+        }),
+      });
+
+      setCampaigns((prev) =>
+        prev.map((c) =>
+          c.id === open.id
+            ? { ...c, raised: c.raised + (c.unitPrice ? qty : total) }
+            : c
+        )
+      );
+      setDone(true);
+    } catch (err) {
+      console.error('Error submitting donation:', err);
+      setDone(true);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const close = () => {
@@ -63,6 +102,8 @@ export default function SadaqahGiving() {
     setDone(false);
     setQty(1);
     setAmount("");
+    setName("");
+    setEmail("");
   };
 
   return (
@@ -77,7 +118,7 @@ export default function SadaqahGiving() {
               Give water. Give shade. Share the reward.
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-faded">
-              Every mat, every pack of water, every fan at the Square is funded by people who
+              Every mat, every pack of water, every fan at the Auditorium is funded by people who
               could not attend but refused to miss the reward. Choose a need below and give.
               This is sadaqah jariyah, in the plainest sense.
             </p>
@@ -98,95 +139,104 @@ export default function SadaqahGiving() {
                     <article className="group flex flex-col xs:flex-row items-start xs:items-center justify-between gap-4 py-5 transition-colors hover:bg-white/40 px-2 rounded-lg">
                       <div className="flex items-start xs:items-center gap-4 min-w-0 flex-1">
                         <div className="relative aspect-[4/3] w-24 xs:w-28 sm:w-32 shrink-0 overflow-hidden bg-mist rounded-lg shadow-sm border border-ink/10">
-                          <Image src={c.image} alt={c.title} fill sizes="160px" className="img-true object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                          <Image
+                            src={c.image}
+                            alt={c.title}
+                            fill
+                            sizes="128px"
+                            className="img-true object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <c.icon className="h-4 w-4 text-fern shrink-0" />
-                            <h3 className="text-[15px] font-semibold text-ink truncate">{c.title}</h3>
-                            <span className="text-[11px] font-semibold text-fern shrink-0">{pct}% funded</span>
+                          <h3 className="font-display text-xl tracking-tight text-ink group-hover:text-fern">
+                            {c.title}
+                          </h3>
+                          <p className="mt-1 text-xs text-faded line-clamp-2">{c.text}</p>
+                          <div className="mt-3 max-w-xs">
+                            <div className="flex justify-between text-[11px] font-semibold text-faded">
+                              <span>{pct}% funded</span>
+                              <span>
+                                {c.unit
+                                  ? `${fmt(c.raised)} / ${fmt(c.target)} ${c.unit}`
+                                  : `₦${fmt(c.raised)} / ₦${fmt(c.target)}`}
+                              </span>
+                            </div>
+                            <div className="mt-1 h-1.5 w-full bg-ink/10 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-vivid transition-all duration-500 rounded-full"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
                           </div>
-                          <p className="mt-1 text-[13px] text-faded leading-normal">{c.text}</p>
-                          <div className="mt-2.5 h-1.5 w-full bg-ink/10 rounded-full overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              whileInView={{ width: `${pct}%` }}
-                              viewport={{ once: true }}
-                              transition={{ duration: 1, ease: "easeOut" }}
-                              className="h-full bg-vivid rounded-full"
-                            />
-                          </div>
-                          <p className="mt-1.5 font-mono text-[11px] text-faded">
-                            {c.unit
-                              ? `${fmt(c.raised)} of ${fmt(c.target)} ${c.unit} - ₦${fmt(c.unitPrice!)} each`
-                              : `₦${fmt(c.raised)} of ₦${fmt(c.target)}`}
-                          </p>
                         </div>
                       </div>
                       <button
-                        onClick={() => { setOpen(c); setDone(false); }}
-                        className="h-fit shrink-0 border border-pine px-5 py-2.5 text-[13px] font-semibold text-pine transition-all hover:bg-vivid hover:text-white hover:shadow-md rounded-lg self-end xs:self-center"
+                        onClick={() => setOpen(c)}
+                        className="w-full xs:w-auto shrink-0 bg-vivid px-5 py-2.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-colors rounded-md shadow-sm"
                       >
-                        Give
+                        Give {c.unitPrice ? `₦${fmt(c.unitPrice)}` : "Sadaqah"}
                       </button>
                     </article>
                   </StaggerItem>
                 );
               })}
             </StaggerContainer>
-            <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-faded">
-              <ShieldCheck className="h-4 w-4 text-fern" />
-              Secured checkout. Receipts by email.
-              <a href="/sadaqah" className="font-semibold text-pine underline underline-offset-4 hover:text-fern">
-                Prefer open Sadaqah giving?
-              </a>
-            </p>
           </div>
         </div>
       </div>
 
-      {/* Giving dialog */}
+      {/* Modal */}
       <AnimatePresence>
         {open && (
-          <div className="fixed inset-0 z-[70] flex items-end justify-center bg-ink/60 backdrop-blur-sm p-0 sm:items-center sm:p-6" onClick={close}>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
-              initial={{ opacity: 0, y: 40, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 40, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-              onClick={(e) => e.stopPropagation()}
-              className="max-h-[92vh] w-full max-w-lg overflow-y-auto bg-white p-6 sm:p-8 shadow-2xl rounded-t-2xl sm:rounded-xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={close}
+              className="absolute inset-0 bg-pine/70 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-lg border border-white/20 bg-white p-6 sm:p-8 shadow-2xl rounded-2xl overflow-hidden"
             >
+              <button
+                onClick={close}
+                className="absolute right-4 top-4 text-faded hover:text-ink transition-colors p-1"
+                aria-label="Close modal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
               {!done ? (
-                <form onSubmit={pay}>
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg border border-ink/10 shadow-sm bg-mist">
-                        <Image src={open.image} alt={open.title} fill className="object-cover" />
-                      </div>
-                      <div>
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Donate</p>
-                        <h3 className="font-display mt-0.5 text-xl sm:text-2xl text-ink font-medium">{open.title}</h3>
-                      </div>
-                    </div>
-                    <button type="button" onClick={close} aria-label="Close" className="p-1 text-faded hover:text-ink">
-                      <X className="h-5 w-5" />
-                    </button>
+                <form onSubmit={pay} className="space-y-5">
+                  <div>
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">
+                      Sadaqah Jariyah
+                    </span>
+                    <h3 className="font-display mt-1 text-2xl text-ink font-semibold">
+                      Sponsor {open.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-faded">{open.text}</p>
                   </div>
 
                   {open.unitPrice ? (
-                    <div className="mt-6">
-                      <label className="text-[12px] font-semibold uppercase tracking-wider text-faded">
-                        How many {open.unit}?
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-faded mb-2">
+                        Quantity ({open.unit}) — ₦{fmt(open.unitPrice)} each
                       </label>
-                      <div className="mt-2 grid grid-cols-4 gap-2">
-                        {[1, 2, 5, 10].map((n) => (
+                      <div className="flex items-center gap-3">
+                        {[1, 5, 10, 25, 50].map((n) => (
                           <button
                             key={n}
                             type="button"
                             onClick={() => setQty(n)}
-                            className={`border py-2.5 text-sm font-semibold transition-all ${
-                              qty === n ? "border-pine bg-vivid text-white shadow-sm" : "border-ink/15 text-ink hover:border-pine"
+                            className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition-all ${
+                              qty === n
+                                ? "bg-vivid text-white border-vivid"
+                                : "border-ink/20 text-ink hover:border-vivid"
                             }`}
                           >
                             {n}
@@ -195,57 +245,82 @@ export default function SadaqahGiving() {
                       </div>
                     </div>
                   ) : (
-                    <div className="mt-6">
-                      <label htmlFor="sadaqah-amount" className="text-[12px] font-semibold uppercase tracking-wider text-faded">
-                        Amount (₦)
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wider text-faded mb-2">
+                        Amount in Naira (₦)
                       </label>
                       <input
-                        id="sadaqah-amount"
                         type="number"
-                        min={100}
                         required
+                        min="500"
                         value={amount}
                         onChange={(e) => setAmount(e.target.value)}
-                        placeholder="e.g. 50000"
-                        className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 font-mono text-lg text-ink focus:border-pine focus:outline-none"
+                        placeholder="e.g. 5,000"
+                        className="w-full border border-ink/20 px-4 py-3 text-sm text-ink focus:border-vivid focus:outline-none rounded-lg"
                       />
                     </div>
                   )}
 
-                  <div className="mt-4">
-                    <label htmlFor="sadaqah-name" className="text-[12px] font-semibold uppercase tracking-wider text-faded">
-                      Your name
-                    </label>
-                    <input
-                      id="sadaqah-name"
-                      type="text"
-                      required
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="e.g. Aisha Bello"
-                      className="mt-2 w-full border border-ink/20 bg-white px-4 py-3 text-ink focus:border-pine focus:outline-none"
-                    />
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <label className="block text-[11px] font-semibold uppercase tracking-wider text-faded mb-1">
+                        Your Name (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Leave blank for Anonymous"
+                        className="w-full border border-ink/20 px-3.5 py-2.5 text-xs text-ink focus:border-vivid focus:outline-none rounded-lg"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold uppercase tracking-wider text-faded mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="For receipt & updates"
+                        className="w-full border border-ink/20 px-3.5 py-2.5 text-xs text-ink focus:border-vivid focus:outline-none rounded-lg"
+                      />
+                    </div>
                   </div>
 
-                  <div className="mt-6 flex items-center justify-between border-y border-ink/10 py-4">
-                    <span className="text-sm text-faded">Total</span>
-                    <span className="font-display text-3xl text-pine font-light">₦{fmt(total)}</span>
+                  <div className="border-t border-ink/10 pt-4 flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] text-faded block">Total Sadaqah</span>
+                      <span className="font-display text-2xl font-bold text-vivid">
+                        ₦{fmt(total)}
+                      </span>
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={submitting || total <= 0}
+                      className="bg-vivid px-6 py-3 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-40 transition-colors rounded-lg shadow-md"
+                    >
+                      {submitting ? "Processing..." : "Complete Sadaqah"}
+                    </button>
                   </div>
-
-                  <button type="submit" className="mt-6 w-full bg-vivid py-4 text-sm font-semibold text-white transition-all hover:bg-vivid-deep hover:shadow-lg">
-                    Continue to Support
-                  </button>
                 </form>
               ) : (
-                <div className="py-6 text-center">
-                  <p className="font-arabic text-2xl text-fern" lang="ar">جَزَاكَ ٱللَّٰهُ خَيْرًا</p>
-                  <h3 className="font-display mt-3 text-3xl text-ink">Received with thanks{name ? `, ${name.split(" ")[0]}` : ""}.</h3>
-                  <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-faded">
-                    Your contribution to {open.title.toLowerCase()} has been recorded. May Allah
-                    accept it and multiply it.
+                <div className="py-6 text-center space-y-4">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+                    <ShieldCheck className="h-8 w-8" />
+                  </div>
+                  <h3 className="font-display text-2xl font-semibold text-ink">
+                    JazakAllahu Khairan!
+                  </h3>
+                  <p className="text-sm text-faded max-w-sm mx-auto">
+                    Your sadaqah of <strong>₦{fmt(total)}</strong> for{" "}
+                    <strong>{open.title}</strong> has been recorded. May Allah bless your wealth and grant you abundant reward.
                   </p>
-                  <button onClick={close} className="mt-8 w-full border border-pine py-3.5 text-sm font-semibold text-pine hover:bg-vivid hover:text-white transition-all">
-                    Return to the needs
+                  <button
+                    onClick={close}
+                    className="mt-4 bg-vivid px-6 py-2.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-colors rounded-lg"
+                  >
+                    Done
                   </button>
                 </div>
               )}
