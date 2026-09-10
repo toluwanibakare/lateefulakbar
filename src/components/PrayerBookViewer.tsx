@@ -103,10 +103,160 @@ export default function PrayerBookViewer() {
 
   return (
     <section id="prayer-book" className="border-t border-ink/10 bg-cream">
-      <div className="mx-auto max-w-7xl px-3.5 py-8 xs:px-5 sm:px-6 sm:py-16 md:py-24">
+      <div className="mx-auto max-w-7xl px-3.5 py-6 xs:px-5 sm:px-6 sm:py-16 md:py-24">
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-10">
-          {/* Left Sidebar Controls */}
-          <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
+          
+          {/* Main Embedded PDF Viewer — Order 1 on Mobile */}
+          <div className="order-1 lg:order-2 lg:col-span-8">
+            <Reveal delay={0.1}>
+              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between h-[62vh] min-h-[440px] xs:h-[68vh] sm:h-[720px] lg:h-[780px]">
+                
+                {/* Header Toolbar */}
+                <div className="bg-pine text-white px-3.5 py-3 xs:px-5 sm:px-6 sm:py-4 flex flex-wrap items-center justify-between gap-2.5 border-b border-white/10 shrink-0">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
+                    <div>
+                      <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-sage block leading-none">
+                        Official PDF Reader
+                      </span>
+                      <span className="text-[10px] sm:text-[11px] text-white/70 font-mono mt-0.5 block">
+                        Page {currentPage} of {TOTAL_PAGES}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowInstructionOverlay(true)}
+                      className="inline-flex items-center justify-center gap-1 bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all touch-manipulation min-h-[34px]"
+                    >
+                      <HelpCircle className="h-3.5 w-3.5 text-sage" />
+                      <span className="hidden xs:inline">Guide</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsFullscreen(true)}
+                      className="inline-flex items-center justify-center gap-1 bg-vivid hover:bg-vivid-deep text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm touch-manipulation min-h-[34px]"
+                    >
+                      <Maximize2 className="h-3.5 w-3.5" />
+                      <span className="hidden xs:inline">Fullscreen</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Page Number Pills Strip */}
+                <div className="border-b border-ink/10 bg-mist px-2.5 py-1.5 sm:px-4 flex items-center gap-2 shrink-0">
+                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-faded shrink-0">
+                    Page:
+                  </span>
+                  <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full touch-pan-x">
+                    {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
+                      <button
+                        type="button"
+                        key={p}
+                        ref={currentPage === p ? activeBtnRef : null}
+                        onClick={(e) => { e.preventDefault(); goToPage(p); }}
+                        className={`h-7 min-w-7 sm:h-7 sm:min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 touch-manipulation ${
+                          currentPage === p
+                            ? "bg-vivid text-white font-bold scale-105 shadow-sm"
+                            : "bg-white text-ink/70 hover:bg-pine/10 hover:text-pine border border-ink/10"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* PDF Content Area */}
+                <div
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden"
+                >
+                  <AnimatePresence>
+                    {isPageLoading && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-md text-white pointer-events-none"
+                      >
+                        <div className="relative flex items-center justify-center">
+                          <motion.div
+                            animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.8, 0.3] }}
+                            transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute h-16 w-16 rounded-full bg-emerald-500/20 border border-emerald-400/40"
+                          />
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+                            className="h-10 w-10 rounded-full border-2 border-emerald-500/30 border-t-emerald-400 border-r-emerald-400"
+                          />
+                        </div>
+
+                        <motion.div
+                          initial={{ y: 5, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          className="mt-4 flex flex-col items-center text-center px-4"
+                        >
+                          <span className="text-xs sm:text-sm font-semibold tracking-widest uppercase text-emerald-400 font-mono">
+                            Loading Page {currentPage}
+                          </span>
+                          <span className="mt-1 text-[11px] text-white/60">
+                            Asalatu Nadwat Prayer Book
+                          </span>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  <iframe
+                    key={`main-pdf-page-${currentPage}`}
+                    ref={mainIframeRef}
+                    src={pdfSrc}
+                    onLoad={() => setIsPageLoading(false)}
+                    className="w-full h-full border-0 select-none"
+                    title="Asalatu Nadwat PDF Page Viewer"
+                  />
+                </div>
+
+                {/* Bottom Navigation Control Bar */}
+                <div className="bg-cream border-t border-ink/10 px-3 py-2.5 xs:px-4 xs:py-3.5 sm:px-6 sm:py-4 flex items-center justify-between gap-2 text-xs shrink-0">
+                  <button
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); goToPage(currentPage - 1); }}
+                    disabled={currentPage <= 1}
+                    className="inline-flex items-center gap-1 bg-white border border-ink/20 px-3 py-2 sm:px-4 font-semibold text-ink rounded-lg disabled:opacity-30 touch-manipulation hover:bg-mist transition-all shadow-sm min-h-[38px]"
+                  >
+                    <ChevronLeft className="h-4 w-4 text-pine" />
+                    <span className="hidden xs:inline">Previous</span>
+                    <span className="hidden sm:inline">Page</span>
+                  </button>
+
+                  <div className="font-mono text-xs font-semibold text-pine bg-pine/10 px-2.5 py-1.5 rounded-full">
+                    Page <strong className="text-pine">{currentPage}</strong> / {TOTAL_PAGES}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); goToPage(currentPage + 1); }}
+                    disabled={currentPage >= TOTAL_PAGES}
+                    className="inline-flex items-center gap-1 bg-vivid px-3 py-2 sm:px-4 font-semibold text-white rounded-lg disabled:opacity-30 touch-manipulation hover:bg-vivid-deep transition-all shadow-sm min-h-[38px]"
+                  >
+                    <span className="hidden xs:inline">Next</span>
+                    <span className="hidden sm:inline">Page</span>
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+
+          {/* Left Sidebar Controls — Order 2 on Mobile */}
+          <div className="order-2 lg:order-1 lg:col-span-4 flex flex-col justify-between space-y-6">
             <div>
               <Reveal>
                 <Eyebrow>09 — Prayer book</Eyebrow>
@@ -123,7 +273,7 @@ export default function PrayerBookViewer() {
               </Reveal>
 
               <Reveal delay={0.14}>
-                <div className="relative mt-4 overflow-hidden rounded-xl border border-ink/15 shadow-md group aspect-[3/4] max-w-[180px] xs:max-w-[200px] sm:max-w-[220px] mx-auto lg:mx-0">
+                <div className="relative mt-4 overflow-hidden rounded-xl border border-ink/15 shadow-md group aspect-[3/4] max-w-[160px] xs:max-w-[190px] sm:max-w-[220px] mx-auto lg:mx-0">
                   <Image
                     src="/assets/prayerbook_cover.png"
                     alt="Asalatu Nadwat Prayer Book Cover"
@@ -229,153 +379,6 @@ export default function PrayerBookViewer() {
             </Reveal>
           </div>
 
-          {/* Main Embedded PDF Viewer */}
-          <div className="lg:col-span-8">
-            <Reveal delay={0.1}>
-              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between h-[580px] xs:h-[650px] sm:h-[720px] md:h-[780px]">
-                
-                {/* Header Toolbar */}
-                <div className="bg-pine text-white px-4 py-3 sm:px-6 sm:py-4 flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-3 border-b border-white/10 shrink-0">
-                  <div className="flex items-center gap-2.5">
-                    <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
-                    <div>
-                      <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-sage block">
-                        Official PDF Reader
-                      </span>
-                      <span className="text-[11px] text-white/70 font-mono">
-                        Page {currentPage} of {TOTAL_PAGES}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowInstructionOverlay(true)}
-                      className="inline-flex items-center justify-center gap-1.5 bg-white/10 hover:bg-white/20 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all touch-manipulation"
-                    >
-                      <HelpCircle className="h-3.5 w-3.5 text-sage" />
-                      <span className="hidden sm:inline">Controls & Guide</span>
-                      <span className="inline sm:hidden">Guide</span>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setIsFullscreen(true)}
-                      className="inline-flex items-center justify-center gap-1.5 bg-vivid hover:bg-vivid-deep text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm touch-manipulation"
-                    >
-                      <Maximize2 className="h-3.5 w-3.5" />
-                      <span>Open Fullscreen</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Page Number Pills Strip */}
-                <div className="border-b border-ink/10 bg-mist px-3 py-2 sm:px-4 flex items-center gap-2 shrink-0">
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-faded shrink-0">
-                    Pages:
-                  </span>
-                  <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full touch-pan-x">
-                    {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
-                      <button
-                        type="button"
-                        key={p}
-                        ref={currentPage === p ? activeBtnRef : null}
-                        onClick={(e) => { e.preventDefault(); goToPage(p); }}
-                        className={`h-8 min-w-8 sm:h-7 sm:min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 touch-manipulation ${
-                          currentPage === p
-                            ? "bg-vivid text-white font-bold scale-105 shadow-sm"
-                            : "bg-white text-ink/70 hover:bg-pine/10 hover:text-pine border border-ink/10"
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* PDF Content Area */}
-                <div
-                  onContextMenu={(e) => e.preventDefault()}
-                  className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden"
-                >
-                  <AnimatePresence>
-                    {isPageLoading && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-md text-white pointer-events-none"
-                      >
-                        <div className="relative flex items-center justify-center">
-                          <motion.div
-                            animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.8, 0.3] }}
-                            transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-                            className="absolute h-16 w-16 rounded-full bg-emerald-500/20 border border-emerald-400/40"
-                          />
-                          <motion.div
-                            animate={{ rotate: 360 }}
-                            transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
-                            className="h-10 w-10 rounded-full border-2 border-emerald-500/30 border-t-emerald-400 border-r-emerald-400"
-                          />
-                        </div>
-
-                        <motion.div
-                          initial={{ y: 5, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          className="mt-4 flex flex-col items-center text-center"
-                        >
-                          <span className="text-xs sm:text-sm font-semibold tracking-widest uppercase text-emerald-400 font-mono">
-                            Loading Page {currentPage}
-                          </span>
-                          <span className="mt-1 text-[11px] text-white/60">
-                            Asalatu Nadwat Prayer Book
-                          </span>
-                        </motion.div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <iframe
-                    key={`main-pdf-page-${currentPage}`}
-                    ref={mainIframeRef}
-                    src={pdfSrc}
-                    onLoad={() => setIsPageLoading(false)}
-                    className="w-full h-full border-0 select-none"
-                    title="Asalatu Nadwat PDF Page Viewer"
-                  />
-                </div>
-
-                {/* Bottom Navigation Control Bar */}
-                <div className="bg-cream border-t border-ink/10 px-4 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between gap-2 text-xs shrink-0">
-                  <button
-                    type="button"
-                    onClick={(e) => { e.preventDefault(); goToPage(currentPage - 1); }}
-                    disabled={currentPage <= 1}
-                    className="inline-flex items-center gap-1.5 bg-white border border-ink/20 px-3.5 py-2 sm:px-4 font-semibold text-ink rounded-lg disabled:opacity-30 touch-manipulation hover:bg-mist transition-all shadow-sm min-h-[38px]"
-                  >
-                    <ChevronLeft className="h-4 w-4 text-pine" />
-                    <span>Previous Page</span>
-                  </button>
-
-                  <div className="font-mono text-xs font-semibold text-pine bg-pine/10 px-3 py-1.5 rounded-full">
-                    Page <strong className="text-pine">{currentPage}</strong> / {TOTAL_PAGES}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={(e) => { e.preventDefault(); goToPage(currentPage + 1); }}
-                    disabled={currentPage >= TOTAL_PAGES}
-                    className="inline-flex items-center gap-1.5 bg-vivid px-3.5 py-2 sm:px-4 font-semibold text-white rounded-lg disabled:opacity-30 touch-manipulation hover:bg-vivid-deep transition-all shadow-sm min-h-[38px]"
-                  >
-                    <span>Next Page</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </Reveal>
-          </div>
         </div>
       </div>
 
@@ -560,7 +563,7 @@ export default function PrayerBookViewer() {
                     <motion.div
                       initial={{ y: 5, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
-                      className="mt-4 flex flex-col items-center text-center"
+                      className="mt-4 flex flex-col items-center text-center px-4"
                     >
                       <span className="text-xs sm:text-sm font-semibold tracking-widest uppercase text-emerald-400 font-mono">
                         Loading Page {currentPage}
