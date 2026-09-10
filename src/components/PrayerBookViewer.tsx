@@ -3,56 +3,18 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, FileText, HelpCircle, Lock, Maximize2, Minimize2, MoveVertical, SlidersHorizontal, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, FileText, Lock, Maximize2, Minimize2, SlidersHorizontal } from "lucide-react";
 import { Eyebrow, Reveal } from "./ui";
 
 const TOTAL_PAGES = 208;
 const BASE_PDF_PATH = "/assets/asalatu-nadwat-prayer-book.pdf";
 
-const getPageContent = (page: number) => {
-  const customPages: Record<number, { title: string; arabic: string; transliteration: string; translation: string }> = {
-    1: {
-      title: "Opening — Bismillāhir-Rahmānir-Rahīm",
-      arabic: "بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
-      transliteration: "Bismillāhir-Rahmānir-Rahīm",
-      translation: "In the name of Allah, the Most Gracious, the Most Merciful. We open this gathering with His praise alone.",
-    },
-    2: {
-      title: "The Gathering Dhikr — Yaa Lateef",
-      arabic: "يَا لَطِيفُ يَا لَطِيفُ يَا لَطِيفُ",
-      transliteration: "Yaa Lateef, Yaa Lateef, Yaa Lateef",
-      translation: "O Most Kind, O Most Subtle — be gentle with us in all that destiny brings, seen and unseen.",
-    },
-    3: {
-      title: "Du‘ā for Relief and Sufficiency",
-      arabic: "اَللَّٰهُمَّ ٱكْفِنِي بِحَلَالِكَ عَنْ حَرَامِكَ وَأَغْنِنِي بِفَضْلِكَ عَمَّنْ سِوَاكَ",
-      transliteration: "Allāhumma-kfinī bi-halālika ‘an harāmika wa-aghninī bi-fadlika ‘amman siwāk",
-      translation: "O Allah, suffice us with what is lawful, and enrich us by Your favour from need of any besides You.",
-    },
-    4: {
-      title: "Supplication for Goodness in Both Worlds",
-      arabic: "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ",
-      transliteration: "Rabbanā ātinā fid-dunyā hasanatan wa-fil-ākhirati hasanatan wa-qinā ‘adhāban-nār",
-      translation: "Our Lord, grant us good in this world and good in the Hereafter, and shield us from the punishment of the Fire.",
-    },
-  };
-
-  if (customPages[page]) return customPages[page];
-
-  return {
-    title: `Asalatu Nadwat Prayer Book — Supplication Page ${page}`,
-    arabic: page % 2 === 0 ? "بِسْمِ ٱللَّٰهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ • يَا لَطِيفُ" : "أَسْتَغْفِرُ ٱللَّٰهَ ٱلْعَظِيمَ وَأَتُوبُ إِلَيْهِ",
-    transliteration: `Official Asalatu Nadwat Supplications — Page ${page} of ${TOTAL_PAGES}`,
-    translation: `Page ${page} of the official 208-page Asalatu Nadwat prayer book. Click "Open Fullscreen Reader" to view the exact high-resolution PDF page.`,
-  };
-};
-
 export default function PrayerBookViewer() {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputPage, setInputPage] = useState("1");
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showInstructionOverlay, setShowInstructionOverlay] = useState(false);
 
+  const mainIframeRef = useRef<HTMLIFrameElement>(null);
   const modalIframeRef = useRef<HTMLIFrameElement>(null);
   const activeBtnRef = useRef<HTMLButtonElement>(null);
   const modalActiveBtnRef = useRef<HTMLButtonElement>(null);
@@ -65,6 +27,18 @@ export default function PrayerBookViewer() {
 
   useEffect(() => {
     const targetUrl = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
+
+    if (mainIframeRef.current) {
+      try {
+        if (mainIframeRef.current.contentWindow) {
+          mainIframeRef.current.contentWindow.location.replace(targetUrl);
+        } else {
+          mainIframeRef.current.src = targetUrl;
+        }
+      } catch {
+        mainIframeRef.current.src = targetUrl;
+      }
+    }
 
     if (modalIframeRef.current) {
       try {
@@ -89,7 +63,6 @@ export default function PrayerBookViewer() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        setShowInstructionOverlay(false);
         setIsFullscreen(false);
       }
       if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "SELECT") return;
@@ -112,12 +85,12 @@ export default function PrayerBookViewer() {
   };
 
   const pdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
-  const activeContent = getPageContent(currentPage);
 
   return (
     <section id="prayer-book" className="border-t border-ink/10 bg-cream">
       <div className="mx-auto max-w-7xl px-3.5 py-8 xs:px-5 sm:px-6 sm:py-16 md:py-24">
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-10">
+          {/* Left Sidebar Controls */}
           <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
             <div>
               <Reveal>
@@ -130,7 +103,7 @@ export default function PrayerBookViewer() {
               </Reveal>
               <Reveal delay={0.12}>
                 <p className="mt-3 text-xs xs:text-sm sm:text-[15px] leading-relaxed text-faded">
-                  Read the complete 208-page official Nadwat prayer book. Browse supplications right on your screen or open the full-screen reader.
+                  Read the complete 208-page official Nadwat prayer book. Select any page number below or open full screen to view.
                 </p>
               </Reveal>
 
@@ -146,7 +119,7 @@ export default function PrayerBookViewer() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
                   <div className="absolute bottom-3 left-3 right-3 text-white">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block">Prayer Book Cover</span>
-                    <span className="text-xs font-semibold text-white/90">208 Pages • Read-Only</span>
+                    <span className="text-xs font-semibold text-white/90">208 Pages • PDF Reader</span>
                   </div>
                 </div>
               </Reveal>
@@ -209,9 +182,9 @@ export default function PrayerBookViewer() {
                 <div className="mt-4 flex items-start gap-2.5 border border-fern/30 bg-fern/5 p-3 sm:p-4 rounded-lg text-xs text-pine shadow-sm">
                   <Lock className="h-4 w-4 shrink-0 text-fern mt-0.5" />
                   <div>
-                    <span className="font-semibold block text-ink">Read-Only Official Book</span>
+                    <span className="font-semibold block text-ink">Read-Only Official PDF</span>
                     <span className="text-[11px] leading-relaxed text-faded">
-                      On-screen reading enabled. Downloads and printing are disabled to preserve accuracy.
+                      Interactive PDF page switching. Downloads and printing are disabled to preserve accuracy.
                     </span>
                   </div>
                 </div>
@@ -232,16 +205,18 @@ export default function PrayerBookViewer() {
             </Reveal>
           </div>
 
+          {/* Main Embedded PDF Viewer */}
           <div className="lg:col-span-8">
             <Reveal delay={0.1}>
-              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between min-h-[480px] xs:min-h-[520px]">
+              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between h-[580px] xs:h-[650px] sm:h-[720px] md:h-[780px]">
                 
-                <div className="bg-pine text-white px-4 py-3 sm:px-6 sm:py-4 flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-3 border-b border-white/10">
+                {/* Header Toolbar */}
+                <div className="bg-pine text-white px-4 py-3 sm:px-6 sm:py-4 flex flex-col xs:flex-row items-stretch xs:items-center justify-between gap-3 border-b border-white/10 shrink-0">
                   <div className="flex items-center gap-2.5">
                     <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
                     <div>
                       <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-sage block">
-                        Digital Supplication Card
+                        Official PDF Reader
                       </span>
                       <span className="text-[11px] text-white/70 font-mono">
                         Page {currentPage} of {TOTAL_PAGES}
@@ -255,11 +230,12 @@ export default function PrayerBookViewer() {
                     className="inline-flex items-center justify-center gap-1.5 bg-vivid hover:bg-vivid-deep text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm touch-manipulation"
                   >
                     <Maximize2 className="h-3.5 w-3.5" />
-                    <span>Open Fullscreen Reader</span>
+                    <span>Open Fullscreen</span>
                   </button>
                 </div>
 
-                <div className="border-b border-ink/10 bg-mist px-3 py-2 sm:px-4 flex items-center gap-2">
+                {/* Page Number Pills Strip */}
+                <div className="border-b border-ink/10 bg-mist px-3 py-2 sm:px-4 flex items-center gap-2 shrink-0">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-faded shrink-0">
                     Pages:
                   </span>
@@ -282,22 +258,22 @@ export default function PrayerBookViewer() {
                   </div>
                 </div>
 
-                <div className="p-5 xs:p-6 sm:p-10 flex-1 flex flex-col justify-center text-center">
-                  <span className="text-xs font-bold uppercase tracking-widest text-fern block">
-                    {activeContent.title}
-                  </span>
-                  <p lang="ar" className="font-arabic mt-6 text-2xl xs:text-3xl sm:text-4xl leading-loose text-pine px-2 select-all">
-                    {activeContent.arabic}
-                  </p>
-                  <p className="mt-6 text-sm xs:text-base font-semibold text-ink/90 italic max-w-lg mx-auto">
-                    "{activeContent.transliteration}"
-                  </p>
-                  <p className="mt-4 text-xs xs:text-sm leading-relaxed text-faded max-w-xl mx-auto border-t border-ink/10 pt-4">
-                    {activeContent.translation}
-                  </p>
+                {/* PDF Content Area */}
+                <div
+                  onContextMenu={(e) => e.preventDefault()}
+                  className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden"
+                >
+                  <iframe
+                    key={currentPage}
+                    ref={mainIframeRef}
+                    src={pdfSrc}
+                    className="w-full h-full border-0 select-none"
+                    title="Asalatu Nadwat PDF Page Viewer"
+                  />
                 </div>
 
-                <div className="bg-cream border-t border-ink/10 px-4 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between gap-2 text-xs">
+                {/* Bottom Navigation Control Bar */}
+                <div className="bg-cream border-t border-ink/10 px-4 py-3.5 sm:px-6 sm:py-4 flex items-center justify-between gap-2 text-xs shrink-0">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); goToPage(currentPage - 1); }}
@@ -328,6 +304,7 @@ export default function PrayerBookViewer() {
         </div>
       </div>
 
+      {/* Fullscreen PDF Modal */}
       <AnimatePresence>
         {isFullscreen && (
           <motion.div
@@ -408,6 +385,7 @@ export default function PrayerBookViewer() {
               className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none rounded-b-xl overflow-hidden"
             >
               <iframe
+                key={currentPage}
                 ref={modalIframeRef}
                 src={pdfSrc}
                 className="w-full h-full border-0 select-none"
