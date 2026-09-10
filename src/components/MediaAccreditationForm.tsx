@@ -39,7 +39,7 @@ const COMPLIANCE_ITEMS = [
 
 export default function MediaAccreditationForm() {
   const [step, setStep] = useState(1);
-  const [idFile, setIdFile] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState<{ id: string; ref: string } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -74,11 +74,11 @@ export default function MediaAccreditationForm() {
 
   const allAgreed = form.agreements.every(Boolean) && form.declaration;
 
-  const onIdUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const r = new FileReader();
-    r.onloadend = () => setIdFile(r.result as string);
+    r.onloadend = () => setLogoFile(r.result as string);
     r.readAsDataURL(file);
   };
 
@@ -331,19 +331,19 @@ export default function MediaAccreditationForm() {
 
                         <div className="sm:col-span-2">
                           <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
-                            Upload Media ID / Press Card / Identification
+                            Upload Company / Media House Logo *
                           </label>
                           <div className="mt-1.5 flex items-center gap-4 border border-dashed border-ink/20 bg-mist p-4 rounded-lg">
-                            {idFile && (
-                              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded border border-ink/20">
-                                <Image src={idFile} alt="ID preview" fill className="object-cover" />
+                            {logoFile && (
+                              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded border border-ink/20 bg-white p-1">
+                                <Image src={logoFile} alt="Company logo preview" fill className="object-contain" />
                               </div>
                             )}
                             <label className="cursor-pointer bg-pine px-4 py-2 text-xs font-semibold text-white rounded hover:bg-ink">
-                              {idFile ? "Change File" : "Upload Press ID"}
-                              <input type="file" accept="image/*,application/pdf" onChange={onIdUpload} className="hidden" />
+                              {logoFile ? "Change Logo" : "Upload Company Logo"}
+                              <input type="file" accept="image/*" onChange={onLogoUpload} className="hidden" />
                             </label>
-                            <span className="text-xs text-faded">Media Card, Work ID or NUJ License</span>
+                            <span className="text-xs text-faded">Official Organization or Media House Logo (PNG, JPG, SVG)</span>
                           </div>
                         </div>
                       </div>
