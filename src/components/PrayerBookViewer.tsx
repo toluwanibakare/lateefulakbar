@@ -53,10 +53,10 @@ export default function PrayerBookViewer() {
     }
 
     if (activeBtnRef.current) {
-      activeBtnRef.current.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      activeBtnRef.current.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
     }
     if (modalActiveBtnRef.current) {
-      modalActiveBtnRef.current.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      modalActiveBtnRef.current.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
     }
   }, [currentPage, isFullscreen]);
 
@@ -264,7 +264,6 @@ export default function PrayerBookViewer() {
                   className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden"
                 >
                   <iframe
-                    key={currentPage}
                     ref={mainIframeRef}
                     src={pdfSrc}
                     className="w-full h-full border-0 select-none"
@@ -385,7 +384,6 @@ export default function PrayerBookViewer() {
               className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none rounded-b-xl overflow-hidden"
             >
               <iframe
-                key={currentPage}
                 ref={modalIframeRef}
                 src={pdfSrc}
                 className="w-full h-full border-0 select-none"
