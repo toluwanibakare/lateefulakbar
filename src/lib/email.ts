@@ -66,7 +66,7 @@ export async function sendRegistrationEmail({
           <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 24px;">
             <p style="margin: 0 0 6px 0; font-weight: 600; font-size: 14px; color: #0f766e;">Event Info:</p>
             <p style="margin: 0 0 4px 0; font-size: 14px; color: #475569;">📍 <strong>Venue:</strong> National Mosque Auditorium, Abuja</p>
-            <p style="margin: 0; font-size: 14px; color: #475569;">📅 <strong>Date:</strong> December 24 - 27, 2027</p>
+            <p style="margin: 0; font-size: 14px; color: #475569;">📅 <strong>Date:</strong> Sunday, January 24, 2027 (1-Day Grand Event)</p>
           </div>
         </div>
 

@@ -13,13 +13,14 @@ export interface BotResponse {
 export const EVENT_KNOWLEDGE_BASE = `
 Lateeful Akbar 2027 Knowledge Base:
 - Theme: "Walking in the Footsteps of Light"
-- Dates: December 24 - 27, 2027 (4 Days Event)
+- Event Duration: 1-Day Grand Event
+- Date: Sunday, January 24, 2027 (Gates open 08:00 WAT)
 - Location / Venue: National Mosque Auditorium, Central Business District, Abuja, Nigeria.
 - Keynote Speakers & Scholars: Sheikh Al-Fazi (Spiritual Wisdom & Sufi Thought), Dr. Amina Yusuf (Islamic Finance & Ethical Leadership), Ustadh Umar Farooq (Youth Empowerment & Contemporary Faith).
 - Features on Website:
   1. Event Registration: Reserve seats for Main Hall, VIP Delegate Pass, or Online Live Stream Access.
-  2. Digital Tasbīh Counter: Participate in global dhikr counter (Subhanallah, Alhamdulillah, Allahu Akbar, Astaghfirullah, Salawat).
-  3. Donations & Sadaqah Jariyah: Support event facilities (Prayer Mats N5,000, Water Supply N2,000, Cooling Systems N15,000, Media Broadcast N25,000, Tents N50,000, Broadcast Internet N10,000).
+  2. Digital Tasbīh Counter: Participate in global live dhikr counter.
+  3. Donations & Sadaqah Jariyah: Support event facilities (Prayer Mats, Water Supply, Cooling Systems, Media Broadcast, Tents, Broadcast Internet).
   4. Program Schedule: Morning Dhikr, Keynote Lectures, Youth Symposium, Sister's Forum, Grand Mawlid & Closing Dua.
   5. Blog & Media: Articles on spiritual growth, event updates, video highlights.
   6. Customer Support: Option to connect directly with human support representatives.

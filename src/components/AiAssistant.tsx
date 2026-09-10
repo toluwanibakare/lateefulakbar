@@ -18,6 +18,7 @@ import {
   User,
   X,
   Headphones,
+  RotateCcw,
 } from "lucide-react";
 
 type QuickButton = {
@@ -48,32 +49,67 @@ function getTimeStr() {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+const DEFAULT_WELCOME: Msg = {
+  id: "welcome",
+  from: "bot",
+  text: "Assalamu Alaikum! I am Noor AI, your guide for Lateeful Akbar 2027. How can I assist you today with registration, schedule, donations, or support?",
+  time: getTimeStr(),
+  buttons: [
+    { label: "🎟️ Register Pass", action: "link", target: "/register" },
+    { label: "💚 Donate / Sadaqah", action: "link", target: "/donate" },
+    { label: "📿 Digital Tasbīh", action: "link", target: "/tasbih" },
+    { label: "💬 Talk to Support Agent", action: "support", target: "support_handoff" },
+  ],
+};
+
 export default function AiAssistant() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const [sessionId] = useState(() => `session_${Math.random().toString(36).substring(2, 9)}`);
-  const [msgs, setMsgs] = useState<Msg[]>([
-    {
-      id: "welcome",
-      from: "bot",
-      text: "Assalamu Alaikum! I am Noor AI, your guide for Lateeful Akbar 2027. How can I assist you today with registration, schedule, donations, or support?",
-      time: getTimeStr(),
-      buttons: [
-        { label: "🎟️ Register Pass", action: "link", target: "/register" },
-        { label: "💚 Donate / Sadaqah", action: "link", target: "/donate" },
-        { label: "📿 Digital Tasbīh", action: "link", target: "/tasbih" },
-        { label: "💬 Talk to Support Agent", action: "support", target: "support_handoff" },
-      ],
-    },
-  ]);
+  const [msgs, setMsgs] = useState<Msg[]>([DEFAULT_WELCOME]);
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  // Load chat history from localStorage on initial client mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("noor_chat_history");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setMsgs(parsed);
+        }
+      }
+    } catch (err) {
+      console.error("Error loading chat history from localStorage:", err);
+    }
+  }, []);
+
+  // Persist chat history to localStorage whenever messages update
+  useEffect(() => {
+    try {
+      if (msgs.length > 0) {
+        localStorage.setItem("noor_chat_history", JSON.stringify(msgs));
+      }
+    } catch (err) {
+      console.error("Error saving chat history to localStorage:", err);
+    }
+  }, [msgs]);
 
   useEffect(() => {
     if (open) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [msgs, typing, open]);
+
+  const clearChat = () => {
+    setMsgs([DEFAULT_WELCOME]);
+    try {
+      localStorage.removeItem("noor_chat_history");
+    } catch (err) {
+      console.error("Error clearing localStorage:", err);
+    }
+  };
 
   const send = async (raw?: string, isSupportOverride?: boolean) => {
     const text = (raw ?? input).trim();
@@ -209,13 +245,23 @@ export default function AiAssistant() {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="relative rounded-lg p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
-                aria-label="Close modal"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={clearChat}
+                  title="Clear chat history"
+                  className="relative rounded-lg p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                  aria-label="Clear chat"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="relative rounded-lg p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                  aria-label="Close modal"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
 
             {/* Chat Messages Body */}

@@ -75,8 +75,8 @@ ${EVENT_KNOWLEDGE_BASE}`,
     // Fallback matcher if Groq API call is unreachable or unconfigured
     if (!reply) {
       const q = message.toLowerCase();
-      if (q.includes('when') || q.includes('date') || q.includes('time')) {
-        reply = 'Lateeful Akbar 2027 will take place from December 24 to December 27, 2027.';
+      if (q.includes('when') || q.includes('date') || q.includes('time') || q.includes('how long') || q.includes('day')) {
+        reply = 'Lateeful Akbar 2027 is a 1-day grand spiritual gathering taking place on Sunday, January 24, 2027 (gates open at 08:00 WAT).';
       } else if (q.includes('where') || q.includes('location') || q.includes('venue')) {
         reply = 'The gathering will be held at the prestigious National Mosque Auditorium, Central Business District, Abuja, Nigeria.';
       } else if (q.includes('theme') || q.includes('about')) {
