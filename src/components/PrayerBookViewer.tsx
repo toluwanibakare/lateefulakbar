@@ -14,6 +14,7 @@ export default function PrayerBookViewer() {
   const [inputPage, setInputPage] = useState("1");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showInstructionOverlay, setShowInstructionOverlay] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
   const mainIframeRef = useRef<HTMLIFrameElement>(null);
   const modalIframeRef = useRef<HTMLIFrameElement>(null);
@@ -22,9 +23,21 @@ export default function PrayerBookViewer() {
 
   const goToPage = (page: number) => {
     const clamped = Math.max(1, Math.min(TOTAL_PAGES, page));
-    setCurrentPage(clamped);
-    setInputPage(String(clamped));
+    if (clamped !== currentPage) {
+      setIsPageLoading(true);
+      setCurrentPage(clamped);
+      setInputPage(String(clamped));
+    }
   };
+
+  useEffect(() => {
+    if (isPageLoading) {
+      const timer = setTimeout(() => {
+        setIsPageLoading(false);
+      }, 650);
+      return () => clearTimeout(timer);
+    }
+  }, [isPageLoading, currentPage]);
 
   useEffect(() => {
     const targetUrl = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
@@ -286,10 +299,49 @@ export default function PrayerBookViewer() {
                   onContextMenu={(e) => e.preventDefault()}
                   className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden"
                 >
+                  <AnimatePresence>
+                    {isPageLoading && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-md text-white pointer-events-none"
+                      >
+                        <div className="relative flex items-center justify-center">
+                          <motion.div
+                            animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.8, 0.3] }}
+                            transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                            className="absolute h-16 w-16 rounded-full bg-emerald-500/20 border border-emerald-400/40"
+                          />
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+                            className="h-10 w-10 rounded-full border-2 border-emerald-500/30 border-t-emerald-400 border-r-emerald-400"
+                          />
+                        </div>
+
+                        <motion.div
+                          initial={{ y: 5, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          className="mt-4 flex flex-col items-center text-center"
+                        >
+                          <span className="text-xs sm:text-sm font-semibold tracking-widest uppercase text-emerald-400 font-mono">
+                            Loading Page {currentPage}
+                          </span>
+                          <span className="mt-1 text-[11px] text-white/60">
+                            Asalatu Nadwat Prayer Book
+                          </span>
+                        </motion.div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <iframe
                     key={`main-pdf-page-${currentPage}`}
                     ref={mainIframeRef}
                     src={pdfSrc}
+                    onLoad={() => setIsPageLoading(false)}
                     className="w-full h-full border-0 select-none"
                     title="Asalatu Nadwat PDF Page Viewer"
                   />
@@ -483,10 +535,49 @@ export default function PrayerBookViewer() {
               onContextMenu={(e) => e.preventDefault()}
               className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none rounded-b-xl overflow-hidden"
             >
+              <AnimatePresence>
+                {isPageLoading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-md text-white pointer-events-none"
+                  >
+                    <div className="relative flex items-center justify-center">
+                      <motion.div
+                        animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.8, 0.3] }}
+                        transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute h-16 w-16 rounded-full bg-emerald-500/20 border border-emerald-400/40"
+                      />
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 0.9, repeat: Infinity, ease: "linear" }}
+                        className="h-10 w-10 rounded-full border-2 border-emerald-500/30 border-t-emerald-400 border-r-emerald-400"
+                      />
+                    </div>
+
+                    <motion.div
+                      initial={{ y: 5, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="mt-4 flex flex-col items-center text-center"
+                    >
+                      <span className="text-xs sm:text-sm font-semibold tracking-widest uppercase text-emerald-400 font-mono">
+                        Loading Page {currentPage}
+                      </span>
+                      <span className="mt-1 text-[11px] text-white/60">
+                        Asalatu Nadwat Prayer Book
+                      </span>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
               <iframe
                 key={`modal-pdf-page-${currentPage}`}
                 ref={modalIframeRef}
                 src={pdfSrc}
+                onLoad={() => setIsPageLoading(false)}
                 className="w-full h-full border-0 select-none"
                 title="Fullscreen Asalatu Nadwat PDF Viewer"
               />
