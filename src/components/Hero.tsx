@@ -115,10 +115,10 @@ export default function Hero() {
             </motion.div>
           </AnimatePresence>
         )}
-        {/* Deep dark emerald & obsidian veils for 100% text legibility */}
-        <div className="absolute inset-0 bg-black/65 backdrop-brightness-75" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#04120d] via-[#04120d]/85 to-[#04120d]/55" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#04120d]/90 via-[#04120d]/60 to-transparent" />
+        {/* Balanced cinematic veils — clear vibrant imagery with sharp text contrast */}
+        <div className="absolute inset-0 bg-pine/40 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#061711] via-[#061711]/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#061711]/70 via-[#061711]/30 to-transparent" />
       </motion.div>
 
       {/* --- Foreground --- */}
