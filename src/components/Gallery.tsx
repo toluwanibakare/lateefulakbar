@@ -29,8 +29,7 @@ export default function Gallery() {
           </FadeIn>
           <FadeIn direction="left" delay={0.12}>
             <p className="max-w-sm text-sm leading-relaxed text-faded">
-              Fifteen frames from the Square. No staging, no stock. Select any image to view it
-              full screen.
+              Photo archive from the Square. Select any image to view full screen.
             </p>
           </FadeIn>
         </div>
@@ -55,7 +54,7 @@ export default function Gallery() {
           </div>
         </FadeIn>
 
-        <motion.div layout className="mt-8 columns-2 gap-4 md:columns-3 [&>*]:mb-4">
+        <motion.div layout className="mt-8 columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-3 [&>*]:mb-3">
           <AnimatePresence mode="popLayout">
             {items.map((g) => (
               <motion.figure
@@ -64,25 +63,24 @@ export default function Gallery() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4 }}
-                className="group relative break-inside-avoid overflow-hidden bg-mist"
+                transition={{ duration: 0.3 }}
+                className="group relative break-inside-avoid overflow-hidden bg-mist rounded-lg shadow-sm"
               >
                 <TiltCard>
-                  <button onClick={() => setActive(g)} className="block w-full" aria-label={`View ${g.label}`}>
+                  <button onClick={() => setActive(g)} className="block w-full" aria-label="View photo">
                     <Image
                       src={g.src}
-                      alt={g.label}
-                      width={800}
-                      height={1000}
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                      className="img-true h-auto w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      alt="Lateeful Akbar event photo"
+                      width={600}
+                      height={750}
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                      className="img-true h-auto w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       loading="lazy"
                     />
                   </button>
-                  <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-ink/70 to-transparent p-3 pt-8 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <span className="text-left text-[12px] font-medium leading-snug text-white">{g.label}</span>
-                    <Expand className="h-4 w-4 shrink-0 text-white/80" />
-                  </figcaption>
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <Expand className="h-5 w-5 text-white/90 drop-shadow-md" />
+                  </div>
                 </TiltCard>
               </motion.figure>
             ))}
@@ -118,8 +116,7 @@ export default function Gallery() {
             className="fixed inset-0 z-[70] flex flex-col bg-ink/95 p-4 backdrop-blur-md sm:p-8"
             onClick={() => setActive(null)}
           >
-            <div className="flex items-center justify-between text-white">
-              <p className="max-w-xl text-sm font-medium">{active.label}</p>
+            <div className="flex items-center justify-end text-white">
               <button aria-label="Close viewer" className="p-2 transition-colors hover:text-sage">
                 <X className="h-6 w-6" />
               </button>
@@ -129,14 +126,11 @@ export default function Gallery() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="relative mx-auto mt-4 w-full max-w-5xl flex-1"
+              className="relative mx-auto my-auto w-full max-w-5xl h-[80vh]"
               onClick={(e) => e.stopPropagation()}
             >
-              <Image src={active.src} alt={active.label} fill sizes="90vw" className="object-contain" />
+              <Image src={active.src} alt="Lateeful Akbar event photo" fill sizes="90vw" className="object-contain" />
             </motion.div>
-            <p className="mt-4 text-center text-[11px] uppercase tracking-[0.24em] text-white/50">
-              {active.category} - Lateeful Ul Akbar archive
-            </p>
           </motion.div>
         )}
       </AnimatePresence>
