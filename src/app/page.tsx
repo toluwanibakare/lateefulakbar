@@ -295,18 +295,19 @@ export default function Home() {
             <StaggerItem>
               <TiltCard className="h-full">
                 <div className="flex h-full flex-col border border-ink/15 bg-cream p-0 overflow-hidden group">
-                  <div className="relative aspect-[3/4] max-h-[320px] sm:max-h-[360px] w-full overflow-hidden bg-mist">
+                  <div
+                    style={{ aspectRatio: "603 / 855" }}
+                    className="relative w-full overflow-hidden bg-emerald-950 flex items-center justify-center group"
+                  >
                     <Image
                       src="/assets/prayerbook_cover.png"
                       alt="Official Asalatu Prayer Book Cover"
                       fill
                       sizes="(max-width: 1024px) 100vw, 33vw"
-                      className="img-true object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-contain transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 left-3 text-white">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block">Official Prayer Book</span>
-                      <span className="text-xs font-semibold text-white/90">208 Pages</span>
+                    <div className="absolute top-3 right-3 bg-emerald-950/80 backdrop-blur-md px-2.5 py-1 rounded-md border border-emerald-500/30 text-white pointer-events-none">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block">208 Pages</span>
                     </div>
                   </div>
                   <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">

@@ -40,7 +40,7 @@ export default function PrayerBookViewer() {
   }, [isPageLoading, currentPage]);
 
   useEffect(() => {
-    const targetUrl = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
+    const targetUrl = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`;
 
     if (mainIframeRef.current) {
       try {
@@ -99,7 +99,7 @@ export default function PrayerBookViewer() {
     }
   };
 
-  const pdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
+  const pdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`;
 
   return (
     <section id="prayer-book" className="border-t border-ink/10 bg-cream overflow-x-hidden w-full">
@@ -124,18 +124,19 @@ export default function PrayerBookViewer() {
               </Reveal>
 
               <Reveal delay={0.14}>
-                <div className="relative mt-4 overflow-hidden rounded-xl border border-ink/15 shadow-md group aspect-[3/4] max-w-[160px] xs:max-w-[190px] sm:max-w-[220px] mx-auto lg:mx-0">
+                <div
+                  style={{ aspectRatio: "603 / 855" }}
+                  className="relative mt-4 overflow-hidden rounded-xl border border-ink/15 shadow-md group max-w-[160px] xs:max-w-[190px] sm:max-w-[220px] mx-auto lg:mx-0 bg-emerald-950 flex items-center justify-center"
+                >
                   <Image
                     src="/assets/prayerbook_cover.png"
                     alt="Asalatu Nadwat Prayer Book Cover"
                     fill
                     sizes="(max-width: 768px) 200px, 240px"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    className="object-contain transition-transform duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-                  <div className="absolute bottom-3 left-3 right-3 text-white">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400 block">Prayer Book Cover</span>
-                    <span className="text-xs font-semibold text-white/90">208 Pages • PDF Reader</span>
+                  <div className="absolute top-2 right-2 bg-emerald-950/80 backdrop-blur-sm px-2 py-0.5 rounded border border-emerald-500/30 text-white pointer-events-none">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-400 block">208 Pages</span>
                   </div>
                 </div>
               </Reveal>
