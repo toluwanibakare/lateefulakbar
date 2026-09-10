@@ -102,12 +102,12 @@ export default function PrayerBookViewer() {
   const pdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1`;
 
   return (
-    <section id="prayer-book" className="border-t border-ink/10 bg-cream">
-      <div className="mx-auto max-w-7xl px-3.5 py-8 xs:px-5 sm:px-6 sm:py-16 md:py-24">
-        <div className="grid gap-6 lg:grid-cols-12 lg:gap-10">
+    <section id="prayer-book" className="border-t border-ink/10 bg-cream overflow-x-hidden w-full">
+      <div className="mx-auto max-w-7xl px-3.5 py-6 xs:px-5 sm:px-6 sm:py-16 md:py-24 w-full">
+        <div className="grid gap-6 lg:grid-cols-12 lg:gap-10 w-full">
           
           {/* Left Sidebar Controls */}
-          <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
+          <div className="lg:col-span-4 flex flex-col justify-between space-y-6 min-w-0 w-full">
             <div>
               <Reveal>
                 <Eyebrow>09 — Prayer book</Eyebrow>
@@ -141,7 +141,7 @@ export default function PrayerBookViewer() {
               </Reveal>
 
               <Reveal delay={0.16}>
-                <div className="mt-5 border border-ink/15 bg-white p-3.5 xs:p-4 sm:p-5 rounded-xl shadow-sm">
+                <div className="mt-5 border border-ink/15 bg-white p-3.5 xs:p-4 sm:p-5 rounded-xl shadow-sm min-w-0">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wider text-fern flex items-center gap-1.5">
                       <SlidersHorizontal className="h-4 w-4" /> Go to Page
@@ -152,7 +152,7 @@ export default function PrayerBookViewer() {
                   </div>
 
                   <form onSubmit={handleInputSubmit} className="mt-3 flex items-center gap-2">
-                    <div className="relative flex-1">
+                    <div className="relative flex-1 min-w-0">
                       <input
                         type="number"
                         min={1}
@@ -168,7 +168,7 @@ export default function PrayerBookViewer() {
                     </div>
                     <button
                       type="submit"
-                      className="bg-vivid px-4 py-2 text-xs font-semibold text-white rounded-lg hover:bg-vivid-deep transition-colors shadow-sm min-h-[40px] touch-manipulation"
+                      className="bg-vivid px-4 py-2 text-xs font-semibold text-white rounded-lg hover:bg-vivid-deep transition-colors shadow-sm min-h-[40px] touch-manipulation shrink-0"
                     >
                       Jump
                     </button>
@@ -214,7 +214,7 @@ export default function PrayerBookViewer() {
                   onClick={() => setShowInstructionOverlay(true)}
                   className="flex w-full items-center justify-center gap-2 border border-ink/20 bg-white px-4 py-3 text-xs sm:text-sm font-semibold text-ink hover:bg-mist transition-all shadow-sm rounded-lg touch-manipulation min-h-[44px]"
                 >
-                  <HelpCircle className="h-4 w-4 text-pine" />
+                  <HelpCircle className="h-4 w-4 text-pine shrink-0" />
                   <span>View Reader Controls & Guide</span>
                 </button>
 
@@ -223,7 +223,7 @@ export default function PrayerBookViewer() {
                   onClick={() => setIsFullscreen(true)}
                   className="flex w-full items-center justify-center gap-2 bg-pine px-4 py-3.5 text-xs sm:text-sm font-semibold text-white hover:bg-ink transition-all shadow-md rounded-lg touch-manipulation min-h-[44px]"
                 >
-                  <Maximize2 className="h-4 w-4 text-sage" />
+                  <Maximize2 className="h-4 w-4 text-sage shrink-0" />
                   <span>Open Fullscreen PDF Reader</span>
                 </button>
               </div>
@@ -231,31 +231,31 @@ export default function PrayerBookViewer() {
           </div>
 
           {/* Main Embedded PDF Viewer */}
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-8 min-w-0 w-full max-w-full">
             <Reveal delay={0.1}>
-              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between h-[500px] xs:h-[560px] sm:h-[680px] lg:h-[760px]">
+              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between h-[500px] xs:h-[560px] sm:h-[680px] lg:h-[760px] min-w-0 w-full max-w-full">
                 
                 {/* Header Toolbar */}
-                <div className="bg-pine text-white px-3.5 py-3 xs:px-5 sm:px-6 sm:py-4 flex flex-wrap items-center justify-between gap-2 border-b border-white/10 shrink-0">
-                  <div className="flex items-center gap-2">
+                <div className="bg-pine text-white px-3 py-2.5 xs:px-4 sm:px-6 sm:py-4 flex items-center justify-between gap-2 border-b border-white/10 shrink-0 min-w-0 w-full">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
                     <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
-                    <div>
-                      <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-sage block leading-none">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider text-sage block leading-none truncate">
                         Official PDF Reader
                       </span>
-                      <span className="text-[10px] sm:text-[11px] text-white/70 font-mono mt-0.5 block">
+                      <span className="text-[10px] sm:text-[11px] text-white/70 font-mono mt-0.5 block truncate">
                         Page {currentPage} of {TOTAL_PAGES}
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 sm:gap-2">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       type="button"
                       onClick={() => setShowInstructionOverlay(true)}
                       className="inline-flex items-center justify-center gap-1 bg-white/10 hover:bg-white/20 text-white px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-all touch-manipulation min-h-[34px]"
                     >
-                      <HelpCircle className="h-3.5 w-3.5 text-sage" />
+                      <HelpCircle className="h-3.5 w-3.5 text-sage shrink-0" />
                       <span className="hidden xs:inline">Guide</span>
                     </button>
 
@@ -264,18 +264,18 @@ export default function PrayerBookViewer() {
                       onClick={() => setIsFullscreen(true)}
                       className="inline-flex items-center justify-center gap-1 bg-vivid hover:bg-vivid-deep text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all shadow-sm touch-manipulation min-h-[34px]"
                     >
-                      <Maximize2 className="h-3.5 w-3.5" />
+                      <Maximize2 className="h-3.5 w-3.5 shrink-0" />
                       <span className="hidden xs:inline">Fullscreen</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Page Number Pills Strip */}
-                <div className="border-b border-ink/10 bg-mist px-2.5 py-1.5 sm:px-4 flex items-center gap-2 shrink-0">
+                <div className="border-b border-ink/10 bg-mist px-2.5 py-1.5 sm:px-4 flex items-center gap-2 shrink-0 min-w-0 w-full">
                   <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-faded shrink-0">
                     Page:
                   </span>
-                  <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full touch-pan-x">
+                  <div className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin touch-pan-x">
                     {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
                       <button
                         type="button"
@@ -297,7 +297,7 @@ export default function PrayerBookViewer() {
                 {/* PDF Content Area */}
                 <div
                   onContextMenu={(e) => e.preventDefault()}
-                  className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden"
+                  className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden min-w-0"
                 >
                   <AnimatePresence>
                     {isPageLoading && (
@@ -348,18 +348,18 @@ export default function PrayerBookViewer() {
                 </div>
 
                 {/* Bottom Navigation Control Bar */}
-                <div className="bg-cream border-t border-ink/10 px-3 py-2.5 sm:px-6 sm:py-3.5 flex items-center justify-between gap-2 text-xs shrink-0">
+                <div className="bg-cream border-t border-ink/10 px-3 py-2.5 sm:px-6 sm:py-3.5 flex items-center justify-between gap-2 text-xs shrink-0 min-w-0 w-full">
                   <button
                     type="button"
                     onClick={(e) => { e.preventDefault(); goToPage(currentPage - 1); }}
                     disabled={currentPage <= 1}
-                    className="inline-flex items-center gap-1 bg-white border border-ink/20 px-3 py-2 sm:px-4 font-semibold text-ink rounded-lg disabled:opacity-30 touch-manipulation hover:bg-mist transition-all shadow-sm min-h-[38px]"
+                    className="inline-flex items-center gap-1 bg-white border border-ink/20 px-3 py-2 sm:px-4 font-semibold text-ink rounded-lg disabled:opacity-30 touch-manipulation hover:bg-mist transition-all shadow-sm min-h-[38px] shrink-0"
                   >
                     <ChevronLeft className="h-4 w-4 text-pine shrink-0" />
                     <span>Prev</span>
                   </button>
 
-                  <div className="font-mono text-xs font-semibold text-pine bg-pine/10 px-2.5 py-1.5 rounded-full whitespace-nowrap">
+                  <div className="font-mono text-xs font-semibold text-pine bg-pine/10 px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0">
                     Page <strong className="text-pine">{currentPage}</strong> / {TOTAL_PAGES}
                   </div>
 
@@ -367,7 +367,7 @@ export default function PrayerBookViewer() {
                     type="button"
                     onClick={(e) => { e.preventDefault(); goToPage(currentPage + 1); }}
                     disabled={currentPage >= TOTAL_PAGES}
-                    className="inline-flex items-center gap-1 bg-vivid px-3 py-2 sm:px-4 font-semibold text-white rounded-lg disabled:opacity-30 touch-manipulation hover:bg-vivid-deep transition-all shadow-sm min-h-[38px]"
+                    className="inline-flex items-center gap-1 bg-vivid px-3 py-2 sm:px-4 font-semibold text-white rounded-lg disabled:opacity-30 touch-manipulation hover:bg-vivid-deep transition-all shadow-sm min-h-[38px] shrink-0"
                   >
                     <span>Next</span>
                     <ChevronRight className="h-4 w-4 shrink-0" />
@@ -466,17 +466,17 @@ export default function PrayerBookViewer() {
             className="fixed inset-0 z-[100] flex flex-col bg-ink/95 backdrop-blur-md p-1.5 sm:p-4 md:p-6"
           >
             <div className="flex flex-wrap items-center justify-between bg-pine px-3 py-2 sm:px-6 sm:py-3.5 text-white rounded-t-xl gap-2">
-              <div className="flex items-center gap-2 sm:gap-3 overflow-hidden">
+              <div className="flex items-center gap-2 sm:gap-3 overflow-hidden min-w-0">
                 <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
                 <span className="font-display text-xs sm:text-lg font-light truncate max-w-[140px] xs:max-w-[240px] sm:max-w-none">
                   Asalatu Nadwat — Prayer Book
                 </span>
-                <span className="hidden sm:inline-block text-xs font-mono bg-white/10 px-2.5 py-0.5 rounded text-white/80">
+                <span className="hidden sm:inline-block text-xs font-mono bg-white/10 px-2.5 py-0.5 rounded text-white/80 shrink-0">
                   Page {currentPage} of {TOTAL_PAGES}
                 </span>
               </div>
 
-              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 px-2 sm:px-3 py-1 rounded-lg">
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 px-2 sm:px-3 py-1 rounded-lg shrink-0">
                 <button
                   type="button"
                   onClick={(e) => { e.preventDefault(); goToPage(currentPage - 1); }}
@@ -501,7 +501,7 @@ export default function PrayerBookViewer() {
               <button
                 type="button"
                 onClick={() => setIsFullscreen(false)}
-                className="inline-flex items-center gap-1.5 bg-vivid px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded-lg touch-manipulation"
+                className="inline-flex items-center gap-1.5 bg-vivid px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded-lg touch-manipulation shrink-0"
               >
                 <Minimize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                 <span className="hidden xs:inline">Exit Fullscreen</span>
@@ -509,11 +509,11 @@ export default function PrayerBookViewer() {
               </button>
             </div>
 
-            <div className="bg-slate-800 px-3 py-1.5 sm:px-4 flex items-center gap-2 border-b border-white/10">
+            <div className="bg-slate-800 px-3 py-1.5 sm:px-4 flex items-center gap-2 border-b border-white/10 min-w-0 w-full">
               <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-white/60 shrink-0">
                 Jump:
               </span>
-              <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full touch-pan-x">
+              <div className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin touch-pan-x">
                 {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
                   <button
                     type="button"
@@ -534,7 +534,7 @@ export default function PrayerBookViewer() {
 
             <div
               onContextMenu={(e) => e.preventDefault()}
-              className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none rounded-b-xl overflow-hidden"
+              className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none rounded-b-xl overflow-hidden min-w-0"
             >
               <AnimatePresence>
                 {isPageLoading && (
