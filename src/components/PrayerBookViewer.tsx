@@ -92,8 +92,8 @@ export default function PrayerBookViewer() {
 
   return (
     <section id="prayer-book" className="border-t border-ink/10 bg-cream">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
-        <div className="grid gap-12 lg:grid-cols-12">
+      <div className="mx-auto max-w-7xl px-4 py-12 xs:px-5 sm:px-6 sm:py-20 md:py-28">
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-12">
           {/* Left Column: Information & Page Selector */}
           <div className="lg:col-span-4 flex flex-col justify-between">
             <div>
@@ -101,19 +101,19 @@ export default function PrayerBookViewer() {
                 <Eyebrow>09 — Prayer book</Eyebrow>
               </Reveal>
               <Reveal delay={0.06}>
-                <h2 className="font-display text-balance mt-5 text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
+                <h2 className="font-display text-balance mt-4 sm:mt-5 text-3xl leading-tight font-light tracking-tight text-ink sm:text-4xl md:text-5xl">
                   Official Asalatu Prayer Book
                 </h2>
               </Reveal>
               <Reveal delay={0.12}>
-                <p className="mt-5 text-[15px] leading-relaxed text-faded">
+                <p className="mt-4 sm:mt-5 text-sm sm:text-[15px] leading-relaxed text-faded">
                   Read the complete 208-page official Nadwat prayer book right inside your browser. Use the instant page flip controls, page input, or horizontal strip.
                 </p>
               </Reveal>
 
               {/* Jump to Page Box */}
               <Reveal delay={0.16}>
-                <div className="mt-8 border border-ink/15 bg-white p-5 rounded-xl shadow-sm">
+                <div className="mt-6 sm:mt-8 border border-ink/15 bg-white p-4 sm:p-5 rounded-xl shadow-sm">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wider text-fern flex items-center gap-1.5">
                       <SlidersHorizontal className="h-4 w-4" /> Go to Page
@@ -133,7 +133,7 @@ export default function PrayerBookViewer() {
                         value={inputPage}
                         onChange={(e) => setInputPage(e.target.value)}
                         placeholder="Page #"
-                        className="w-full rounded-lg border border-ink/20 bg-mist px-3.5 py-2.5 text-sm font-semibold text-ink focus:border-pine focus:bg-white focus:outline-none"
+                        className="w-full rounded-lg border border-ink/20 bg-mist px-3.5 py-2.5 text-base sm:text-sm font-semibold text-ink focus:border-pine focus:bg-white focus:outline-none"
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-mono text-faded">
                         / {TOTAL_PAGES}
@@ -141,7 +141,7 @@ export default function PrayerBookViewer() {
                     </div>
                     <button
                       type="submit"
-                      className="bg-vivid px-4 py-2.5 text-xs font-semibold text-white rounded-lg hover:bg-vivid-deep transition-colors shadow-sm"
+                      className="bg-vivid px-4 py-2.5 text-xs font-semibold text-white rounded-lg hover:bg-vivid-deep transition-colors shadow-sm min-h-[42px] touch-manipulation"
                     >
                       Jump
                     </button>
@@ -171,7 +171,7 @@ export default function PrayerBookViewer() {
                       <button
                         key={p}
                         onClick={() => goToPage(p)}
-                        className={`px-2 py-1 text-[11px] font-mono rounded transition-colors ${
+                        className={`px-2.5 py-1 text-[11px] font-mono rounded transition-colors touch-manipulation ${
                           currentPage === p
                             ? "bg-pine text-white font-bold"
                             : "bg-mist text-ink/70 hover:bg-pine/10 hover:text-pine"
@@ -186,7 +186,7 @@ export default function PrayerBookViewer() {
 
               {/* Protection Notice */}
               <Reveal delay={0.2}>
-                <div className="mt-6 flex items-start gap-3 border border-fern/30 bg-fern/5 p-4 rounded-lg text-xs text-pine shadow-sm">
+                <div className="mt-5 sm:mt-6 flex items-start gap-3 border border-fern/30 bg-fern/5 p-3.5 sm:p-4 rounded-lg text-xs text-pine shadow-sm">
                   <Lock className="h-4 w-4 shrink-0 text-fern mt-0.5" />
                   <div>
                     <span className="font-semibold block text-ink">Read-Only Official Book</span>
@@ -202,14 +202,14 @@ export default function PrayerBookViewer() {
               <div className="mt-6 flex flex-col gap-2.5">
                 <button
                   onClick={() => setIsFullscreen(true)}
-                  className="flex w-full items-center justify-center gap-2.5 bg-pine px-6 py-3.5 text-sm font-semibold text-white hover:bg-ink transition-all shadow-md rounded-lg"
+                  className="flex w-full items-center justify-center gap-2.5 bg-pine px-6 py-3.5 text-sm font-semibold text-white hover:bg-ink transition-all shadow-md rounded-lg touch-manipulation"
                 >
                   <Maximize2 className="h-4 w-4 text-sage" />
                   <span>Open Fullscreen Reader</span>
                 </button>
                 <button
                   onClick={() => setShowInstructionOverlay(true)}
-                  className="flex w-full items-center justify-center gap-2 border border-ink/20 bg-white px-5 py-2.5 text-xs font-semibold text-ink hover:border-pine hover:text-pine transition-all rounded-lg"
+                  className="flex w-full items-center justify-center gap-2 border border-ink/20 bg-white px-5 py-2.5 text-xs font-semibold text-ink hover:border-pine hover:text-pine transition-all rounded-lg touch-manipulation"
                 >
                   <HelpCircle className="h-4 w-4 text-fern" />
                   <span>How to Swipe & Scroll Book</span>
@@ -223,41 +223,41 @@ export default function PrayerBookViewer() {
             <Reveal delay={0.1}>
               <div className="border border-ink/15 bg-white shadow-[0_30px_60px_-40px_rgba(10,46,35,0.35)] rounded-xl overflow-hidden relative">
                 {/* Header Control Bar */}
-                <div className="flex flex-wrap items-center justify-between border-b border-ink/10 bg-pine px-5 py-3.5 text-white gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <FileText className="h-4 w-4 text-sage" />
-                    <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-sage">
+                <div className="flex flex-wrap items-center justify-between border-b border-ink/10 bg-pine px-3.5 py-3 sm:px-5 sm:py-3.5 text-white gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-4 w-4 text-sage shrink-0" />
+                    <span className="text-[11px] sm:text-[12px] font-semibold uppercase tracking-[0.18em] sm:tracking-[0.2em] text-sage truncate">
                       Asalatu Nadwat PDF
                     </span>
                   </div>
 
                   {/* Center Flip Controls */}
-                  <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-lg">
+                  <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 px-2.5 sm:px-3 py-1 rounded-lg">
                     <button
                       onClick={() => goToPage(currentPage - 1)}
                       disabled={currentPage <= 1}
                       aria-label="Previous Page"
-                      className="p-1 hover:text-sage disabled:opacity-30 transition-colors"
+                      className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
                     >
                       <ChevronLeft className="h-4 w-4" />
                     </button>
-                    <span className="font-mono text-xs font-semibold px-1">
+                    <span className="font-mono text-[11px] sm:text-xs font-semibold px-0.5 sm:px-1">
                       Page <strong className="text-sage">{currentPage}</strong> / {TOTAL_PAGES}
                     </span>
                     <button
                       onClick={() => goToPage(currentPage + 1)}
                       disabled={currentPage >= TOTAL_PAGES}
                       aria-label="Next Page"
-                      className="p-1 hover:text-sage disabled:opacity-30 transition-colors"
+                      className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
                     >
                       <ChevronRight className="h-4 w-4" />
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
                     <button
                       onClick={() => setShowInstructionOverlay(true)}
-                      className="inline-flex items-center gap-1 bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-white/90 hover:bg-white/20 transition-all rounded"
+                      className="inline-flex items-center gap-1 bg-white/10 px-2 sm:px-2.5 py-1.5 text-xs font-semibold text-white/90 hover:bg-white/20 transition-all rounded touch-manipulation"
                       title="Show Swipe/Scroll Instructions"
                     >
                       <HelpCircle className="h-3.5 w-3.5 text-sage" />
@@ -265,26 +265,26 @@ export default function PrayerBookViewer() {
                     </button>
                     <button
                       onClick={() => setIsFullscreen(!isFullscreen)}
-                      className="inline-flex items-center gap-1.5 bg-vivid px-3 py-1.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded"
+                      className="inline-flex items-center gap-1.5 bg-vivid px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded touch-manipulation"
                     >
                       {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
-                      <span className="hidden sm:inline">{isFullscreen ? "Exit Fullscreen" : "Full Screen Reader"}</span>
+                      <span>{isFullscreen ? "Exit" : "Fullscreen"}</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Horizontal Swipeable / Scrollable Page Strip */}
-                <div className="border-b border-ink/10 bg-mist px-4 py-2 flex items-center gap-2">
+                <div className="border-b border-ink/10 bg-mist px-3 py-2 sm:px-4 flex items-center gap-2">
                   <span className="text-[11px] font-bold uppercase tracking-wider text-faded shrink-0">
                     Pages:
                   </span>
-                  <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full">
+                  <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full touch-pan-x">
                     {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
                       <button
                         key={p}
                         ref={currentPage === p ? activeBtnRef : null}
                         onClick={() => goToPage(p)}
-                        className={`h-7 min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 ${
+                        className={`h-8 min-w-8 sm:h-7 sm:min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 touch-manipulation ${
                           currentPage === p
                             ? "bg-vivid text-white font-bold scale-105 shadow-sm"
                             : "bg-white text-ink/70 hover:bg-pine/10 hover:text-pine border border-ink/10"
@@ -299,8 +299,7 @@ export default function PrayerBookViewer() {
                 {/* Embedded PDF iframe & Container */}
                 <div
                   onContextMenu={(e) => e.preventDefault()}
-                  className="relative w-full bg-slate-900 overflow-hidden select-none"
-                  style={{ height: "760px" }}
+                  className="relative w-full h-[520px] xs:h-[600px] sm:h-[700px] lg:h-[780px] bg-slate-900 overflow-hidden select-none"
                 >
                   <iframe
                     ref={mainIframeRef}
@@ -317,68 +316,68 @@ export default function PrayerBookViewer() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setShowInstructionOverlay(false)}
-                        className="absolute inset-0 z-30 flex items-center justify-center bg-ink/85 backdrop-blur-md p-6 cursor-pointer text-white"
+                        className="absolute inset-0 z-30 flex items-center justify-center bg-ink/85 backdrop-blur-md p-4 sm:p-6 cursor-pointer text-white"
                       >
                         <motion.div
                           initial={{ scale: 0.9, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
                           exit={{ scale: 0.9, opacity: 0 }}
                           onClick={(e) => e.stopPropagation()}
-                          className="relative max-w-md w-full bg-pine border border-white/20 p-6 sm:p-8 rounded-2xl shadow-2xl text-center"
+                          className="relative max-w-md w-full bg-pine border border-white/20 p-5 sm:p-8 rounded-2xl shadow-2xl text-center max-h-[90vh] overflow-y-auto"
                         >
                           <button
                             onClick={() => setShowInstructionOverlay(false)}
-                            className="absolute top-4 right-4 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 transition-colors"
+                            className="absolute top-3.5 right-3.5 p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white/80 transition-colors"
                             aria-label="Close guide"
                           >
                             <X className="h-5 w-5" />
                           </button>
 
                           {/* Animated Vertical Swipe/Scroll Gesture Icon */}
-                          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-vivid/20 border border-vivid/40">
+                          <div className="mx-auto flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-vivid/20 border border-vivid/40">
                             <motion.div
-                              animate={{ y: [-14, 14, -14], opacity: [0.5, 1, 0.5] }}
+                              animate={{ y: [-12, 12, -12], opacity: [0.5, 1, 0.5] }}
                               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                               className="flex flex-col items-center text-sage"
                             >
-                              <ChevronLeft className="h-6 w-6 rotate-90" />
-                              <MoveVertical className="h-6 w-6 my-[-4px]" />
-                              <ChevronRight className="h-6 w-6 rotate-90" />
+                              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 rotate-90" />
+                              <MoveVertical className="h-5 w-5 sm:h-6 sm:w-6 my-[-4px]" />
+                              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 rotate-90" />
                             </motion.div>
                           </div>
 
-                          <h3 className="font-display mt-5 text-2xl font-light text-white tracking-tight">
+                          <h3 className="font-display mt-4 text-xl sm:text-2xl font-light text-white tracking-tight">
                             Swipe & Scroll to Read
                           </h3>
-                          <p className="mt-3 text-sm leading-relaxed text-white/85">
+                          <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-white/85">
                             Scroll or swipe up/down inside the book to turn pages smoothly, or use the page bar and jump input above.
                           </p>
 
-                          <div className="mt-6 grid grid-cols-3 gap-2 text-left text-[11px] border-t border-white/15 pt-4 text-white/80">
+                          <div className="mt-5 grid grid-cols-3 gap-2 text-left text-[10px] sm:text-[11px] border-t border-white/15 pt-3.5 text-white/80">
                             <div className="flex flex-col items-center text-center">
-                              <span className="text-base">👆</span>
+                              <span className="text-sm sm:text-base">👆</span>
                               <span className="mt-1 font-semibold">Swipe / Scroll</span>
-                              <span className="text-[10px] text-white/60">inside reader</span>
+                              <span className="text-[9px] sm:text-[10px] text-white/60">inside reader</span>
                             </div>
                             <div className="flex flex-col items-center text-center">
-                              <span className="text-base">🔢</span>
+                              <span className="text-sm sm:text-base">🔢</span>
                               <span className="mt-1 font-semibold">Page Bar</span>
-                              <span className="text-[10px] text-white/60">tap page #</span>
+                              <span className="text-[9px] sm:text-[10px] text-white/60">tap page #</span>
                             </div>
                             <div className="flex flex-col items-center text-center">
-                              <span className="text-base">↔️</span>
+                              <span className="text-sm sm:text-base">↔️</span>
                               <span className="mt-1 font-semibold">Arrow Keys</span>
-                              <span className="text-[10px] text-white/60">left / right</span>
+                              <span className="text-[9px] sm:text-[10px] text-white/60">left / right</span>
                             </div>
                           </div>
 
                           <button
                             onClick={() => setShowInstructionOverlay(false)}
-                            className="mt-6 w-full bg-vivid py-3 text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep transition-all shadow-lg"
+                            className="mt-5 w-full bg-vivid py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep transition-all shadow-lg touch-manipulation"
                           >
                             Got It — Start Reading
                           </button>
-                          <p className="mt-2 text-[11px] text-white/50">Tap anywhere or press Esc to close</p>
+                          <p className="mt-2 text-[10px] sm:text-[11px] text-white/50">Tap anywhere or press Esc to close</p>
                         </motion.div>
                       </motion.div>
                     )}
@@ -386,28 +385,33 @@ export default function PrayerBookViewer() {
                 </div>
 
                 {/* Bottom Navigation Flip Bar */}
-                <div className="flex items-center justify-between border-t border-ink/10 bg-cream px-6 py-3.5 text-xs text-ink">
+                <div className="flex items-center justify-between border-t border-ink/10 bg-cream px-3.5 py-3 sm:px-6 sm:py-3.5 text-xs text-ink gap-2">
                   <button
                     onClick={() => goToPage(currentPage - 1)}
                     disabled={currentPage <= 1}
-                    className="inline-flex items-center gap-1.5 bg-white border border-ink/20 px-4 py-2 font-semibold rounded hover:bg-mist hover:border-pine disabled:opacity-30 transition-all shadow-sm"
+                    className="inline-flex items-center gap-1 sm:gap-1.5 bg-white border border-ink/20 px-3 py-2 sm:px-4 font-semibold rounded hover:bg-mist hover:border-pine disabled:opacity-30 transition-all shadow-sm touch-manipulation"
                   >
-                    <ChevronLeft className="h-4 w-4 text-pine" /> Previous Page
+                    <ChevronLeft className="h-4 w-4 text-pine" />
+                    <span className="hidden sm:inline">Previous Page</span>
+                    <span className="inline sm:hidden">Prev</span>
                   </button>
 
-                  <div className="font-mono text-xs text-faded flex items-center gap-1">
-                    <span>Reading Page</span>
+                  <div className="font-mono text-[11px] sm:text-xs text-faded flex items-center gap-1">
+                    <span className="hidden xs:inline">Reading</span>
+                    <span>Page</span>
                     <span className="font-bold text-pine">{currentPage}</span>
-                    <span>of</span>
+                    <span>/</span>
                     <span className="font-bold text-ink">{TOTAL_PAGES}</span>
                   </div>
 
                   <button
                     onClick={() => goToPage(currentPage + 1)}
                     disabled={currentPage >= TOTAL_PAGES}
-                    className="inline-flex items-center gap-1.5 bg-vivid px-4 py-2 font-semibold text-white rounded hover:bg-vivid-deep disabled:opacity-30 transition-all shadow-sm"
+                    className="inline-flex items-center gap-1 sm:gap-1.5 bg-vivid px-3 py-2 sm:px-4 font-semibold text-white rounded hover:bg-vivid-deep disabled:opacity-30 transition-all shadow-sm touch-manipulation"
                   >
-                    Next Page <ChevronRight className="h-4 w-4" />
+                    <span className="hidden sm:inline">Next Page</span>
+                    <span className="inline sm:hidden">Next</span>
+                    <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>
@@ -423,34 +427,36 @@ export default function PrayerBookViewer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex flex-col bg-ink/95 backdrop-blur-md p-3 sm:p-6"
+            className="fixed inset-0 z-[100] flex flex-col bg-ink/95 backdrop-blur-md p-2 sm:p-4 md:p-6"
           >
             {/* Modal Header Controls */}
-            <div className="flex flex-wrap items-center justify-between bg-pine px-6 py-3.5 text-white rounded-t-xl gap-3">
-              <div className="flex items-center gap-3">
-                <FileText className="h-5 w-5 text-sage" />
-                <span className="font-display text-lg font-light">Asalatu Nadwat — Official Prayer Book</span>
+            <div className="flex flex-wrap items-center justify-between bg-pine px-3.5 py-2.5 sm:px-6 sm:py-3.5 text-white rounded-t-xl gap-2 sm:gap-3">
+              <div className="flex items-center gap-2 sm:gap-3 overflow-hidden">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
+                <span className="font-display text-sm sm:text-lg font-light truncate max-w-[160px] xs:max-w-[260px] sm:max-w-none">
+                  Asalatu Nadwat — Prayer Book
+                </span>
                 <span className="hidden sm:inline-block text-xs font-mono bg-white/10 px-2.5 py-0.5 rounded text-white/80">
                   Page {currentPage} of {TOTAL_PAGES}
                 </span>
               </div>
 
               {/* Fullscreen Flip Buttons */}
-              <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-lg">
+              <div className="flex items-center gap-1.5 sm:gap-2 bg-white/10 px-2.5 sm:px-3 py-1 rounded-lg">
                 <button
                   onClick={() => goToPage(currentPage - 1)}
                   disabled={currentPage <= 1}
-                  className="p-1 hover:text-sage disabled:opacity-30 transition-colors"
+                  className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
-                <span className="font-mono text-xs font-semibold">
+                <span className="font-mono text-[11px] sm:text-xs font-semibold">
                   {currentPage} / {TOTAL_PAGES}
                 </span>
                 <button
                   onClick={() => goToPage(currentPage + 1)}
                   disabled={currentPage >= TOTAL_PAGES}
-                  className="p-1 hover:text-sage disabled:opacity-30 transition-colors"
+                  className="p-1 hover:text-sage disabled:opacity-30 transition-colors touch-manipulation"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -458,24 +464,26 @@ export default function PrayerBookViewer() {
 
               <button
                 onClick={() => setIsFullscreen(false)}
-                className="inline-flex items-center gap-2 bg-vivid px-4 py-2 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded-lg"
+                className="inline-flex items-center gap-1.5 bg-vivid px-3 py-1.5 sm:px-4 sm:py-2 text-xs font-semibold text-white hover:bg-vivid-deep transition-all rounded-lg touch-manipulation"
               >
-                <Minimize2 className="h-4 w-4" /> Exit Fullscreen
+                <Minimize2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span className="hidden xs:inline">Exit Fullscreen</span>
+                <span className="inline xs:hidden">Exit</span>
               </button>
             </div>
 
             {/* Modal Swipeable Strip */}
-            <div className="bg-slate-800 px-4 py-2 flex items-center gap-2 border-b border-white/10">
+            <div className="bg-slate-800 px-3 py-2 sm:px-4 flex items-center gap-2 border-b border-white/10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-white/60 shrink-0">
-                Jump Page:
+                Jump:
               </span>
-              <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full">
+              <div className="flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin max-w-full touch-pan-x">
                 {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
                   <button
                     key={p}
                     ref={currentPage === p ? modalActiveBtnRef : null}
                     onClick={() => goToPage(p)}
-                    className={`h-7 min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 ${
+                    className={`h-7 min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 touch-manipulation ${
                       currentPage === p
                         ? "bg-vivid text-white font-bold scale-105"
                         : "bg-white/10 text-white/70 hover:bg-white/20"
@@ -490,7 +498,7 @@ export default function PrayerBookViewer() {
             {/* Modal Iframe (Persistent Node) */}
             <div
               onContextMenu={(e) => e.preventDefault()}
-              className="relative flex-1 w-full bg-slate-900 select-none rounded-b-xl overflow-hidden"
+              className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none rounded-b-xl overflow-hidden"
             >
               <iframe
                 ref={modalIframeRef}

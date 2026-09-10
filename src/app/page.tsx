@@ -19,14 +19,14 @@ import {
 } from "@/components/ui";
 import { BLOG_POSTS, EVENT, GALLERY, PRAYER_PAGES } from "@/lib/site";
 
-function ViewMore({ href, children = "View more" }: { href: string; children?: string }) {
+function ViewMore({ href, children = "View more", dark = false }: { href: string; children?: string; dark?: boolean }) {
   return (
     <Link
       href={href}
-      className="group inline-flex items-center gap-2 text-sm font-semibold text-pine"
+      className={`group inline-flex items-center gap-2 text-sm font-semibold ${dark ? "text-white" : "text-pine"}`}
     >
-      <span className="border-b border-pine/40 pb-0.5 transition-colors group-hover:border-pine">{children}</span>
-      <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+      <span className={`border-b ${dark ? "border-emerald-400/50 text-emerald-400 group-hover:border-emerald-300 group-hover:text-emerald-300" : "border-pine/40 group-hover:border-pine"} pb-0.5 transition-colors`}>{children}</span>
+      <ArrowRight className={`h-4 w-4 transition-transform group-hover:translate-x-1 ${dark ? "text-emerald-400 group-hover:text-emerald-300" : ""}`} />
     </Link>
   );
 }
@@ -294,12 +294,26 @@ export default function Home() {
           <StaggerContainer staggerDelay={0.12} className="mx-auto grid max-w-7xl gap-6 px-5 py-16 sm:px-6 md:py-24 lg:grid-cols-3">
             <StaggerItem>
               <TiltCard className="h-full">
-                <div className="flex h-full flex-col border border-ink/15 bg-cream p-6 sm:p-8">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Prayer book</p>
-                  <h3 className="font-display mt-3 text-2xl tracking-tight">Read the supplications</h3>
-                  <p lang="ar" className="font-arabic mt-4 text-xl leading-loose text-pine">{PRAYER_PAGES[0].arabic}</p>
-                  <p className="mt-2 text-sm text-faded">{PRAYER_PAGES[0].transliteration}</p>
-                  <div className="mt-6"><ViewMore href="/prayer-book">Open the book</ViewMore></div>
+                <div className="relative flex h-full flex-col justify-between overflow-hidden border border-ink/15 p-6 sm:p-8 rounded-xl shadow-md group">
+                  <Image
+                    src="/assets/prayerbook_cover.png"
+                    alt="Prayer book cover background"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/80 to-emerald-950/90 backdrop-blur-[1px]" />
+                  <div className="relative z-10 flex h-full flex-col justify-between">
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-emerald-400">Prayer book</p>
+                      <h3 className="font-display mt-3 text-2xl font-light tracking-tight text-white">Read the supplications</h3>
+                      <p lang="ar" className="font-arabic mt-4 text-xl sm:text-2xl leading-loose text-emerald-300">{PRAYER_PAGES[0].arabic}</p>
+                      <p className="mt-2 text-sm text-white/80">{PRAYER_PAGES[0].transliteration}</p>
+                    </div>
+                    <div className="mt-6">
+                      <ViewMore href="/prayer-book" dark>Open the book</ViewMore>
+                    </div>
+                  </div>
                 </div>
               </TiltCard>
             </StaggerItem>
