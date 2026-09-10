@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Expand, X } from "lucide-react";
+import { Expand, ExternalLink, X } from "lucide-react";
 import { GALLERY, type GalleryItem } from "@/lib/site";
 import { Eyebrow, FadeIn, TiltCard } from "./ui";
 
@@ -88,6 +88,24 @@ export default function Gallery() {
             ))}
           </AnimatePresence>
         </motion.div>
+
+        {/* External Pixieset Link Button at bottom of every category */}
+        <FadeIn direction="up" delay={0.2}>
+          <div className="mt-12 flex flex-col items-center justify-center border-t border-ink/10 pt-10 text-center">
+            <p className="text-xs uppercase tracking-[0.2em] text-faded mb-3">
+              Showing {items.length} archived frames in {filter}
+            </p>
+            <a
+              href="https://nadwatmedia.pixieset.com/lateefulakbar20226/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2.5 bg-pine px-7 py-4 text-xs sm:text-sm font-semibold text-white rounded-xl hover:bg-ink transition-all shadow-lg group touch-manipulation"
+            >
+              <span>View Full Photo Gallery on Pixieset</span>
+              <ExternalLink className="h-4 w-4 text-sage transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+            </a>
+          </div>
+        </FadeIn>
       </div>
 
       {/* Full screen viewer */}

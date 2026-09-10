@@ -36,31 +36,85 @@ export type GalleryItem = {
   span?: string;
 };
 
-/* All gallery items categorized in their respective subfolders */
-export const GALLERY: GalleryItem[] = [
-  // Gathering
+const RAW_GATHERING: GalleryItem[] = [
   { src: "/assets/gallery/gathering/crowd-08.jpg", label: "The sisters' canopy - thousands in white", category: "Gathering" },
-  { src: "/assets/gallery/gathering/crowd-31.jpg", label: "Row upon row of white", category: "Gathering" },
   { src: "/assets/gallery/gathering/crowd-49.jpg", label: "The stands fill at TBS", category: "Gathering" },
   { src: "/assets/gallery/gathering/crowd-67.jpg", label: "A sea that stretches on", category: "Gathering" },
-  { src: "/assets/gallery/gathering/crowd-75.jpg", label: "Closing supplication", category: "Gathering" },
   { src: "/assets/gallery/gathering/crowd-80.jpg", label: "Arrival tide at the gates", category: "Gathering" },
+  { src: "/assets/gallery/gathering/crowd-52.jpg", label: "Brothers gathered in prayer", category: "Gathering" },
+  { src: "/assets/gallery/gathering/crowd-63.jpg", label: "Congregation filled to capacity", category: "Gathering" },
+  { src: "/assets/gallery/gathering/LATEEFULAKBAR-51.jpg", label: "Mass assembly at Tafawa Balewa Square", category: "Gathering" },
+  { src: "/assets/gallery/gathering/LATEEFULAKBAR-88.jpg", label: "Overview of grand seating area", category: "Gathering" },
+  { src: "/assets/gallery/gathering/LATEEFULAKBAR-297.jpg", label: "Worshippers occupying main bowl", category: "Gathering" },
+  { src: "/assets/gallery/gathering/LATEEFULAKBAR-310.jpg", label: "Crowd in white attire", category: "Gathering" },
+  { src: "/assets/gallery/gathering/LATEEFULAKBAR-412.jpg", label: "Mass congregation in Tasbīh", category: "Gathering" },
+];
 
-  // People
+const RAW_PEOPLE: GalleryItem[] = [
   { src: "/assets/gallery/people/crowd-15.jpg", label: "The convener at dhikr", category: "People" },
   { src: "/assets/gallery/people/crowd-30.jpg", label: "Brothers in quiet reflection", category: "People" },
-  { src: "/assets/gallery/people/crowd-52.jpg", label: "The brothers' hall", category: "People" },
+  { src: "/assets/gallery/people/crowd-52.jpg", label: "The brothers' section", category: "People" },
   { src: "/assets/gallery/people/crowd-63.jpg", label: "Scholars on stage", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-115.jpg", label: "Distinguished guests & elders", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-150.jpg", label: "Youth & attendees engaged in prayer", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-170.jpg", label: "Faces of faith and hope", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-229.jpg", label: "Islamic scholars & dignitaries", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-248.jpg", label: "Worshippers sharing warmth", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-249.jpg", label: "Devotion during recitation", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-257.jpg", label: "Moments of earnest supplication", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-261.jpg", label: "Brothers standing shoulder to shoulder", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-262.jpg", label: "Community members at the venue", category: "People" },
+  { src: "/assets/gallery/people/LATEEFULAKBAR-266.jpg", label: "Peaceful smiles among attendees", category: "People" },
+];
 
-  // Atmosphere
+const RAW_ATMOSPHERE: GalleryItem[] = [
   { src: "/assets/gallery/atmosphere/crowd-18.jpg", label: "Hands raised in du'a", category: "Atmosphere" },
-  { src: "/assets/gallery/atmosphere/crowd-48.jpg", label: "Midday recitation", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/crowd-48.jpg", label: "Midday recitation at TBS", category: "Atmosphere" },
   { src: "/assets/gallery/atmosphere/crowd-54.jpg", label: "Stillness before the call", category: "Atmosphere" },
   { src: "/assets/gallery/atmosphere/crowd-58.jpg", label: "Evening light on white", category: "Atmosphere" },
-
-  // Drone
-  { src: "/assets/gallery/drone/crowd-11.jpg", label: "Drone over Tafawa Balewa Square", category: "Drone" },
+  { src: "/assets/gallery/atmosphere/crowd-15.jpg", label: "Atmosphere of devotion", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/crowd-31.jpg", label: "Rows in deep supplication", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/crowd-75.jpg", label: "Closing prayer moments", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-21.jpg", label: "Sacred moments at Lateeful Akbar", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-48.jpg", label: "Spiritual ambience in the Square", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-83.jpg", label: "Praise and remembrance", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-86.jpg", label: "Worshippers gathered in harmony", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-92.jpg", label: "Serenity amidst the congregation", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-103.jpg", label: "Blessed moments of dhikr", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-112.jpg", label: "Echoes of Yaa Lateef", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-190.jpg", label: "Peaceful reflection", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-237.jpg", label: "Light across the arena", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-255.jpg", label: "Congregation in unison", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-286.jpg", label: "Spirit of unity and faith", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-289.jpg", label: "Gathered under His mercy", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-395.jpg", label: "Solemn prayer at sunset", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-471.jpg", label: "A sea of white worshippers", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-472.jpg", label: "Devotion in the main bowl", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/LATEEFULAKBAR-473.jpg", label: "Voices united in Tasbīh", category: "Atmosphere" },
 ];
+
+const RAW_DRONE: GalleryItem[] = [
+  { src: "/assets/gallery/drone/crowd-12.jpg", label: "Aerial panorama of Tafawa Balewa Square", category: "Drone" },
+  { src: "/assets/gallery/drone/LATEEFULAKBAR-6.jpg", label: "Bird's-eye view of the white sea", category: "Drone" },
+  { src: "/assets/gallery/drone/LATEEFULAKBAR-7.jpg", label: "Overhead vista of the grand canopy", category: "Drone" },
+  { src: "/assets/gallery/drone/lateefulakbar-poster.jpg", label: "Aerial view of Lateeful Akbar venue", category: "Drone" },
+];
+
+function interleaveGallery(): GalleryItem[] {
+  const buckets = [RAW_GATHERING, RAW_PEOPLE, RAW_ATMOSPHERE, RAW_DRONE];
+  const result: GalleryItem[] = [];
+  const maxLen = Math.max(...buckets.map((b) => b.length));
+  for (let i = 0; i < maxLen; i++) {
+    for (const b of buckets) {
+      if (i < b.length) {
+        result.push(b[i]);
+      }
+    }
+  }
+  return result;
+}
+
+export const GALLERY: GalleryItem[] = interleaveGallery();
 
 export const HERO_SEQUENCE = [
   "/assets/crowd-12.jpg",
