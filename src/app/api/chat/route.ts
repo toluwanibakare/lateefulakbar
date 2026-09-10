@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { EVENT_KNOWLEDGE_BASE, getQuickButtonsForIntent } from '@/lib/kb';
-import { GoogleGenAI } from '@google/genai';
+
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 export async function POST(req: Request) {
   try {
@@ -13,7 +14,7 @@ export async function POST(req: Request) {
 
     const db = await getDb();
 
-    // 1. Handle Human Support Handoff
+    // 1. Handle Human Customer Support Handoff
     if (isSupportRequest || message.toLowerCase().includes('human support') || message.toLowerCase().includes('talk to human')) {
       await db.query(
         `INSERT INTO support_tickets (name, email, phone, query, status) VALUES (?, ?, ?, ?, 'pending')`,
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
       );
 
       return NextResponse.json({
-        reply: `Assalamu Alaikum! Your request has been handed off to our customer support team. An admin representative will review your message ("${message.slice(0, 60)}...") and get back to you shortly.`,
+        reply: `Assalamu Alaikum! Your request has been handed off to our customer support team. An admin representative will review your message ("${message.slice(0, 60)}...") and contact you shortly.`,
         isSupportHandoff: true,
         buttons: [
           { label: '🎟️ Return to Registration', action: 'link', target: '/register' },
@@ -31,30 +32,47 @@ export async function POST(req: Request) {
       });
     }
 
-    // 2. Process query with Gemini API or Intelligent Knowledge Base Fallback
+    // 2. Query Groq AI API
     let reply = '';
-    const apiKey = process.env.GEMINI_API_KEY;
 
-    if (apiKey) {
+    if (GROQ_API_KEY) {
       try {
-        const ai = new GoogleGenAI({ apiKey });
-        const systemInstruction = `You are "Noor AI", the official intelligent assistant for Lateeful Akbar 2027. Answer politely, warmly, and accurately using the Knowledge Base below. Keep answers concise (2-4 sentences maximum). If the user asks for human customer support, inform them to click the "Talk to Support Agent" button.
+        const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${GROQ_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'openai/gpt-oss-20b',
+            messages: [
+              {
+                role: 'system',
+                content: `You are "Noor AI", the official intelligent assistant for Lateeful Akbar 2027. Answer politely, warmly, and accurately using the Knowledge Base below. Keep answers concise (2-4 sentences maximum). If the user asks for human customer support, inform them to click the "Talk to Support Agent" button.
 
 Knowledge Base:
-${EVENT_KNOWLEDGE_BASE}`;
-
-        const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
-          contents: `${systemInstruction}\n\nUser Question: ${message}`,
+${EVENT_KNOWLEDGE_BASE}`,
+              },
+              {
+                role: 'user',
+                content: message,
+              },
+            ],
+            temperature: 0.6,
+            max_tokens: 300,
+          }),
         });
 
-        reply = response.text || '';
+        const groqData = await groqRes.json();
+        if (groqData?.choices?.[0]?.message?.content) {
+          reply = groqData.choices[0].message.content.trim();
+        }
       } catch (err) {
-        console.error('Gemini API call failed, falling back to Knowledge Base matcher:', err);
+        console.error('Groq AI API call error, using Knowledge Base fallback:', err);
       }
     }
 
-    // Fallback if no API key or call failed
+    // Fallback matcher if Groq API call is unreachable or unconfigured
     if (!reply) {
       const q = message.toLowerCase();
       if (q.includes('when') || q.includes('date') || q.includes('time')) {
@@ -66,7 +84,7 @@ ${EVENT_KNOWLEDGE_BASE}`;
       } else if (q.includes('speaker') || q.includes('scholar')) {
         reply = 'Honored speakers include Sheikh Al-Fazi (Spiritual Wisdom), Dr. Amina Yusuf (Islamic Finance), and Ustadh Umar Farooq (Youth Leadership).';
       } else if (q.includes('ticket') || q.includes('register') || q.includes('cost') || q.includes('price')) {
-        reply = 'Registration passes are available! You can choose between Standard Pass (Free), VIP Delegate Pass, or Virtual Streaming Access.';
+        reply = 'Registration passes are free! You can choose between Standard Pass, VIP Delegate Pass, or Virtual Streaming Access.';
       } else if (q.includes('donate') || q.includes('sadaqah')) {
         reply = 'You can support the gathering by contributing to water supply, prayer mats, cooling fans, tents, or media broadcast setup.';
       } else {
