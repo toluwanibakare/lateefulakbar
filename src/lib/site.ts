@@ -35,23 +35,30 @@ export type GalleryItem = {
   span?: string;
 };
 
-/* All 15 frames appear here - none left unused */
+/* All gallery items categorized in their respective subfolders */
 export const GALLERY: GalleryItem[] = [
-  { src: "/assets/crowd-08.jpg", label: "The sisters' canopy - thousands in white", category: "Gathering" },
-  { src: "/assets/crowd-11.jpg", label: "Drone over Tafawa Balewa Square", category: "Drone" },
-  { src: "/assets/crowd-80.jpg", label: "Arrival tide at the gates", category: "Gathering" },
-  { src: "/assets/crowd-15.jpg", label: "The convener at dhikr", category: "People" },
-  { src: "/assets/crowd-18.jpg", label: "Hands raised in du'a", category: "Atmosphere" },
-  { src: "/assets/crowd-30.jpg", label: "Brothers in quiet reflection", category: "People" },
-  { src: "/assets/crowd-31.jpg", label: "Row upon row of white", category: "Gathering" },
-  { src: "/assets/crowd-48.jpg", label: "Midday recitation", category: "Atmosphere" },
-  { src: "/assets/crowd-49.jpg", label: "The stands fill at TBS", category: "Gathering" },
-  { src: "/assets/crowd-52.jpg", label: "The brothers' hall", category: "People" },
-  { src: "/assets/crowd-54.jpg", label: "Stillness before the call", category: "Atmosphere" },
-  { src: "/assets/crowd-58.jpg", label: "Evening light on white", category: "Atmosphere" },
-  { src: "/assets/crowd-63.jpg", label: "Scholars on stage", category: "People" },
-  { src: "/assets/crowd-67.jpg", label: "A sea that stretches on", category: "Gathering" },
-  { src: "/assets/crowd-75.jpg", label: "Closing supplication", category: "Gathering" },
+  // Gathering
+  { src: "/assets/gallery/gathering/crowd-08.jpg", label: "The sisters' canopy - thousands in white", category: "Gathering" },
+  { src: "/assets/gallery/gathering/crowd-31.jpg", label: "Row upon row of white", category: "Gathering" },
+  { src: "/assets/gallery/gathering/crowd-49.jpg", label: "The stands fill at TBS", category: "Gathering" },
+  { src: "/assets/gallery/gathering/crowd-67.jpg", label: "A sea that stretches on", category: "Gathering" },
+  { src: "/assets/gallery/gathering/crowd-75.jpg", label: "Closing supplication", category: "Gathering" },
+  { src: "/assets/gallery/gathering/crowd-80.jpg", label: "Arrival tide at the gates", category: "Gathering" },
+
+  // People
+  { src: "/assets/gallery/people/crowd-15.jpg", label: "The convener at dhikr", category: "People" },
+  { src: "/assets/gallery/people/crowd-30.jpg", label: "Brothers in quiet reflection", category: "People" },
+  { src: "/assets/gallery/people/crowd-52.jpg", label: "The brothers' hall", category: "People" },
+  { src: "/assets/gallery/people/crowd-63.jpg", label: "Scholars on stage", category: "People" },
+
+  // Atmosphere
+  { src: "/assets/gallery/atmosphere/crowd-18.jpg", label: "Hands raised in du'a", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/crowd-48.jpg", label: "Midday recitation", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/crowd-54.jpg", label: "Stillness before the call", category: "Atmosphere" },
+  { src: "/assets/gallery/atmosphere/crowd-58.jpg", label: "Evening light on white", category: "Atmosphere" },
+
+  // Drone
+  { src: "/assets/gallery/drone/crowd-11.jpg", label: "Drone over Tafawa Balewa Square", category: "Drone" },
 ];
 
 export const HERO_SEQUENCE = [
