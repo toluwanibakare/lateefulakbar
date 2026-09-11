@@ -106,8 +106,8 @@ const ALL_PERMISSIONS = [
   { id: "newsletter", label: "Email & Newsletter Hub" },
   { id: "blog", label: "Blog Manager" },
   { id: "gallery", label: "Gallery Manager" },
-  { id: "sadaqah", label: "Sadaqah Campaigns" },
-  { id: "donations", label: "Donation Payments" },
+  { id: "sadaqah", label: "Donation Campaigns" },
+  { id: "donations", label: "Donation Management" },
   { id: "ai_assistant", label: "AI Knowledge Base" },
   { id: "settings", label: "Website Settings" },
   { id: "admin_users", label: "Admin Users" },
@@ -757,8 +757,8 @@ export default function AdminPage() {
     {
       group: "GIVING",
       items: [
-        { id: "sadaqah", label: "Sadaqah Campaigns", icon: HeartIcon },
-        { id: "donations", label: "Donation Payments", icon: DollarSign },
+        { id: "sadaqah", label: "Donation Campaigns", icon: HeartIcon },
+        { id: "donations", label: "Donation Management", icon: DollarSign },
       ],
     },
     {
@@ -1642,7 +1642,7 @@ export default function AdminPage() {
               <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-base font-bold text-pine">Donation Payments Log</h2>
+                    <h2 className="text-base font-bold text-pine">Donation Management Log</h2>
                     <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions</p>
                   </div>
                 </div>
