@@ -19,6 +19,7 @@ import {
   X,
   Headphones,
   RotateCcw,
+  CheckCircle2,
 } from "lucide-react";
 
 type QuickButton = {
@@ -68,9 +69,17 @@ export default function AiAssistant() {
   const [typing, setTyping] = useState(false);
   const [sessionId] = useState(() => `session_${Math.random().toString(36).substring(2, 9)}`);
   const [msgs, setMsgs] = useState<Msg[]>([DEFAULT_WELCOME]);
+
+  // Support Form Prompt State
+  const [showSupportModal, setShowSupportModal] = useState(false);
+  const [visitorName, setVisitorName] = useState("");
+  const [visitorEmail, setVisitorEmail] = useState("");
+  const [visitorPhone, setVisitorPhone] = useState("");
+  const [pendingQuery, setPendingQuery] = useState("");
+
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  // Load chat history from localStorage on initial client mount
+  // Load chat history & user details from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem("noor_chat_history");
@@ -80,19 +89,23 @@ export default function AiAssistant() {
           setMsgs(parsed);
         }
       }
+      const savedName = localStorage.getItem("noor_visitor_name");
+      const savedEmail = localStorage.getItem("noor_visitor_email");
+      if (savedName) setVisitorName(savedName);
+      if (savedEmail) setVisitorEmail(savedEmail);
     } catch (err) {
-      console.error("Error loading chat history from localStorage:", err);
+      console.error("Error loading chat history:", err);
     }
   }, []);
 
-  // Persist chat history to localStorage whenever messages update
+  // Persist chat history to localStorage
   useEffect(() => {
     try {
       if (msgs.length > 0) {
         localStorage.setItem("noor_chat_history", JSON.stringify(msgs));
       }
     } catch (err) {
-      console.error("Error saving chat history to localStorage:", err);
+      console.error("Error saving chat history:", err);
     }
   }, [msgs]);
 
@@ -100,7 +113,7 @@ export default function AiAssistant() {
     if (open) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
-  }, [msgs, typing, open]);
+  }, [msgs, typing, open, showSupportModal]);
 
   const clearChat = () => {
     setMsgs([DEFAULT_WELCOME]);
@@ -111,13 +124,46 @@ export default function AiAssistant() {
     }
   };
 
-  const send = async (raw?: string, isSupportOverride?: boolean) => {
+  const handleTriggerSupport = (queryText: string) => {
+    setPendingQuery(queryText);
+    setShowSupportModal(true);
+  };
+
+  const submitSupportForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!visitorName || !visitorEmail) return;
+
+    try {
+      localStorage.setItem("noor_visitor_name", visitorName);
+      localStorage.setItem("noor_visitor_email", visitorEmail);
+    } catch (e) {}
+
+    setShowSupportModal(false);
+    await send(pendingQuery || "Requesting human customer support representative...", true, visitorName, visitorEmail, visitorPhone);
+  };
+
+  const send = async (
+    raw?: string,
+    isSupportOverride?: boolean,
+    overrideName?: string,
+    overrideEmail?: string,
+    overridePhone?: string
+  ) => {
     const text = (raw ?? input).trim();
     if (!text && !isSupportOverride) return;
+
+    // Check if user is asking for customer support without saved name/email
+    if (!isSupportOverride && (text.toLowerCase().includes('support') || text.toLowerCase().includes('human'))) {
+      if (!visitorName || !visitorEmail) {
+        handleTriggerSupport(text);
+        return;
+      }
+    }
+
     if (typing) return;
 
     const time = getTimeStr();
-    const userMsgText = isSupportOverride ? "Requesting human customer support agent..." : text;
+    const userMsgText = isSupportOverride ? `Requesting live support: "${text}"` : text;
 
     setMsgs((m) => [...m, { id: String(Date.now()), from: "user", text: userMsgText, time }]);
     setInput("");
@@ -128,7 +174,10 @@ export default function AiAssistant() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: userMsgText,
+          message: text,
+          name: overrideName || visitorName || 'Guest Visitor',
+          email: overrideEmail || visitorEmail || '',
+          phone: overridePhone || visitorPhone || '',
           sessionId,
           isSupportRequest: isSupportOverride,
         }),
@@ -264,6 +313,49 @@ export default function AiAssistant() {
               </div>
             </div>
 
+            {/* Support Details Prompt Card (Asks Name & Email for Human Support) */}
+            {showSupportModal && (
+              <div className="p-5 bg-mist border-b border-sage space-y-3">
+                <div className="flex items-center gap-2 text-pine font-bold text-xs uppercase tracking-wider">
+                  <Headphones className="h-4 w-4 text-vivid" /> Connect with Live Support
+                </div>
+                <p className="text-xs text-faded">Please enter your name & email so an admin representative can address and reply to you directly.</p>
+                <form onSubmit={submitSupportForm} className="space-y-3">
+                  <input
+                    type="text"
+                    required
+                    placeholder="Your Full Name"
+                    value={visitorName}
+                    onChange={(e) => setVisitorName(e.target.value)}
+                    className="w-full bg-white border border-ink/15 rounded-xl px-3.5 py-2 text-xs text-ink focus:outline-none focus:border-vivid"
+                  />
+                  <input
+                    type="email"
+                    required
+                    placeholder="Your Email Address"
+                    value={visitorEmail}
+                    onChange={(e) => setVisitorEmail(e.target.value)}
+                    className="w-full bg-white border border-ink/15 rounded-xl px-3.5 py-2 text-xs text-ink focus:outline-none focus:border-vivid"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      className="flex-1 bg-vivid hover:bg-vivid-deep text-white font-bold py-2 rounded-xl text-xs uppercase tracking-wider shadow-sm"
+                    >
+                      Connect with Support
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowSupportModal(false)}
+                      className="px-4 bg-white text-faded hover:text-ink font-semibold py-2 rounded-xl text-xs border border-ink/15"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
+
             {/* Chat Messages Body */}
             <div className="flex-1 space-y-4 overflow-y-auto bg-cream dark:bg-slate-950 px-4 py-5 scrollbar-thin">
               {msgs.map((m) => (
@@ -308,7 +400,7 @@ export default function AiAssistant() {
                           btn.action === 'support' ? (
                             <button
                               key={idx}
-                              onClick={() => send("Switch to customer support", true)}
+                              onClick={() => handleTriggerSupport("I would like to speak to a human customer support agent.")}
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold rounded-lg bg-amber-500/10 text-amber-800 dark:text-amber-300 hover:bg-amber-500/20 border border-amber-500/30 transition-all"
                             >
                               {btn.label}
@@ -379,7 +471,13 @@ export default function AiAssistant() {
                   return (
                     <button
                       key={c.label}
-                      onClick={() => send(c.query, c.label === "Customer Support")}
+                      onClick={() => {
+                        if (c.label === "Customer Support") {
+                          handleTriggerSupport(c.query);
+                        } else {
+                          send(c.query);
+                        }
+                      }}
                       className="group inline-flex shrink-0 items-center gap-1.5 rounded-full border border-ink/15 dark:border-slate-800 bg-cream dark:bg-slate-800/60 px-3 py-1.5 text-[11px] font-medium text-ink dark:text-slate-200 transition-all hover:border-vivid hover:bg-vivid/10 hover:text-vivid dark:hover:text-emerald-300"
                     >
                       <Icon className="h-3 w-3 text-vivid dark:text-emerald-400 group-hover:text-vivid-deep" />

@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server';
+import { getDb } from '@/lib/db';
+import { RowDataPacket } from 'mysql2';
 import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
 
 const SUPER_ADMIN_PASSWORD = process.env.SUPER_ADMIN_PASSWORD || 'Master@123';
@@ -8,7 +10,6 @@ const FINANCE_ADMIN_PASSWORD = process.env.FINANCE_ADMIN_PASSWORD || 'Finance@12
 
 export async function POST(req: Request) {
   try {
-    // 1. Rate Limiting Check (5 attempts per minute per IP or identifier)
     const ip = req.headers.get('x-forwarded-for') || 'ip_unknown';
     const rateCheck = checkRateLimit(`login_${ip}`, 5, 60 * 1000);
 
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Role 1: Master Super Admin
+    // Master Super Admin
     if (email === 'admin@lateefulakbar.com' && password === SUPER_ADMIN_PASSWORD) {
       return NextResponse.json({
         success: true,
@@ -38,12 +39,13 @@ export async function POST(req: Request) {
           name: 'Super Admin',
           email: 'admin@lateefulakbar.com',
           role: 'Super Admin',
+          permissions: ['dashboard', 'messages', 'live_event', 'updates', 'attendees', 'referrals', 'newsletter', 'blog', 'gallery', 'sadaqah', 'donations', 'ai_assistant', 'settings', 'admin_users', 'activity_log'],
         },
         token: process.env.SUPER_ADMIN_TOKEN || 'session_super_admin_lateeful_akbar_2027',
       });
     }
 
-    // Role 2: Content Admin
+    // Preset Role Accounts
     if (email === 'content@lateefulakbar.com' && password === CONTENT_ADMIN_PASSWORD) {
       return NextResponse.json({
         success: true,
@@ -51,12 +53,12 @@ export async function POST(req: Request) {
           name: 'Content Manager',
           email: 'content@lateefulakbar.com',
           role: 'Content Admin',
+          permissions: ['dashboard', 'newsletter', 'blog', 'gallery'],
         },
         token: process.env.CONTENT_ADMIN_TOKEN || 'session_content_admin_lateeful_akbar_2027',
       });
     }
 
-    // Role 3: Event Admin
     if (email === 'event@lateefulakbar.com' && password === EVENT_ADMIN_PASSWORD) {
       return NextResponse.json({
         success: true,
@@ -64,12 +66,12 @@ export async function POST(req: Request) {
           name: 'Event Coordinator',
           email: 'event@lateefulakbar.com',
           role: 'Event Admin',
+          permissions: ['dashboard', 'live_event', 'updates', 'attendees', 'referrals'],
         },
         token: process.env.EVENT_ADMIN_TOKEN || 'session_event_admin_lateeful_akbar_2027',
       });
     }
 
-    // Role 4: Finance Admin
     if (email === 'finance@lateefulakbar.com' && password === FINANCE_ADMIN_PASSWORD) {
       return NextResponse.json({
         success: true,
@@ -77,16 +79,46 @@ export async function POST(req: Request) {
           name: 'Finance Controller',
           email: 'finance@lateefulakbar.com',
           role: 'Finance Admin',
+          permissions: ['dashboard', 'sadaqah', 'donations'],
         },
         token: process.env.FINANCE_ADMIN_TOKEN || 'session_finance_admin_lateeful_akbar_2027',
       });
     }
 
+    // Dynamic MySQL Admin Users Query
+    const db = await getDb();
+    const [rows] = await db.query<RowDataPacket[]>(
+      `SELECT * FROM admin_users WHERE email = ? AND password = ?`,
+      [email, password]
+    );
+
+    if (rows.length > 0) {
+      const u = rows[0];
+      let perms: string[] = [];
+      try {
+        perms = JSON.parse(u.permissions || '[]');
+      } catch (e) {
+        perms = ['dashboard'];
+      }
+
+      return NextResponse.json({
+        success: true,
+        user: {
+          name: u.name,
+          email: u.email,
+          role: u.role,
+          permissions: perms,
+        },
+        token: `session_custom_${u.id}_2027`,
+      });
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Invalid credentials' },
+      { success: false, error: 'Invalid email or password' },
       { status: 401 }
     );
   } catch (error) {
+    console.error('Login error:', error);
     return NextResponse.json(
       { success: false, error: 'Authentication processing error' },
       { status: 500 }
