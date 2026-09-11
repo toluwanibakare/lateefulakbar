@@ -106,8 +106,7 @@ const ALL_PERMISSIONS = [
   { id: "newsletter", label: "Email & Newsletter Hub" },
   { id: "blog", label: "Blog Manager" },
   { id: "gallery", label: "Gallery Manager" },
-  { id: "sadaqah", label: "Donation Campaigns" },
-  { id: "donations", label: "Donation Management" },
+  { id: "donations", label: "Donation & Sadaqah Management" },
   { id: "ai_assistant", label: "AI Knowledge Base" },
   { id: "settings", label: "Website Settings" },
   { id: "admin_users", label: "Admin Users" },
@@ -764,8 +763,7 @@ export default function AdminPage() {
     {
       group: "GIVING",
       items: [
-        { id: "sadaqah", label: "Donation Campaigns", icon: HeartIcon },
-        { id: "donations", label: "Donation Management", icon: DollarSign },
+        { id: "donations", label: "Donation & Sadaqah Management", icon: HeartIcon },
       ],
     },
     {
@@ -1620,8 +1618,8 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* SECTION: DONATION MANAGEMENT (CAMPAIGNS, THRESHOLDS & PAYMENTS) */}
-          {activeSection === "donations" && (
+          {/* SECTION: DONATION & SADAQAH MANAGEMENT (CAMPAIGNS, THRESHOLDS & PAYMENTS) */}
+          {(activeSection === "donations" || activeSection === "sadaqah") && (
             <div className="space-y-8">
               {/* Overview Metrics Cards */}
               <div className="grid gap-5 sm:grid-cols-4">

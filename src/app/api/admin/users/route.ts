@@ -44,9 +44,28 @@ export async function GET(req: Request) {
     }
 
     if (type === 'donations_list') {
-      const [rows] = await db.query<RowDataPacket[]>(
+      let [rows] = await db.query<RowDataPacket[]>(
         'SELECT * FROM donations ORDER BY id DESC'
       );
+
+      if (rows.length === 0) {
+        try {
+          await db.query(`
+            INSERT INTO donations (donor_name, email, amount, category, tx_ref, status) VALUES
+            ('Alhaji Ibrahim Danjuma', 'ibrahim.d@example.com', 250000, 'Nadwat TV Live Broadcast', 'TX-1001', 'completed'),
+            ('Hajiya Fatima Bello', 'fatima.bello@example.com', 50000, 'Provide Cooling Fans', 'TX-1002', 'completed'),
+            ('Anonymous Donor', 'anonymous@lateefulakbar.com', 15000, 'Prayer Mats & Rugs', 'TX-1003', 'completed'),
+            ('Dr. Sulaimon Adebayo', 'sulaimon.ade@example.com', 100000, 'Water & Hydration Points', 'TX-1004', 'completed'),
+            ('Khadijah Opeyemi', 'khadijah.op@example.com', 10000, 'General Sadaqah', 'TX-1005', 'completed')
+          `);
+          [rows] = await db.query<RowDataPacket[]>(
+            'SELECT * FROM donations ORDER BY id DESC'
+          );
+        } catch (e) {
+          console.error('Error auto-seeding donations:', e);
+        }
+      }
+
       return NextResponse.json({ success: true, donations: rows });
     }
 
