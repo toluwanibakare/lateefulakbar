@@ -1618,47 +1618,16 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* SECTION: DONATION & SADAQAH MANAGEMENT (CAMPAIGNS, THRESHOLDS & PAYMENTS) */}
-          {(activeSection === "donations" || activeSection === "sadaqah") && (
+          {/* SECTION: DONATION CAMPAIGNS & THRESHOLDS PAGE */}
+          {activeSection === "sadaqah" && (
             <div className="space-y-8">
-              {/* Overview Metrics Cards */}
-              <div className="grid gap-5 sm:grid-cols-4">
-                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
-                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Raised</span>
-                  <div className="text-2xl font-extrabold text-pine mt-1">
-                    ₦{donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0).toLocaleString()}
-                  </div>
-                </div>
-                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
-                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Donors</span>
-                  <div className="text-2xl font-extrabold text-vivid mt-1">
-                    {donationsList.length} donors
-                  </div>
-                </div>
-                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
-                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Avg Contribution</span>
-                  <div className="text-2xl font-extrabold text-gilt mt-1">
-                    ₦{donationsList.length > 0
-                      ? Math.round(donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0) / donationsList.length).toLocaleString()
-                      : 0}
-                  </div>
-                </div>
-                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
-                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Active Campaigns</span>
-                  <div className="text-2xl font-extrabold text-pine mt-1">
-                    {campaigns.length} projects
-                  </div>
-                </div>
-              </div>
-
-              {/* Campaigns & Thresholds Management Section with Collapsible Dropdown Form */}
               <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-5">
                   <div>
                     <h2 className="text-base font-bold text-pine flex items-center gap-2">
                       <HeartIcon className="h-5 w-5 text-vivid" /> Live Site Donation Items & Thresholds ({campaigns.length})
                     </h2>
-                    <p className="text-xs text-faded mt-0.5">Manage physical items, target quantities, and unit prices visible to visitors</p>
+                    <p className="text-xs text-faded mt-0.5">Manage physical items, target quantities, and unit prices visible to visitors on the live site</p>
                   </div>
 
                   <button
@@ -1835,12 +1804,41 @@ export default function AdminPage() {
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* SECTION: SADAQAH PAYMENTS LOG PAGE */}
+          {activeSection === "donations" && (
+            <div className="space-y-6">
+              {/* Overview Metrics Cards */}
+              <div className="grid gap-5 sm:grid-cols-3">
+                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Raised</span>
+                  <div className="text-2xl font-extrabold text-pine mt-1">
+                    ₦{donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Donors</span>
+                  <div className="text-2xl font-extrabold text-vivid mt-1">
+                    {donationsList.length} donors
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Avg Contribution</span>
+                  <div className="text-2xl font-extrabold text-gilt mt-1">
+                    ₦{donationsList.length > 0
+                      ? Math.round(donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0) / donationsList.length).toLocaleString()
+                      : 0}
+                  </div>
+                </div>
+              </div>
 
               {/* Transactions Log Section */}
               <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-base font-bold text-pine">Completed Donation Transactions Log</h2>
+                    <h2 className="text-base font-bold text-pine">Completed Sadaqah Payments Log</h2>
                     <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions from live site visitors</p>
                   </div>
                 </div>
