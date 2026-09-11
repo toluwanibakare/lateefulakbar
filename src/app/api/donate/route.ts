@@ -7,6 +7,11 @@ export async function GET() {
   try {
     const db = await getDb();
 
+    // Query active donation campaigns & thresholds set by admin
+    const [campaigns] = await db.query<RowDataPacket[]>(
+      `SELECT * FROM sadaqah_campaigns WHERE is_active = 1 ORDER BY id ASC`
+    );
+
     // Query totals by category
     const [rows] = await db.query<RowDataPacket[]>(
       `SELECT category, SUM(amount) as categoryTotal, COUNT(*) as totalCount FROM donations WHERE status = 'completed' GROUP BY category`
@@ -23,19 +28,19 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
+      campaigns,
       categoryTotals,
       grandTotal: Number(overallRows[0]?.grandTotal || 0),
       totalDonors: Number(overallRows[0]?.totalDonors || 0),
     });
   } catch (error) {
-    console.error('Error fetching donation stats:', error);
-    return NextResponse.json({ success: false, categoryTotals: {}, grandTotal: 0, totalDonors: 0 });
+    console.error('Error fetching donation stats & campaigns:', error);
+    return NextResponse.json({ success: false, campaigns: [], categoryTotals: {}, grandTotal: 0, totalDonors: 0 });
   }
 }
 
 export async function POST(req: Request) {
   try {
-    // 1. Rate Limiting Check (20 requests per hour per IP)
     const ip = req.headers.get('x-forwarded-for') || 'ip_unknown';
     const rateCheck = checkRateLimit(`donate_${ip}`, 20, 60 * 60 * 1000);
 
@@ -58,20 +63,26 @@ export async function POST(req: Request) {
     }
 
     const ref = txRef || `TX-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
     const db = await getDb();
+
     await db.query(
       `INSERT INTO donations (donor_name, email, amount, category, tx_ref, status) VALUES (?, ?, ?, ?, ?, 'completed')`,
       [donorName || 'Anonymous', email, amount, category, ref]
     );
 
+    // Update current quantity on matching campaign
+    await db.query(
+      `UPDATE sadaqah_campaigns SET current_qty = current_qty + 1 WHERE category = ? OR title = ?`,
+      [category, category]
+    );
+
     return NextResponse.json({
       success: true,
-      message: 'Jazakallahu Khairan for your generous donation!',
+      message: 'Donation recorded successfully',
       txRef: ref,
     });
   } catch (error) {
-    console.error('Error recording donation:', error);
-    return NextResponse.json({ error: 'Failed to process donation record' }, { status: 500 });
+    console.error('Error logging donation:', error);
+    return NextResponse.json({ error: 'Failed to record donation' }, { status: 500 });
   }
 }

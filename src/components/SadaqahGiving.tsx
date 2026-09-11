@@ -19,12 +19,10 @@ type Campaign = {
 };
 
 const INITIAL: Campaign[] = [
-  { id: "mats", title: "Prayer mats", text: "Clean mats for the canopies, laid before dawn.", icon: Layers, image: "/assets/praying_mat.jpeg", target: 1000, raised: 640, unit: "mats", unitPrice: 3500 },
-  { id: "water", title: "Water", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/donation-water.jpg", target: 2000, raised: 1350, unit: "packs", unitPrice: 1500 },
-  { id: "cooling", title: "Cooling fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 700, raised: 410, unit: "fans", unitPrice: 25000 },
-  { id: "internet", title: "Broadcast internet", text: "Uplink for the millions watching worldwide.", icon: Wifi, image: "/assets/donation-internet.jpg", target: 2000000, raised: 1450000 },
-  { id: "media", title: "Media facility", text: "Cameras, drone and livestream production.", icon: Video, image: "/assets/user-donation-media.jpg", target: 3500000, raised: 2800000 },
-  { id: "tents", title: "Tents and canopy", text: "The great white canopies over the Square.", icon: Home, image: "/assets/user-donation-tents.jpg", target: 5000000, raised: 3200000 },
+  { id: "mats", title: "Prayer Mats & Rugs", text: "Clean mats for the canopies, laid before dawn.", icon: Layers, image: "/assets/praying_mat.jpeg", target: 500, raised: 310, unit: "mats", unitPrice: 15000 },
+  { id: "water", title: "Water & Hydration Points", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/donation-water.jpg", target: 1000, raised: 780, unit: "packs", unitPrice: 5000 },
+  { id: "cooling", title: "Provide Cooling Fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 200, raised: 134, unit: "fans", unitPrice: 25000 },
+  { id: "media", title: "Nadwat TV Live Broadcast", text: "Cameras, drone and HD livestream production.", icon: Video, image: "/assets/user-donation-media.jpg", target: 50, raised: 22, unit: "units", unitPrice: 100000 },
 ];
 
 function fmt(n: number) {
@@ -32,7 +30,7 @@ function fmt(n: number) {
 }
 
 export default function SadaqahGiving() {
-  const [campaigns, setCampaigns] = useState(INITIAL);
+  const [campaigns, setCampaigns] = useState<Campaign[]>(INITIAL);
   const [open, setOpen] = useState<Campaign | null>(null);
   const [qty, setQty] = useState(1);
   const [amount, setAmount] = useState("");
@@ -42,147 +40,145 @@ export default function SadaqahGiving() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    // Fetch live donation stats from MySQL
+    // Fetch live donation campaigns & threshold data from MySQL database
     fetch('/api/donate')
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && data.categoryTotals) {
-          setCampaigns((prev) =>
-            prev.map((c) => {
-              const liveCatTotal = data.categoryTotals[c.title];
-              return liveCatTotal ? { ...c, raised: c.raised + liveCatTotal } : c;
-            })
-          );
+        if (data.success && data.campaigns && data.campaigns.length > 0) {
+          const dbCampaigns: Campaign[] = data.campaigns.map((dbC: any) => ({
+            id: String(dbC.id),
+            title: dbC.title,
+            text: dbC.description || "Community donation project for Lateeful Akbar 2027",
+            icon: dbC.title.toLowerCase().includes("fan") ? Wind : dbC.title.toLowerCase().includes("water") ? Droplets : dbC.title.toLowerCase().includes("mat") ? Layers : Video,
+            image: dbC.image_url || "/assets/praying_mat.jpeg",
+            target: dbC.target_qty || 100,
+            raised: dbC.current_qty || 0,
+            unit: "units",
+            unitPrice: Number(dbC.unit_price) || 25000,
+          }));
+          setCampaigns(dbCampaigns);
         }
       })
-      .catch((err) => console.error('Error fetching donation stats:', err));
+      .catch((err) => console.error('Error fetching donation campaigns:', err));
   }, []);
 
-  const total = open
-    ? open.unitPrice
-      ? qty * open.unitPrice
-      : parseFloat(amount) || 0
-    : 0;
+  const totalPay = open?.unitPrice ? open.unitPrice * Math.max(1, qty) : Number(amount) || 0;
 
-  const pay = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (total <= 0 || !open) return;
-
+  const pay = async () => {
+    if (!open || !totalPay) return;
     setSubmitting(true);
+
     try {
-      await fetch('/api/donate', {
+      const res = await fetch('/api/donate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           donorName: name || 'Anonymous',
           email,
-          amount: total,
+          amount: totalPay,
           category: open.title,
         }),
       });
 
-      setCampaigns((prev) =>
-        prev.map((c) =>
-          c.id === open.id
-            ? { ...c, raised: c.raised + (c.unitPrice ? qty : total) }
-            : c
-        )
-      );
-      setDone(true);
+      const data = await res.json();
+      if (data.success) {
+        setDone(true);
+        // Increment local progress state dynamically
+        setCampaigns((list) =>
+          list.map((c) => (c.id === open.id ? { ...c, raised: c.raised + (open.unitPrice ? qty : 1) } : c))
+        );
+      }
     } catch (err) {
-      console.error('Error submitting donation:', err);
-      setDone(true);
+      console.error('Failed to log donation:', err);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const close = () => {
-    setOpen(null);
-    setDone(false);
-    setQty(1);
-    setAmount("");
-    setName("");
-    setEmail("");
-  };
-
   return (
-    <section id="donate" className="border-t border-ink/10 bg-cream">
-      <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
-        <FadeIn direction="up">
-          <Eyebrow>Donate — fund a need</Eyebrow>
-        </FadeIn>
-        <div className="mt-5 grid gap-8 lg:grid-cols-12">
-          <FadeIn direction="right" delay={0.06} className="lg:col-span-5" blur>
-            <h2 className="font-display text-balance text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
-              Give water. Give shade. Share the reward.
+    <section className="border-t border-ink/10 bg-paper py-20 sm:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-6">
+        <div className="max-w-3xl">
+          <FadeIn>
+            <Eyebrow>Donation & Sadaqah Campaigns</Eyebrow>
+          </FadeIn>
+          <FadeIn delay={0.06}>
+            <h2 className="font-display mt-4 text-3xl font-light tracking-tight sm:text-5xl">
+              Equip the assembly — item by item, mat by mat.
             </h2>
-            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-faded">
-              Every mat, every pack of water, every fan at the Auditorium is funded by people who
-              could not attend but refused to miss the reward. Choose a need below and give.
-              This is sadaqah jariyah, in the plainest sense.
-            </p>
-            <p className="font-arabic mt-6 text-xl text-fern" lang="ar">
-              يَـٰٓأَيُّهَا ٱللَّذِينَ ءَامَنُوٓا۟ إِن تَنصُرُوا۟ ٱللَّهَ يَنصُرْكُمْ وَيُثَبِّتْ أَقْدَامَكُمْ
-            </p>
-            <p className="mt-2 text-[13px] text-faded italic">
-              “O believers! If you stand up for Allah, He will help you and make your steps firm.” (Qur’an 47:7)
+          </FadeIn>
+          <FadeIn delay={0.12}>
+            <p className="mt-4 text-base leading-relaxed text-faded sm:text-lg">
+              You can sponsor specific physical needs for the gathering — water, prayer mats, cooling fans, or broadcast coverage. Each campaign tracks items needed and current progress set by organizers.
             </p>
           </FadeIn>
+        </div>
 
-          <div className="lg:col-span-7">
-            <StaggerContainer staggerDelay={0.06} className="divide-y divide-ink/10 border-y border-ink/10">
-              {campaigns.map((c) => {
-                const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
-                return (
-                  <StaggerItem key={c.id}>
-                    <article className="group flex flex-col xs:flex-row items-start xs:items-center justify-between gap-4 py-5 transition-colors hover:bg-white/40 px-2 rounded-lg">
-                      <div className="flex items-start xs:items-center gap-4 min-w-0 flex-1">
-                        <div className="relative aspect-[4/3] w-24 xs:w-28 sm:w-32 shrink-0 overflow-hidden bg-mist rounded-lg shadow-sm border border-ink/10">
-                          <Image
-                            src={c.image}
-                            alt={c.title}
-                            fill
-                            sizes="128px"
-                            className="img-true object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+        <StaggerContainer className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {campaigns.map((c) => {
+            const Icon = c.icon;
+            const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
+
+            return (
+              <StaggerItem key={c.id}>
+                <TiltCard className="group h-full border border-ink/15 bg-white transition-all hover:border-vivid hover:shadow-xl">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-cream">
+                    <Image
+                      src={c.image}
+                      alt={c.title}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-pine/70 via-transparent to-transparent" />
+                    <div className="absolute top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-pine backdrop-blur-md shadow-sm">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="absolute bottom-4 left-4 right-4 text-white">
+                      <h3 className="font-display text-2xl font-normal">{c.title}</h3>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col justify-between p-6">
+                    <p className="text-sm leading-relaxed text-faded">{c.text}</p>
+
+                    <div className="mt-6 space-y-3">
+                      <div>
+                        <div className="flex justify-between text-xs font-semibold">
+                          <span className="text-ink">
+                            {fmt(c.raised)} / {fmt(c.target)} {c.unit || "raised"}
+                          </span>
+                          <span className="text-vivid font-bold">{pct}%</span>
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <h3 className="font-display text-xl tracking-tight text-ink group-hover:text-fern">
-                            {c.title}
-                          </h3>
-                          <p className="mt-1 text-xs text-faded line-clamp-2">{c.text}</p>
-                          <div className="mt-3 max-w-xs">
-                            <div className="flex justify-between text-[11px] font-semibold text-faded">
-                              <span>{pct}% funded</span>
-                              <span>
-                                {c.unit
-                                  ? `${fmt(c.raised)} / ${fmt(c.target)} ${c.unit}`
-                                  : `₦${fmt(c.raised)} / ₦${fmt(c.target)}`}
-                              </span>
-                            </div>
-                            <div className="mt-1 h-1.5 w-full bg-ink/10 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-vivid transition-all duration-500 rounded-full"
-                                style={{ width: `${pct}%` }}
-                              />
-                            </div>
-                          </div>
+                        <div className="mt-2 h-2 w-full overflow-hidden bg-mist rounded-full">
+                          <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
                         </div>
                       </div>
+
+                      {c.unitPrice && (
+                        <div className="text-xs font-bold text-pine">
+                          ₦{fmt(c.unitPrice)} per item
+                        </div>
+                      )}
+
                       <button
-                        onClick={() => setOpen(c)}
-                        className="w-full xs:w-auto shrink-0 bg-vivid px-5 py-2.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-colors rounded-md shadow-sm"
+                        onClick={() => {
+                          setOpen(c);
+                          setQty(1);
+                          setAmount("");
+                          setDone(false);
+                        }}
+                        className="mt-2 w-full bg-mist py-3 text-xs font-bold uppercase tracking-wider text-pine hover:bg-vivid hover:text-white transition-colors"
                       >
-                        Give {c.unitPrice ? `₦${fmt(c.unitPrice)}` : "Sadaqah"}
+                        Sponsor this campaign
                       </button>
-                    </article>
-                  </StaggerItem>
-                );
-              })}
-            </StaggerContainer>
-          </div>
-        </div>
+                    </div>
+                  </div>
+                </TiltCard>
+              </StaggerItem>
+            );
+          })}
+        </StaggerContainer>
       </div>
 
       {/* Modal */}
@@ -193,134 +189,123 @@ export default function SadaqahGiving() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={close}
-              className="absolute inset-0 bg-pine/70 backdrop-blur-sm"
+              onClick={() => setOpen(null)}
+              className="absolute inset-0 bg-ink/60 backdrop-blur-xs"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg border border-white/20 bg-white p-6 sm:p-8 shadow-2xl rounded-2xl overflow-hidden"
+              className="relative w-full max-w-lg border border-ink/15 bg-white p-6 shadow-2xl sm:p-8"
             >
               <button
-                onClick={close}
-                className="absolute right-4 top-4 text-faded hover:text-ink transition-colors p-1"
-                aria-label="Close modal"
+                onClick={() => setOpen(null)}
+                className="absolute top-4 right-4 text-faded hover:text-ink"
               >
                 <X className="h-5 w-5" />
               </button>
 
               {!done ? (
-                <form onSubmit={pay} className="space-y-5">
-                  <div>
-                    <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">
-                      Sadaqah Jariyah
-                    </span>
-                    <h3 className="font-display mt-1 text-2xl text-ink font-semibold">
-                      Sponsor {open.title}
-                    </h3>
-                    <p className="mt-1 text-xs text-faded">{open.text}</p>
-                  </div>
+                <>
+                  <Eyebrow>Sponsor Campaign</Eyebrow>
+                  <h3 className="font-display mt-2 text-2xl font-light text-ink sm:text-3xl">
+                    {open.title}
+                  </h3>
+                  <p className="mt-1 text-xs text-faded">{open.text}</p>
 
-                  {open.unitPrice ? (
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-faded mb-2">
-                        Quantity ({open.unit}) — ₦{fmt(open.unitPrice)} each
-                      </label>
-                      <div className="flex items-center gap-3">
-                        {[1, 5, 10, 25, 50].map((n) => (
+                  <div className="mt-6 space-y-4">
+                    {open.unitPrice ? (
+                      <div>
+                        <label className="text-xs font-semibold uppercase tracking-wider text-faded">
+                          Number of items (₦{fmt(open.unitPrice)} each)
+                        </label>
+                        <div className="mt-2 flex items-center gap-3">
                           <button
-                            key={n}
-                            type="button"
-                            onClick={() => setQty(n)}
-                            className={`flex-1 py-2 text-xs font-semibold rounded-lg border transition-all ${
-                              qty === n
-                                ? "bg-vivid text-white border-vivid"
-                                : "border-ink/20 text-ink hover:border-vivid"
-                            }`}
+                            onClick={() => setQty((q) => Math.max(1, q - 1))}
+                            className="flex h-10 w-10 items-center justify-center border border-ink/20 font-bold"
                           >
-                            {n}
+                            -
                           </button>
-                        ))}
+                          <span className="font-mono text-lg font-bold">{qty}</span>
+                          <button
+                            onClick={() => setQty((q) => q + 1)}
+                            className="flex h-10 w-10 items-center justify-center border border-ink/20 font-bold"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider text-faded mb-2">
-                        Amount in Naira (₦)
-                      </label>
-                      <input
-                        type="number"
-                        required
-                        min="500"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="e.g. 5,000"
-                        className="w-full border border-ink/20 px-4 py-3 text-sm text-ink focus:border-vivid focus:outline-none rounded-lg"
-                      />
-                    </div>
-                  )}
+                    ) : (
+                      <div>
+                        <label className="text-xs font-semibold uppercase tracking-wider text-faded">
+                          Custom Donation Amount (₦)
+                        </label>
+                        <input
+                          type="number"
+                          value={amount}
+                          onChange={(e) => setAmount(e.target.value)}
+                          placeholder="e.g. 50000"
+                          className="mt-2 w-full border border-ink/20 p-3 font-mono text-base"
+                        />
+                      </div>
+                    )}
 
-                  <div className="grid gap-3 sm:grid-cols-2">
                     <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-wider text-faded mb-1">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-faded">
                         Your Name (Optional)
                       </label>
                       <input
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Leave blank for Anonymous"
-                        className="w-full border border-ink/20 px-3.5 py-2.5 text-xs text-ink focus:border-vivid focus:outline-none rounded-lg"
+                        placeholder="Anonymous"
+                        className="mt-2 w-full border border-ink/20 p-3 text-xs"
                       />
                     </div>
+
                     <div>
-                      <label className="block text-[11px] font-semibold uppercase tracking-wider text-faded mb-1">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-faded">
                         Email Address
                       </label>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="For receipt & updates"
-                        className="w-full border border-ink/20 px-3.5 py-2.5 text-xs text-ink focus:border-vivid focus:outline-none rounded-lg"
+                        placeholder="your@email.com"
+                        className="mt-2 w-full border border-ink/20 p-3 text-xs"
                       />
                     </div>
-                  </div>
 
-                  <div className="border-t border-ink/10 pt-4 flex items-center justify-between">
-                    <div>
-                      <span className="text-[11px] text-faded block">Total Sadaqah</span>
-                      <span className="font-display text-2xl font-bold text-vivid">
-                        ₦{fmt(total)}
-                      </span>
+                    <div className="pt-2">
+                      <div className="flex justify-between text-sm font-bold text-pine mb-4">
+                        <span>Total Contribution:</span>
+                        <span className="font-mono text-lg">₦{fmt(totalPay)}</span>
+                      </div>
+
+                      <button
+                        onClick={pay}
+                        disabled={submitting || !totalPay}
+                        className="w-full bg-vivid py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-vivid-deep disabled:opacity-40"
+                      >
+                        {submitting ? "Processing..." : `Complete ₦${fmt(totalPay)} Donation`}
+                      </button>
                     </div>
-                    <button
-                      type="submit"
-                      disabled={submitting || total <= 0}
-                      className="bg-vivid px-6 py-3 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-40 transition-colors rounded-lg shadow-md"
-                    >
-                      {submitting ? "Processing..." : "Complete Sadaqah"}
-                    </button>
                   </div>
-                </form>
+                </>
               ) : (
-                <div className="py-6 text-center space-y-4">
-                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                    <ShieldCheck className="h-8 w-8" />
+                <div className="py-8 text-center space-y-4">
+                  <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-mist text-vivid">
+                    <ShieldCheck className="h-8 w-8 text-vivid" />
                   </div>
-                  <h3 className="font-display text-2xl font-semibold text-ink">
-                    JazakAllahu Khairan!
-                  </h3>
-                  <p className="text-sm text-faded max-w-sm mx-auto">
-                    Your sadaqah of <strong>₦{fmt(total)}</strong> for{" "}
-                    <strong>{open.title}</strong> has been recorded. May Allah bless your wealth and grant you abundant reward.
+                  <h3 className="font-display text-2xl font-bold text-pine">JazakAllah Khair!</h3>
+                  <p className="text-xs text-faded max-w-sm mx-auto">
+                    Your contribution of ₦{fmt(totalPay)} towards {open.title} has been received. May Allah reward your generosity abundantly.
                   </p>
                   <button
-                    onClick={close}
-                    className="mt-4 bg-vivid px-6 py-2.5 text-xs font-semibold text-white hover:bg-vivid-deep transition-colors rounded-lg"
+                    onClick={() => setOpen(null)}
+                    className="mt-4 bg-vivid px-6 py-2.5 text-xs font-bold uppercase text-white"
                   >
-                    Done
+                    Close
                   </button>
                 </div>
               )}
