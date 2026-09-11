@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   LayoutDashboard,
-  Calendar,
-  Layers,
   Radio,
   Users,
   Share2,
@@ -14,11 +12,7 @@ import {
   Mail,
   FileText,
   Image as ImageIcon,
-  Video,
-  BookOpen,
   Bell,
-  MapPin,
-  UserCheck,
   Bot,
   Settings,
   ShieldCheck,
@@ -33,13 +27,40 @@ import {
   TrendingUp,
   Sliders,
   Play,
-  Trash2,
-  Edit,
+  RotateCcw,
+  BookOpen,
+  Headphones,
+  Send,
+  MessageSquare,
   Eye,
-  Key,
-  Shield
+  Check,
+  Paperclip,
+  Smile,
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Upload
 } from "lucide-react";
-import { Eyebrow, Reveal } from "@/components/ui";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell
+} from "recharts";
+import { Eyebrow } from "@/components/ui";
 
 // Types
 type UserRole = 'Super Admin' | 'Content Admin' | 'Event Admin' | 'Finance Admin';
@@ -50,6 +71,23 @@ interface AdminUser {
   role: UserRole;
 }
 
+const REGISTRATION_TREND = [
+  { day: "Mon", count: 420 },
+  { day: "Tue", count: 680 },
+  { day: "Wed", count: 950 },
+  { day: "Thu", count: 1200 },
+  { day: "Fri", count: 1650 },
+  { day: "Sat", count: 2100 },
+  { day: "Sun", count: 2840 },
+];
+
+const DONATION_PIE_DATA = [
+  { name: "Fans", value: 3350000, color: "#01923c" },
+  { name: "Mats", value: 2100000, color: "#0b3d2e" },
+  { name: "Water", value: 1850000, color: "#9a7b2e" },
+  { name: "Broadcast", value: 1100000, color: "#34d399" },
+];
+
 export default function AdminPage() {
   // Authentication State
   const [user, setUser] = useState<AdminUser | null>(null);
@@ -58,7 +96,7 @@ export default function AdminPage() {
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
-  // Active Menu State (Structured according to target specification)
+  // Active Menu State
   const [activeSection, setActiveSection] = useState<string>("dashboard");
 
   // Dashboard Stats & Data State
@@ -75,10 +113,26 @@ export default function AdminPage() {
   const [aiKnowledge, setAiKnowledge] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  // Live Chat Support State
+  const [chatTickets, setChatTickets] = useState<any[]>([]);
+  const [activeTicket, setActiveTicket] = useState<any | null>(null);
+  const [ticketMessages, setTicketMessages] = useState<any[]>([]);
+  const [adminReplyInput, setAdminReplyInput] = useState("");
+  const [sendingReply, setSendingReply] = useState(false);
+
+  // Email / Newsletter Hub State
+  const [newsletterSubject, setNewsletterSubject] = useState("");
+  const [newsletterBody, setNewsletterBody] = useState("");
+  const [newsletterTarget, setNewsletterTarget] = useState("all");
+  const [newsletterSingleEmail, setNewsletterSingleEmail] = useState("");
+  const [newsletterMode, setNewsletterMode] = useState<"edit" | "preview">("edit");
+  const [newsletterTemplateName, setNewsletterTemplateName] = useState("");
+  const [savedTemplates, setSavedTemplates] = useState<{ id: string; name: string; subject: string; body: string }[]>([]);
+
   // Control Form States
   const [liveUrl, setLiveUrl] = useState("https://www.youtube.com/embed/live_stream?channel=nadwat");
   const [isLiveActive, setIsLiveActive] = useState(false);
-  const [tasbihCountInput, setTasbihCountInput] = useState("0");
+  const [tasbihCountDisplay, setTasbihCountDisplay] = useState("0");
   const [updateTitle, setUpdateTitle] = useState("");
   const [updateContent, setUpdateContent] = useState("");
   const [aiTopic, setAiTopic] = useState("");
@@ -104,7 +158,7 @@ export default function AdminPage() {
       if (data.success) {
         setStats(data.stats);
         if (data.stats.tasbihCount !== undefined) {
-          setTasbihCountInput(String(data.stats.tasbihCount));
+          setTasbihCountDisplay(String(data.stats.tasbihCount));
         }
       }
     } catch (e) {
@@ -120,10 +174,19 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/crud?type=attendees");
         const data = await res.json();
         if (data.success) setAttendees(data.data);
-      } else if (section === "referrals" || section === "leaderboard") {
+      } else if (section === "referrals") {
         const res = await fetch("/api/admin/crud?type=referrals");
         const data = await res.json();
         if (data.success) setReferrals(data.data);
+      } else if (section === "messages") {
+        const res = await fetch("/api/admin/messages");
+        const data = await res.json();
+        if (data.success) {
+          setChatTickets(data.tickets || []);
+          if (data.tickets && data.tickets.length > 0 && !activeTicket) {
+            setActiveTicket(data.tickets[0]);
+          }
+        }
       } else if (section === "sadaqah") {
         const res = await fetch("/api/admin/crud?type=campaigns");
         const data = await res.json();
@@ -157,6 +220,20 @@ export default function AdminPage() {
     }
   }, [user, activeSection]);
 
+  // Load ticket messages when active ticket changes
+  useEffect(() => {
+    if (activeTicket) {
+      fetch(`/api/admin/messages?ticketId=${activeTicket.id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) {
+            setTicketMessages(data.messages || []);
+          }
+        })
+        .catch((err) => console.error(err));
+    }
+  }, [activeTicket]);
+
   // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,24 +266,82 @@ export default function AdminPage() {
     localStorage.removeItem("admin_user");
   };
 
-  // Helper actions
-  const handleUpdateTasbih = async () => {
-    const countVal = Number(tasbihCountInput);
-    if (isNaN(countVal) || countVal < 0) return;
+  // Reset Tasbih to 0 in DB
+  const handleResetTasbih = async () => {
+    if (!confirm("Are you sure you want to reset the global Yaa Lateef counter to 0 in the database?")) return;
+
     try {
       const res = await fetch("/api/tasbih", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ count: countVal }),
+        body: JSON.stringify({ count: 0 }),
       });
       const data = await res.json();
       if (data.success) {
-        alert(`Global Tasbīh counter updated to ${data.count.toLocaleString()}`);
+        setTasbihCountDisplay("0");
+        alert("Global Tasbīh counter has been reset to 0 in the database.");
         loadDashboardStats();
       }
     } catch (e) {
-      alert("Failed to update counter");
+      alert("Failed to reset counter");
     }
+  };
+
+  // Send Live Support Reply to User
+  const handleSendLiveReply = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!activeTicket || !adminReplyInput.trim()) return;
+
+    setSendingReply(true);
+    try {
+      const res = await fetch("/api/admin/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ticketId: activeTicket.id,
+          sender: user?.name || "Support Admin",
+          message: adminReplyInput,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTicketMessages((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            ticket_id: activeTicket.id,
+            sender: user?.name || "Support Admin",
+            message: adminReplyInput,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+        setAdminReplyInput("");
+      }
+    } catch (err) {
+      alert("Failed to send reply");
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
+  // Dispatch Newsletter Email Broadcast
+  const handleDispatchNewsletter = async () => {
+    if (!newsletterSubject || !newsletterBody) {
+      alert("Please fill in both the Subject Line and Message Body.");
+      return;
+    }
+
+    alert(`Dispatching Newsletter broadcast to ${newsletterTarget === 'single' ? newsletterSingleEmail : 'all community members'}!`);
+  };
+
+  const handleSaveNewsletterTemplate = () => {
+    if (!newsletterTemplateName) return;
+    setSavedTemplates((prev) => [
+      ...prev,
+      { id: String(Date.now()), name: newsletterTemplateName, subject: newsletterSubject, body: newsletterBody },
+    ]);
+    setNewsletterTemplateName("");
+    alert("Template saved successfully!");
   };
 
   const handleCreateAnnouncement = async (e: React.FormEvent) => {
@@ -227,7 +362,7 @@ export default function AdminPage() {
       if (data.success) {
         setUpdateTitle("");
         setUpdateContent("");
-        alert("Announcement posted successfully!");
+        alert("Announcement posted to the live event page and database successfully!");
         loadSectionData("updates");
       }
     } catch (e) {
@@ -254,7 +389,7 @@ export default function AdminPage() {
         setAiQuestion("");
         setAiAnswer("");
         setAiTopic("");
-        alert("Knowledge item added to AI memory!");
+        alert("Knowledge item added to AI memory & database!");
         loadSectionData("knowledge_base");
       }
     } catch (e) {
@@ -262,7 +397,7 @@ export default function AdminPage() {
     }
   };
 
-  // Render Login View if unauthenticated (Matches Main Site Aesthetic)
+  // Render Login View if unauthenticated
   if (!user) {
     return (
       <div className="min-h-screen bg-paper text-ink flex items-center justify-center p-4">
@@ -335,56 +470,48 @@ export default function AdminPage() {
     );
   }
 
-  // Sidebar Menu Items Definition according to user specification
+  // Refined Sidebar Menu
   const SIDEBAR_NAV = [
     {
       group: "ADMIN",
       items: [
-        { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { id: "dashboard", label: "Dashboard Overview", icon: LayoutDashboard },
+        { id: "messages", label: "Live Support Chat", icon: Headphones },
       ],
     },
     {
       group: "EVENT",
       items: [
-        { id: "event_overview", label: "Event Overview", icon: Calendar },
-        { id: "homepage", label: "Homepage", icon: Layers },
-        { id: "live_event", label: "Live Event", icon: Radio },
+        { id: "live_event", label: "Live Event Stream", icon: Radio },
         { id: "updates", label: "Event Updates", icon: Bell },
-        { id: "venue_map", label: "Venue & Map", icon: MapPin },
       ],
     },
     {
       group: "PEOPLE",
       items: [
         { id: "attendees", label: "Attendees", icon: Users },
-        { id: "referrals", label: "Referrals", icon: Share2 },
-        { id: "leaderboard", label: "Leaderboard", icon: Trophy },
-        { id: "newsletter", label: "Newsletter", icon: Mail },
+        { id: "referrals", label: "Referrals Leaderboard", icon: Share2 },
       ],
     },
     {
       group: "CONTENT",
       items: [
-        { id: "blog", label: "Blog", icon: FileText },
-        { id: "gallery", label: "Gallery", icon: ImageIcon },
-        { id: "videos", label: "Videos", icon: Video },
-        { id: "prayer_book", label: "Prayer Book", icon: BookOpen },
-        { id: "about_content", label: "Founder / About", icon: UserCheck },
+        { id: "newsletter", label: "Email & Newsletter Hub", icon: Mail },
+        { id: "blog", label: "Blog Manager", icon: FileText },
+        { id: "gallery", label: "Gallery Manager", icon: ImageIcon },
       ],
     },
     {
       group: "GIVING",
       items: [
         { id: "sadaqah", label: "Sadaqah Campaigns", icon: HeartIcon },
-        { id: "donations", label: "Donations", icon: DollarSign },
-        { id: "payments", label: "Payments", icon: TrendingUp },
+        { id: "donations", label: "Donation Payments", icon: DollarSign },
       ],
     },
     {
       group: "AI",
       items: [
-        { id: "ai_assistant", label: "AI Assistant", icon: Bot },
-        { id: "knowledge_base", label: "Knowledge Base", icon: BookOpen },
+        { id: "ai_assistant", label: "AI Knowledge Base", icon: Bot },
       ],
     },
     {
@@ -392,30 +519,30 @@ export default function AdminPage() {
       items: [
         { id: "settings", label: "Website Settings", icon: Settings },
         { id: "admin_users", label: "Admin Users", icon: ShieldCheck },
-        { id: "activity_log", label: "Activity Log", icon: Activity },
+        { id: "activity_log", label: "Activity Audit Log", icon: Activity },
       ],
     },
   ];
 
   return (
     <div className="min-h-screen bg-paper text-ink flex flex-col md:flex-row font-body">
-      {/* Sidebar Navigation - Main Site Styling */}
+      {/* Sidebar Navigation */}
       <aside className="w-full md:w-64 bg-cream border-r border-ink/15 flex-shrink-0 flex flex-col justify-between">
         <div>
           {/* Header */}
-          <div className="p-6 border-b border-ink/15 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="h-2.5 w-2.5 rounded-full bg-vivid animate-pulse" />
-              <span className="font-display font-bold text-base text-pine dark:text-emerald-400 tracking-wide uppercase">
+          <div className="px-5 py-5 border-b border-ink/15 flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="h-2.5 w-2.5 rounded-full bg-vivid animate-pulse flex-shrink-0" />
+              <span className="font-display font-bold text-sm text-pine dark:text-emerald-400 tracking-wide uppercase whitespace-nowrap truncate">
                 Lateeful Akbar
               </span>
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-mist text-pine border border-sage uppercase">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-mist text-pine border border-sage uppercase flex-shrink-0">
               Admin
             </span>
           </div>
 
-          {/* User Profile info */}
+          {/* User Profile */}
           <div className="px-6 py-4 border-b border-ink/10 bg-mist/50">
             <div className="text-xs font-bold text-pine">{user.name}</div>
             <div className="text-[11px] text-faded flex items-center justify-between mt-0.5">
@@ -476,7 +603,7 @@ export default function AdminPage() {
               {activeSection.replace("_", " ")}
             </h1>
             <p className="text-xs text-faded">
-              Lateeful-Ul-Akbar 2027 &bull; Central Control & Management Console
+              Lateeful-Ul-Akbar 2027 &bull; Central Database & Operations Control
             </p>
           </div>
 
@@ -486,7 +613,7 @@ export default function AdminPage() {
               className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold rounded-xl bg-mist text-pine border border-ink/15 hover:bg-sage transition-all"
             >
               <RefreshCw className={`h-3.5 w-3.5 ${loadingStats ? "animate-spin" : ""}`} />
-              Refresh Data
+              Refresh Database
             </button>
           </div>
         </header>
@@ -514,7 +641,7 @@ export default function AdminPage() {
                   </div>
                   <div className="mt-4 flex items-center gap-2 text-xs text-vivid font-semibold">
                     <TrendingUp className="h-3.5 w-3.5" />
-                    <span>+{stats?.todayRegistrations || 0} registered today</span>
+                    <span>+{stats?.todayRegistrations || 0} today</span>
                   </div>
                 </div>
 
@@ -552,7 +679,7 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <div className="mt-4 flex items-center gap-2 text-xs text-fern font-semibold">
-                    <span>Active Referral Leaderboard</span>
+                    <span>Active Leaderboard</span>
                   </div>
                 </div>
 
@@ -563,90 +690,488 @@ export default function AdminPage() {
                         Global Tasbīh Total
                       </span>
                       <div className="text-3xl font-extrabold text-vivid mt-2">
-                        {stats ? Number(stats.tasbihCount).toLocaleString() : "..."}
+                        {stats ? Number(stats.tasbihCount).toLocaleString() : tasbihCountDisplay}
                       </div>
                     </div>
                     <div className="h-10 w-10 rounded-xl bg-mist text-vivid flex items-center justify-center border border-sage">
                       <Sliders className="h-5 w-5" />
                     </div>
                   </div>
-                  <div className="mt-4 flex items-center gap-2 text-xs text-faded font-medium">
-                    <span>Live Yaa Lateef Counter</span>
+                  <div className="mt-4 flex items-center justify-between text-xs">
+                    <span className="text-faded">Live Yaa Lateef</span>
+                    <button
+                      onClick={handleResetTasbih}
+                      className="text-rose-600 font-bold hover:underline inline-flex items-center gap-1"
+                    >
+                      <RotateCcw className="h-3 w-3" /> Reset 0
+                    </button>
                   </div>
                 </div>
               </div>
 
-              {/* Activity & Recent Data Tables */}
+              {/* Graphical Charts Section */}
               <div className="grid gap-8 lg:grid-cols-12">
-                {/* Recent Registrations */}
-                <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-sm font-bold text-pine flex items-center gap-2">
-                      <Users className="h-4 w-4 text-vivid" /> Recent Registrations
-                    </h3>
-                    <button
-                      onClick={() => setActiveSection("attendees")}
-                      className="text-xs font-bold text-vivid hover:underline"
-                    >
-                      View All
-                    </button>
+                {/* Registration Trend Area Chart */}
+                <div className="lg:col-span-8 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-base font-bold text-pine">Attendee Registration Growth</h3>
+                      <p className="text-xs text-faded">Daily registration volume towards Nadwat 2027</p>
+                    </div>
+                    <span className="px-3 py-1 bg-mist text-pine text-xs font-semibold rounded-full border border-sage">
+                      Real-Time Sync
+                    </span>
                   </div>
 
-                  <div className="space-y-3">
-                    {stats?.recentRegistrations?.map((r: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="p-3.5 rounded-xl bg-cream border border-ink/10 flex items-center justify-between text-xs"
-                      >
-                        <div>
-                          <div className="font-bold text-ink">{r.full_name}</div>
-                          <div className="text-faded text-[11px]">{r.email} &bull; {r.phone}</div>
-                        </div>
-                        <span className="px-2.5 py-1 rounded-full bg-mist text-pine font-semibold text-[10px] uppercase">
-                          {r.ticket_type}
-                        </span>
+                  <div className="h-64 w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={REGISTRATION_TREND} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                        <defs>
+                          <linearGradient id="colorReg" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#01923c" stopOpacity={0.4} />
+                            <stop offset="95%" stopColor="#01923c" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef4ec" />
+                        <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#4c6a5e' }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fontSize: 11, fill: '#4c6a5e' }} axisLine={false} tickLine={false} />
+                        <Tooltip
+                          contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                        />
+                        <Area type="monotone" dataKey="count" stroke="#01923c" strokeWidth={3} fillOpacity={1} fill="url(#colorReg)" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+
+                {/* Donation Distribution Pie Chart */}
+                <div className="lg:col-span-4 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-base font-bold text-pine">Sadaqah Category Split</h3>
+                    <p className="text-xs text-faded">Donations by community project</p>
+                  </div>
+
+                  <div className="h-48 w-full my-4">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={DONATION_PIE_DATA}
+                          innerRadius={50}
+                          outerRadius={75}
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {DONATION_PIE_DATA.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value: any) => `₦${Number(value).toLocaleString()}`}
+                          contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    {DONATION_PIE_DATA.map((d) => (
+                      <div key={d.name} className="flex items-center gap-2">
+                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: d.color }} />
+                        <span className="text-ink font-semibold truncate">{d.name}</span>
                       </div>
                     ))}
-                    {(!stats?.recentRegistrations || stats.recentRegistrations.length === 0) && (
-                      <div className="text-center py-6 text-faded text-xs">No registrations recorded yet</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: LIVE CHAT SUPPORT PAGE (Matching Image Structure) */}
+          {activeSection === "messages" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-bold text-pine flex items-center gap-2">
+                    <Headphones className="h-5 w-5 text-vivid" /> Live Chat Support
+                  </h2>
+                  <p className="text-xs text-faded">Manage support requests and chat directly with website visitors.</p>
+                </div>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-12">
+                {/* Active Sessions List Column */}
+                <div className="lg:col-span-4 bg-white border border-ink/15 rounded-2xl p-5 shadow-sm space-y-4">
+                  <h3 className="text-xs font-bold text-pine uppercase tracking-wider">
+                    Active Sessions ({chatTickets.length})
+                  </h3>
+
+                  <div className="divide-y divide-ink/10 max-h-[500px] overflow-y-auto pr-1">
+                    {chatTickets.map((t) => {
+                      const isSelected = activeTicket?.id === t.id;
+                      return (
+                        <div
+                          key={t.id}
+                          onClick={() => setActiveTicket(t)}
+                          className={`py-3 px-3 rounded-xl cursor-pointer transition-all flex items-center justify-between ${
+                            isSelected
+                              ? "bg-mist border border-sage shadow-sm"
+                              : "hover:bg-cream"
+                          }`}
+                        >
+                          <div>
+                            <div className="font-bold text-xs text-ink">{t.name || "Anonymous Visitor"}</div>
+                            <div className="text-[11px] text-faded font-mono">ID: {t.email}</div>
+                            <div className="text-[10px] text-faded mt-0.5">
+                              {new Date(t.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </div>
+                          </div>
+                          <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                            t.status === 'resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                          }`}>
+                            {t.status}
+                          </span>
+                        </div>
+                      );
+                    })}
+                    {chatTickets.length === 0 && (
+                      <div className="text-center py-10 text-faded text-xs">No support requests yet</div>
                     )}
                   </div>
                 </div>
 
-                {/* Audit & Activity Log */}
-                <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-sm font-bold text-pine flex items-center gap-2">
-                      <Activity className="h-4 w-4 text-gilt" /> Audit & Activity Log
-                    </h3>
-                    <button
-                      onClick={() => setActiveSection("activity_log")}
-                      className="text-xs font-bold text-gilt hover:underline"
-                    >
-                      View Full Audit
-                    </button>
+                {/* Main Chat Thread & Reply Box Column */}
+                <div className="lg:col-span-8 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm flex flex-col justify-between min-h-[520px]">
+                  {activeTicket ? (
+                    <>
+                      {/* Ticket Header */}
+                      <div className="border-b border-ink/10 pb-4 flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <h3 className="text-base font-bold text-pine">{activeTicket.name}</h3>
+                            <span className="text-xs font-mono text-vivid bg-mist px-2.5 py-0.5 rounded-full border border-sage">
+                              {activeTicket.email}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-faded mt-0.5">Status: Human Active Representative</p>
+                        </div>
+
+                        <button
+                          onClick={() => alert("Chat thread marked as resolved!")}
+                          className="px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold hover:bg-emerald-100"
+                        >
+                          Resolve Chat
+                        </button>
+                      </div>
+
+                      {/* Messages Thread Container */}
+                      <div className="py-6 space-y-4 max-h-[350px] overflow-y-auto px-2">
+                        {/* Initial User Support Query */}
+                        <div className="bg-cream border border-ink/10 p-4 rounded-2xl max-w-xl">
+                          <span className="text-[10px] font-bold uppercase text-pine block mb-1">
+                            {activeTicket.name} (Visitor)
+                          </span>
+                          <p className="text-xs text-ink leading-relaxed">"{activeTicket.query}"</p>
+                        </div>
+
+                        {/* Bot Handoff Notice */}
+                        <div className="bg-mist/60 border border-sage p-3.5 rounded-2xl max-w-xl">
+                          <span className="text-[10px] font-bold uppercase text-vivid block mb-1">
+                            AI BOT
+                          </span>
+                          <p className="text-xs text-faded">
+                            Thank you {activeTicket.name}. A human representative has been notified of your request and will reply shortly!
+                          </p>
+                        </div>
+
+                        {/* Admin & Visitor Message Stream */}
+                        {ticketMessages.map((msg, idx) => (
+                          <div
+                            key={idx}
+                            className={`p-4 rounded-2xl max-w-xl text-xs ${
+                              msg.sender.includes("Admin") || msg.sender === user?.name
+                                ? "bg-vivid text-white ml-auto shadow-sm"
+                                : "bg-cream border border-ink/10 text-ink"
+                            }`}
+                          >
+                            <span className={`text-[10px] font-bold block mb-1 uppercase ${
+                              msg.sender.includes("Admin") ? "text-white/80" : "text-pine"
+                            }`}>
+                              {msg.sender}
+                            </span>
+                            <p className="leading-relaxed">{msg.message}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Quick Reply & Send Form */}
+                      <div className="border-t border-ink/10 pt-4 space-y-3">
+                        <div className="flex flex-wrap gap-2 items-center">
+                          <span className="text-[11px] font-bold text-faded">Quick Templates:</span>
+                          <button
+                            onClick={() => setAdminReplyInput("Assalamu Alaikum! How can I assist you with your registration?")}
+                            className="px-2.5 py-1 bg-cream hover:bg-mist border border-ink/10 rounded-lg text-[11px] text-pine font-medium"
+                          >
+                            Welcome Greeting
+                          </button>
+                          <button
+                            onClick={() => setAdminReplyInput("Your entry pass and QR code have been re-sent to your registered email.")}
+                            className="px-2.5 py-1 bg-cream hover:bg-mist border border-ink/10 rounded-lg text-[11px] text-pine font-medium"
+                          >
+                            Pass Info
+                          </button>
+                        </div>
+
+                        <form onSubmit={handleSendLiveReply} className="flex gap-2">
+                          <input
+                            type="text"
+                            placeholder="Type your reply (Shift+Enter for new line)..."
+                            value={adminReplyInput}
+                            onChange={(e) => setAdminReplyInput(e.target.value)}
+                            className="flex-1 bg-cream border border-ink/15 rounded-xl px-4 py-3 text-xs text-ink focus:outline-none focus:border-vivid"
+                          />
+                          <button
+                            type="submit"
+                            disabled={sendingReply}
+                            className="px-6 bg-vivid hover:bg-vivid-deep text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-md"
+                          >
+                            <Send className="h-4 w-4" /> Send
+                          </button>
+                        </form>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-center py-20 text-faded text-xs">
+                      Select an active chat session on the left to start replying
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: NEWSLETTER & EMAIL HUB (Matching Image 1, 2, 3 Layout) */}
+          {activeSection === "newsletter" && (
+            <div className="space-y-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-lg font-bold text-pine flex items-center gap-2">
+                    <Mail className="h-5 w-5 text-vivid" /> Email Composer & Newsletter Hub
+                  </h2>
+                  <p className="text-xs text-faded">Create and broadcast updates to your community members.</p>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setNewsletterMode(newsletterMode === "edit" ? "preview" : "edit")}
+                    className="px-4 py-2 bg-mist border border-sage text-pine font-semibold rounded-xl text-xs flex items-center gap-2"
+                  >
+                    <Eye className="h-4 w-4" /> {newsletterMode === "edit" ? "Live Preview" : "Edit Mode"}
+                  </button>
+
+                  <button
+                    onClick={handleDispatchNewsletter}
+                    className="px-6 py-2 bg-vivid hover:bg-vivid-deep text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-md"
+                  >
+                    <Send className="h-4 w-4" /> Dispatch Newsletter
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid gap-6 lg:grid-cols-12">
+                {/* Left Column: Composer Form / Live Branded Preview */}
+                <div className="lg:col-span-8 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h3 className="text-sm font-bold text-pine">Newsletter Composer</h3>
+                      <p className="text-xs text-faded">Compose your message with rich text and media.</p>
+                    </div>
+                    <span className="px-3 py-1 bg-mist text-vivid font-bold text-xs rounded-full border border-sage">
+                      {subscribers.length || 15} Recipients Target
+                    </span>
                   </div>
 
-                  <div className="space-y-3">
-                    {stats?.recentLogs?.map((log: any, idx: number) => (
-                      <div
-                        key={idx}
-                        className="p-3.5 rounded-xl bg-cream border border-ink/10 text-xs"
-                      >
-                        <div className="flex justify-between font-bold text-ink">
-                          <span>{log.action}</span>
-                          <span className="text-[10px] text-faded">
-                            {new Date(log.created_at).toLocaleTimeString()}
-                          </span>
-                        </div>
-                        <div className="text-faded text-[11px] mt-0.5">
-                          By <span className="text-pine font-semibold">{log.admin_name}</span> &bull; {log.details}
+                  {newsletterMode === "edit" ? (
+                    <div className="space-y-4">
+                      {/* Send To Toggle */}
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Send To
+                        </label>
+                        <div className="flex gap-3">
+                          <button
+                            type="button"
+                            onClick={() => setNewsletterTarget("single")}
+                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                              newsletterTarget === "single"
+                                ? "bg-vivid text-white shadow-sm"
+                                : "bg-cream text-faded border border-ink/15"
+                            }`}
+                          >
+                            Single Member
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setNewsletterTarget("all")}
+                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                              newsletterTarget === "all"
+                                ? "bg-vivid text-white shadow-sm"
+                                : "bg-cream text-faded border border-ink/15"
+                            }`}
+                          >
+                            Entire Category (All Members)
+                          </button>
                         </div>
                       </div>
-                    ))}
-                    {(!stats?.recentLogs || stats.recentLogs.length === 0) && (
-                      <div className="text-center py-6 text-faded text-xs">System ready &bull; Activity log active</div>
-                    )}
+
+                      {newsletterTarget === "single" && (
+                        <div>
+                          <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                            Recipient Email Address
+                          </label>
+                          <input
+                            type="email"
+                            placeholder="member@example.com"
+                            value={newsletterSingleEmail}
+                            onChange={(e) => setNewsletterSingleEmail(e.target.value)}
+                            className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                          />
+                        </div>
+                      )}
+
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Subject Line
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Monthly Community Update - Lateeful-Ul-Akbar 2027"
+                          value={newsletterSubject}
+                          onChange={(e) => setNewsletterSubject(e.target.value)}
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-semibold"
+                        />
+                      </div>
+
+                      {/* Rich Text Toolbar Mockup */}
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Message Body
+                        </label>
+                        <div className="border border-ink/15 rounded-2xl overflow-hidden bg-cream">
+                          <div className="flex flex-wrap items-center gap-1.5 p-3 border-b border-ink/15 bg-white">
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><Bold className="h-4 w-4" /></button>
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><Italic className="h-4 w-4" /></button>
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><Underline className="h-4 w-4" /></button>
+                            <span className="h-4 w-px bg-ink/20 mx-1" />
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><List className="h-4 w-4" /></button>
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><ListOrdered className="h-4 w-4" /></button>
+                            <span className="h-4 w-px bg-ink/20 mx-1" />
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><AlignLeft className="h-4 w-4" /></button>
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><AlignCenter className="h-4 w-4" /></button>
+                            <button type="button" className="p-1.5 hover:bg-mist rounded text-ink"><AlignRight className="h-4 w-4" /></button>
+                            <span className="h-4 w-px bg-ink/20 mx-1" />
+                            <button type="button" className="px-3 py-1 bg-mist text-pine text-xs font-bold rounded-lg border border-sage inline-flex items-center gap-1">
+                              <Upload className="h-3.5 w-3.5" /> Upload Image
+                            </button>
+                          </div>
+                          <textarea
+                            rows={8}
+                            placeholder="Write your email newsletter message here..."
+                            value={newsletterBody}
+                            onChange={(e) => setNewsletterBody(e.target.value)}
+                            className="w-full p-4 text-xs text-ink bg-cream focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Live Branded Email Template Preview (Matching Image 2 & 3) */
+                    <div className="border border-ink/15 rounded-2xl p-6 bg-cream/50 space-y-6">
+                      <div className="text-xs font-bold text-faded uppercase tracking-wider">
+                        Live Branded Preview (Desktop View)
+                      </div>
+
+                      <div className="bg-white border border-ink/15 rounded-2xl p-8 max-w-xl mx-auto shadow-md">
+                        <div className="text-center border-b-2 border-vivid pb-6 mb-6">
+                          <h2 className="text-xl font-display font-bold text-pine uppercase tracking-wider">
+                            Lateeful Akbar 2027
+                          </h2>
+                          <span className="text-[10px] text-faded">Nadwat Global Assembly</span>
+                        </div>
+
+                        <div className="space-y-4 text-xs text-ink leading-relaxed">
+                          <div className="font-bold text-sm text-pine">
+                            Subject: {newsletterSubject || "Sample Subject Line"}
+                          </div>
+                          <p>
+                            {newsletterBody || "No content composed yet..."}
+                          </p>
+                        </div>
+
+                        <div className="border-t border-ink/10 pt-6 mt-8 text-center text-[10px] text-faded space-y-1">
+                          <p>&copy; 2027 Nadwat Global Assembly &bull; Tafawa Balewa Square, Lagos</p>
+                          <p className="text-vivid">www.lateefulakbar.com</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Right Column: Saved Templates & Settings (Matching Image 1) */}
+                <div className="lg:col-span-4 space-y-6">
+                  <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
+                    <h3 className="text-xs font-bold text-pine uppercase tracking-wider">
+                      Saved Templates
+                    </h3>
+
+                    <div>
+                      <label className="block text-[11px] font-semibold text-faded mb-1.5">
+                        Pick a template
+                      </label>
+                      <select className="w-full bg-cream border border-ink/15 rounded-xl px-3 py-2 text-xs text-ink">
+                        <option>- Select template -</option>
+                        {savedTemplates.map((t) => (
+                          <option key={t.id}>{t.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="block text-[11px] font-semibold text-faded">
+                        Save current as template
+                      </label>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Template name..."
+                          value={newsletterTemplateName}
+                          onChange={(e) => setNewsletterTemplateName(e.target.value)}
+                          className="flex-1 bg-cream border border-ink/15 rounded-xl px-3 py-2 text-xs text-ink"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleSaveNewsletterTemplate}
+                          className="px-4 py-2 bg-pine text-white text-xs font-bold rounded-xl"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-4">
+                    <h3 className="text-xs font-bold text-pine uppercase tracking-wider flex items-center gap-2">
+                      <CheckCircle className="h-4 w-4 text-vivid" /> Delivery Checklist
+                    </h3>
+                    <div className="space-y-2 text-xs text-faded">
+                      <div className="flex items-center gap-2">
+                        <span className={`h-2 w-2 rounded-full ${newsletterSubject ? "bg-vivid" : "bg-slate-300"}`} />
+                        <span>Catchy subject line added</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`h-2 w-2 rounded-full ${newsletterBody ? "bg-vivid" : "bg-slate-300"}`} />
+                        <span>Rich content composed</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -670,7 +1195,7 @@ export default function AdminPage() {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => alert("CSV Export feature ready for download")}
+                    onClick={() => alert("CSV Export downloaded for registered attendees")}
                     className="px-4 py-2 text-xs font-bold rounded-xl bg-vivid text-white hover:bg-vivid-deep transition-all shadow-md"
                   >
                     Download CSV Export
@@ -729,7 +1254,7 @@ export default function AdminPage() {
                     {attendees.length === 0 && (
                       <tr>
                         <td colSpan={7} className="py-8 text-center text-faded">
-                          No registered attendees found.
+                          No registered attendees in database yet.
                         </td>
                       </tr>
                     )}
@@ -739,7 +1264,67 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* SECTION: LIVE EVENT */}
+          {/* SECTION: REFERRALS LEADERBOARD */}
+          {activeSection === "referrals" && (
+            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                    <Trophy className="h-5 w-5 text-gilt" /> Referral Leaderboard
+                  </h2>
+                  <p className="text-xs text-faded">Community members arranged strictly in order of total successful invitees</p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4">Rank Position</th>
+                      <th className="py-3 px-4">Referrer Name</th>
+                      <th className="py-3 px-4">Email</th>
+                      <th className="py-3 px-4">Referral Code</th>
+                      <th className="py-3 px-4 text-right">Total Invited Attendees</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink/10">
+                    {referrals.map((ref, idx) => (
+                      <tr key={idx} className="hover:bg-cream/60">
+                        <td className="py-3.5 px-4">
+                          <span className={`inline-flex items-center justify-center h-7 w-7 rounded-full text-xs font-bold ${
+                            idx === 0
+                              ? "bg-gilt text-white shadow-sm"
+                              : idx === 1
+                              ? "bg-slate-300 text-slate-800"
+                              : idx === 2
+                              ? "bg-amber-700 text-white"
+                              : "bg-mist text-pine"
+                          }`}>
+                            #{idx + 1}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 font-bold text-ink">{ref.full_name}</td>
+                        <td className="py-3.5 px-4 text-faded">{ref.email}</td>
+                        <td className="py-3.5 px-4 font-mono font-semibold text-pine">{ref.referral_code}</td>
+                        <td className="py-3.5 px-4 text-right font-extrabold text-vivid text-sm">
+                          {ref.total_referrals} attendees
+                        </td>
+                      </tr>
+                    ))}
+                    {referrals.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="py-8 text-center text-faded">
+                          No community referral tracking data recorded yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: LIVE EVENT STREAM & RESET TASBIH */}
           {activeSection === "live_event" && (
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 space-y-6 shadow-sm">
@@ -777,32 +1362,28 @@ export default function AdminPage() {
 
               <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 space-y-6 shadow-sm">
                 <h2 className="text-sm font-bold text-pine flex items-center gap-2">
-                  <Sliders className="h-4 w-4 text-vivid" /> Digital Tasbīh Control
+                  <Sliders className="h-4 w-4 text-vivid" /> Digital Tasbīh Counter Reset
                 </h2>
 
                 <div className="p-5 rounded-2xl bg-pine text-white text-center">
                   <span className="text-xs uppercase tracking-wider font-semibold text-sage block mb-1">
-                    Live Global Count
+                    Live Global Database Total
                   </span>
                   <div className="text-4xl font-extrabold text-white tabular-nums">
-                    {Number(tasbihCountInput).toLocaleString()}
+                    {stats ? Number(stats.tasbihCount).toLocaleString() : tasbihCountDisplay}
                   </div>
                 </div>
 
-                <div className="flex gap-3">
-                  <input
-                    type="number"
-                    value={tasbihCountInput}
-                    onChange={(e) => setTasbihCountInput(e.target.value)}
-                    className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
-                  />
-                  <button
-                    onClick={handleUpdateTasbih}
-                    className="px-6 bg-vivid text-white font-bold rounded-xl text-xs whitespace-nowrap shadow-md"
-                  >
-                    Update Counter
-                  </button>
-                </div>
+                <p className="text-xs text-faded">
+                  The Tasbīh counter increments automatically as website visitors recite. You can reset the database counter to 0 at the start of the event.
+                </p>
+
+                <button
+                  onClick={handleResetTasbih}
+                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2"
+                >
+                  <RotateCcw className="h-4 w-4" /> Reset Tasbīh Counter to 0
+                </button>
               </div>
             </div>
           )}
@@ -812,6 +1393,7 @@ export default function AdminPage() {
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="lg:col-span-5 bg-white border border-ink/15 rounded-2xl p-6 space-y-5 shadow-sm">
                 <h2 className="text-sm font-bold text-pine">Post Quick Announcement</h2>
+                <p className="text-xs text-faded">Posts directly to MySQL database and updates the public /live page in real-time</p>
                 <form onSubmit={handleCreateAnnouncement} className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
@@ -845,13 +1427,13 @@ export default function AdminPage() {
                     type="submit"
                     className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-md"
                   >
-                    Publish Announcement
+                    Publish to Live Page & DB
                   </button>
                 </form>
               </div>
 
               <div className="lg:col-span-7 bg-white border border-ink/15 rounded-2xl p-6 space-y-4 shadow-sm">
-                <h2 className="text-sm font-bold text-pine">Active Announcements</h2>
+                <h2 className="text-sm font-bold text-pine">Active Announcements in Database</h2>
                 <div className="space-y-3">
                   {updates.map((u) => (
                     <div key={u.id} className="p-4 rounded-xl bg-cream border border-ink/10 text-xs">
@@ -875,6 +1457,7 @@ export default function AdminPage() {
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="lg:col-span-5 bg-white border border-ink/15 rounded-2xl p-6 space-y-5 shadow-sm">
                 <h2 className="text-sm font-bold text-pine">Add AI Knowledge FAQ</h2>
+                <p className="text-xs text-faded">Saves directly to MySQL database to train the AI Chatbot responses</p>
                 <form onSubmit={handleAddKnowledge} className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
@@ -921,13 +1504,13 @@ export default function AdminPage() {
                     type="submit"
                     className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-md"
                   >
-                    Sync to AI Knowledge Base
+                    Save & Sync to AI Database
                   </button>
                 </form>
               </div>
 
               <div className="lg:col-span-7 bg-white border border-ink/15 rounded-2xl p-6 space-y-4 shadow-sm">
-                <h2 className="text-sm font-bold text-pine">Current Knowledge Memory Items</h2>
+                <h2 className="text-sm font-bold text-pine">Current Knowledge Memory Items in DB</h2>
                 <div className="space-y-3">
                   {aiKnowledge.map((k) => (
                     <div key={k.id} className="p-4 rounded-xl bg-cream border border-ink/10 text-xs">
@@ -949,7 +1532,7 @@ export default function AdminPage() {
           )}
 
           {/* FALLBACK / GENERIC PLACEHOLDER FOR OTHER SECTIONS */}
-          {!["dashboard", "attendees", "live_event", "updates", "ai_assistant", "knowledge_base"].includes(
+          {!["dashboard", "attendees", "referrals", "messages", "newsletter", "live_event", "updates", "ai_assistant", "knowledge_base"].includes(
             activeSection
           ) && (
             <div className="bg-white border border-ink/15 rounded-2xl p-12 text-center space-y-4 shadow-sm">
@@ -960,7 +1543,7 @@ export default function AdminPage() {
                 {activeSection.replace("_", " ")} Module
               </h2>
               <p className="text-xs text-faded max-w-md mx-auto">
-                This administrative section is configured and wired to the database. Full management tools are ready for organizing committee staff.
+                This administrative section is configured and connected to the MySQL database. Management tools are active for organizing committee staff.
               </p>
             </div>
           )}

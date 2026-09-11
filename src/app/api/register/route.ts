@@ -2,13 +2,29 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { sendRegistrationEmail } from '@/lib/email';
 import QRCode from 'qrcode';
+import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
 
 export async function POST(req: Request) {
   try {
-    const { fullName, email, phone, ticketType } = await req.json();
+    // 1. Rate Limiting Check (10 registrations per hour per IP)
+    const ip = req.headers.get('x-forwarded-for') || 'ip_unknown';
+    const rateCheck = checkRateLimit(`reg_${ip}`, 10, 60 * 60 * 1000);
 
-    if (!fullName || !email || !phone) {
-      return NextResponse.json({ error: 'Full name, email, and phone are required' }, { status: 400 });
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: 'Too many registration requests. Please wait an hour.' },
+        { status: 429 }
+      );
+    }
+
+    const body = await req.json();
+    const fullName = sanitizeString(body.fullName, 150);
+    const email = body.email ? body.email.trim() : '';
+    const phone = sanitizeString(body.phone, 30);
+    const ticketType = sanitizeString(body.ticketType, 100);
+
+    if (!fullName || !email || !phone || !isValidEmail(email)) {
+      return NextResponse.json({ error: 'Valid full name, email, and phone number are required' }, { status: 400 });
     }
 
     const type = ticketType || 'Standard Pass';

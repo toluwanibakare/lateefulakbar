@@ -1,16 +1,36 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { EVENT_KNOWLEDGE_BASE, getQuickButtonsForIntent } from '@/lib/kb';
+import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
 export async function POST(req: Request) {
   try {
-    const { message, sessionId, isSupportRequest, name, email, phone } = await req.json();
+    // 1. Rate Limiting Check (15 requests/min per IP)
+    const ip = req.headers.get('x-forwarded-for') || 'ip_unknown';
+    const rateCheck = checkRateLimit(`chat_${ip}`, 15, 60 * 1000);
 
-    if (!message || typeof message !== 'string') {
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { error: 'Too many chat messages. Please wait a moment.' },
+        { status: 429 }
+      );
+    }
+
+    const body = await req.json();
+    const rawMessage = body.message;
+
+    if (!rawMessage || typeof rawMessage !== 'string') {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
+
+    const message = sanitizeString(rawMessage, 500);
+    const name = sanitizeString(body.name, 100);
+    const email = body.email && isValidEmail(body.email) ? body.email.trim() : 'not_provided@lateefulakbar.org';
+    const phone = sanitizeString(body.phone, 30);
+    const sessionId = sanitizeString(body.sessionId, 100) || 'anon';
+    const isSupportRequest = Boolean(body.isSupportRequest);
 
     const db = await getDb();
 
@@ -18,7 +38,7 @@ export async function POST(req: Request) {
     if (isSupportRequest || message.toLowerCase().includes('human support') || message.toLowerCase().includes('talk to human')) {
       await db.query(
         `INSERT INTO support_tickets (name, email, phone, query, status) VALUES (?, ?, ?, ?, 'pending')`,
-        [name || 'Guest User', email || 'not_provided@lateefulakbar.org', phone || '', message]
+        [name || 'Guest User', email, phone, message]
       );
 
       return NextResponse.json({
@@ -49,6 +69,7 @@ export async function POST(req: Request) {
               {
                 role: 'system',
                 content: `You are "Noor AI", the official intelligent assistant for Lateeful Akbar 2027. Answer politely, warmly, and accurately using the Knowledge Base below. Keep answers concise (2-4 sentences maximum). If the user asks for human customer support, inform them to click the "Talk to Support Agent" button.
+
 
 Knowledge Base:
 ${EVENT_KNOWLEDGE_BASE}`,
@@ -98,7 +119,7 @@ ${EVENT_KNOWLEDGE_BASE}`,
     // Save chat log to MySQL
     await db.query(
       `INSERT INTO chat_logs (session_id, user_message, bot_reply) VALUES (?, ?, ?)`,
-      [sessionId || 'anon', message, reply]
+      [sessionId, message, reply]
     );
 
     return NextResponse.json({

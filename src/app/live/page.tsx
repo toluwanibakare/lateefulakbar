@@ -1,15 +1,12 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import PageHeader from "@/components/PageHeader";
 import EventDashboard from "@/components/EventDashboard";
 import PrayerBookViewer from "@/components/PrayerBookViewer";
 import { CountdownStrip, Eyebrow, Reveal } from "@/components/ui";
 import { EVENT } from "@/lib/site";
-
-export const metadata = {
-  title: "Live — Majilis Mubāshir",
-  description:
-    "The live dashboard for Lateef ul-il-Akbar-Il-A’azam 2027: YouTube livestream from TBS, the worldwide Yaa Lateef tasbīh, order of the day and live updates.",
-};
 
 const ORDER = [
   { time: "08:00", title: "Gates & settling", note: "Accreditation, seating by canopy." },
@@ -20,25 +17,20 @@ const ORDER = [
   { time: "15:00", title: "Closing & dispersal", note: "Orderly exit by section." },
 ];
 
-const UPDATES = [
-  {
-    time: "Until the day",
-    title: "Broadcast opens 08:00 WAT, 24 January 2027",
-    text: "The Nadwat TV feed appears at the top of this page. Keep it open for real-time broadcast and announcements.",
-  },
-  {
-    time: "On the day",
-    title: "Stewards post gate & seating notes here",
-    text: "Canopy changes, water points, lost-and-found and dispersal order will be announced here first.",
-  },
-  {
-    time: "After",
-    title: "Final tasbīh & closing du‘ā replay",
-    text: "The worldwide Yaa Lateef total is announced at closing and kept on this page.",
-  },
-];
-
 export default function LivePage() {
+  const [updates, setUpdates] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/api/updates')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.updates && data.updates.length > 0) {
+          setUpdates(data.updates);
+        }
+      })
+      .catch((err) => console.error("Error fetching live updates:", err));
+  }, []);
+
   return (
     <>
       <PageHeader
@@ -113,17 +105,27 @@ export default function LivePage() {
               </h2>
             </Reveal>
             <div className="mt-8 space-y-4">
-              {UPDATES.map((u, i) => (
-                <Reveal key={u.title} delay={Math.min(i * 0.05, 0.15)}>
-                  <article className="border border-ink/15 bg-white p-5 sm:p-6">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">
-                      {u.time}
-                    </p>
-                    <h3 className="mt-1.5 text-[15px] font-semibold text-ink">{u.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-faded">{u.text}</p>
-                  </article>
-                </Reveal>
-              ))}
+              {updates.length > 0 ? (
+                updates.map((u, i) => (
+                  <Reveal key={u.id || i} delay={Math.min(i * 0.05, 0.15)}>
+                    <article className="border border-ink/15 bg-white p-5 sm:p-6 shadow-sm">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">
+                        {new Date(u.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} &bull; {u.priority || 'Live'}
+                      </p>
+                      <h3 className="mt-1.5 text-[15px] font-semibold text-ink">{u.title}</h3>
+                      <p className="mt-1.5 text-sm leading-relaxed text-faded">{u.content}</p>
+                    </article>
+                  </Reveal>
+                ))
+              ) : (
+                <article className="border border-ink/15 bg-white p-5 sm:p-6">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-fern">
+                    Until the day
+                  </p>
+                  <h3 className="mt-1.5 text-[15px] font-semibold text-ink">Broadcast opens 08:00 WAT, 24 January 2027</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-faded">The Nadwat TV feed appears at the top of this page. Keep it open for real-time broadcast and announcements.</p>
+                </article>
+              )}
             </div>
             <Reveal delay={0.1}>
               <div className="mt-6 flex flex-wrap gap-3">
