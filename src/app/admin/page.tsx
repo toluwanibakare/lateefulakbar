@@ -763,7 +763,8 @@ export default function AdminPage() {
     {
       group: "GIVING",
       items: [
-        { id: "donations", label: "Donation & Sadaqah Management", icon: HeartIcon },
+        { id: "sadaqah", label: "Donation Campaigns", icon: HeartIcon },
+        { id: "donations", label: "Sadaqah Payments", icon: DollarSign },
       ],
     },
     {
