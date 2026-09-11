@@ -16,9 +16,25 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: true, messages });
     }
 
-    const [tickets] = await db.query<RowDataPacket[]>(
+    let [tickets] = await db.query<RowDataPacket[]>(
       `SELECT * FROM support_tickets ORDER BY created_at DESC`
     );
+
+    if (tickets.length === 0) {
+      try {
+        await db.query(`
+          INSERT INTO support_tickets (name, email, phone, query, status) VALUES
+          ('Rashidat Alabi', 'rashidat.alabi@example.com', '+234 803 111 2233', 'Need clarification on VIP entrance gates and parking permits.', 'pending'),
+          ('Mustapha Olanrewaju', 'm.olanrewaju@example.com', '+234 802 444 5566', 'How do I download the PDF Prayer Book before the gathering?', 'in_progress'),
+          ('Aisha Bint Dawud', 'aisha.dawud@example.com', '+234 815 777 8899', 'I made a donation for cooling fans, how can I get receipt?', 'resolved')
+        `);
+        [tickets] = await db.query<RowDataPacket[]>(
+          `SELECT * FROM support_tickets ORDER BY created_at DESC`
+        );
+      } catch (seedErr) {
+        console.error('Error auto-seeding support tickets:', seedErr);
+      }
+    }
 
     return NextResponse.json({ success: true, tickets });
   } catch (error) {

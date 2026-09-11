@@ -51,7 +51,9 @@ import {
   Key,
   Trash2,
   Edit,
-  ShieldAlert
+  ShieldAlert,
+  Home,
+  Globe
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -120,6 +122,7 @@ export default function AdminPage() {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -230,7 +233,11 @@ export default function AdminPage() {
     }
   };
 
+  // Data loading state
+  const [loadingSection, setLoadingSection] = useState(false);
+
   const loadSectionData = async (section: string) => {
+    setLoadingSection(true);
     try {
       if (section === "attendees") {
         const res = await fetch("/api/admin/crud?type=attendees");
@@ -300,6 +307,8 @@ export default function AdminPage() {
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoadingSection(false);
     }
   };
 
@@ -655,14 +664,25 @@ export default function AdminPage() {
   // Render Login View if unauthenticated
   if (!user) {
     return (
-      <div className="min-h-screen bg-paper text-ink flex items-center justify-center p-4">
+      <div className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center p-4 relative">
+        <div className="absolute top-6 right-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl bg-white border border-ink/15 text-pine hover:bg-mist transition-all shadow-sm"
+          >
+            <Home className="h-3.5 w-3.5 text-vivid" />
+            Visit Main Site
+          </Link>
+        </div>
         <div className="w-full max-w-md bg-white border border-ink/15 dark:border-slate-800 rounded-3xl p-8 shadow-xl">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 flex flex-col items-center">
             <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-mist text-pine mb-4 border border-sage">
               <ShieldCheck className="h-8 w-8 text-pine" />
             </div>
-            <Eyebrow>Nadwat Global Assembly</Eyebrow>
-            <h1 className="text-2xl font-display font-bold text-pine dark:text-emerald-400 mt-1">
+            <div className="flex justify-center w-full">
+              <Eyebrow>Nadwat Global Assembly</Eyebrow>
+            </div>
+            <h1 className="text-2xl font-display font-bold text-pine dark:text-emerald-400 mt-2">
               Lateeful Akbar Admin
             </h1>
             <p className="text-xs text-faded mt-1">Sign in with your authorized admin credentials</p>
@@ -718,7 +738,15 @@ export default function AdminPage() {
             </div>
 
             <button
-              type="submit"
+              type="button"
+              onClick={() => {
+                if (!emailInput || !passwordInput) {
+                  setAuthError("Please enter your admin email and password.");
+                  return;
+                }
+                setAuthError("");
+                setShowConfirmModal(true);
+              }}
               disabled={authLoading}
               className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md disabled:opacity-50 mt-2"
             >
@@ -726,6 +754,42 @@ export default function AdminPage() {
             </button>
           </form>
         </div>
+
+        {/* Confirmation Modal */}
+        {showConfirmModal && (
+          <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-ink/15 shadow-2xl space-y-4 animate-in fade-in zoom-in duration-150 text-center">
+              <div className="mx-auto h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
+                <ShieldAlert className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-base font-bold text-pine">Confirm Sign In</h3>
+                <p className="text-xs text-faded mt-1">
+                  Are you sure you want to log in as <span className="font-semibold text-ink">{emailInput}</span>?
+                </p>
+              </div>
+              <div className="flex items-center gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmModal(false)}
+                  className="flex-1 bg-cream hover:bg-mist text-pine font-bold py-2.5 rounded-xl text-xs border border-ink/15 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    setShowConfirmModal(false);
+                    handleLogin(e);
+                  }}
+                  className="flex-1 bg-vivid hover:bg-vivid-deep text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md"
+                >
+                  Yes, Proceed
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -882,6 +946,15 @@ export default function AdminPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              target="_blank"
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl bg-vivid text-white hover:bg-vivid-deep transition-all shadow-sm"
+              title="Open public website in new tab"
+            >
+              <Globe className="h-3.5 w-3.5" />
+              Visit Site
+            </Link>
             <button
               onClick={() => { loadDashboardStats(); loadSectionData(activeSection); }}
               className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold rounded-xl bg-mist text-pine border border-ink/15 hover:bg-sage transition-all shadow-sm"
@@ -1019,7 +1092,7 @@ export default function AdminPage() {
 
                 <div className="lg:col-span-4 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
                   <div>
-                    <h3 className="text-base font-bold text-pine">Sadaqah Category Split</h3>
+                    <h3 className="text-base font-bold text-pine">Donation Category Split</h3>
                     <p className="text-xs text-faded">Donations by community project</p>
                   </div>
 
