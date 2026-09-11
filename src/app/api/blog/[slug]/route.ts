@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
+import { checkRateLimit, sanitizeString } from '@/lib/security';
 
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params;
+    const rawParams = await params;
+    const slug = sanitizeString(rawParams.slug, 150);
     const db = await getDb();
 
     const [rows] = await db.query<RowDataPacket[]>(
@@ -30,9 +32,17 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const { slug } = await params;
+    const ip = req.headers.get('x-forwarded-for') || 'ip_unknown';
+    const rateCheck = checkRateLimit(`blog_${ip}`, 30, 60 * 1000);
+
+    if (!rateCheck.success) {
+      return NextResponse.json({ success: false, error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
+    const rawParams = await params;
+    const slug = sanitizeString(rawParams.slug, 150);
     const body = await req.json().catch(() => ({}));
-    const action = body.action || 'view';
+    const action = sanitizeString(body.action, 20) || 'view';
 
     const db = await getDb();
 

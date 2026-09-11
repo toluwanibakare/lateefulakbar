@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { RowDataPacket, ResultSetHeader } from 'mysql2';
+import { RowDataPacket } from 'mysql2';
+import { verifyAdminToken, sanitizeString } from '@/lib/security';
 
 // Log admin activity helper
 export async function logAdminActivity(adminEmail: string, adminName: string, action: string, details: string) {
@@ -15,8 +16,13 @@ export async function logAdminActivity(adminEmail: string, adminName: string, ac
   }
 }
 
-// 1. Attendees GET & POST & DELETE
+// 1. Admin GET Data
 export async function GET(req: Request) {
+  // Authorization Guard
+  if (!verifyAdminToken(req.headers.get('authorization'))) {
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
+  }
+
   const { searchParams } = new URL(req.url);
   const type = searchParams.get('type');
 
@@ -96,14 +102,30 @@ export async function GET(req: Request) {
   }
 }
 
+// 2. Admin POST Actions
 export async function POST(req: Request) {
+  // Authorization Guard
+  if (!verifyAdminToken(req.headers.get('authorization'))) {
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
-    const { action, payload, adminEmail = 'admin@lateefulakbar.com', adminName = 'Super Admin' } = body;
+    const action = sanitizeString(body.action, 50);
+    const adminEmail = sanitizeString(body.adminEmail, 100) || 'admin@lateefulakbar.com';
+    const adminName = sanitizeString(body.adminName, 100) || 'Super Admin';
+    const payload = body.payload || {};
+
     const db = await getDb();
 
     if (action === 'create_campaign') {
-      const { title, category, targetQty, unitPrice, description, imageUrl } = payload;
+      const title = sanitizeString(payload.title, 255);
+      const category = sanitizeString(payload.category, 100);
+      const targetQty = Number(payload.targetQty) || 100;
+      const unitPrice = Number(payload.unitPrice) || 0;
+      const description = sanitizeString(payload.description, 2000);
+      const imageUrl = sanitizeString(payload.imageUrl, 500);
+
       await db.query(
         'INSERT INTO sadaqah_campaigns (title, category, target_qty, unit_price, description, image_url) VALUES (?, ?, ?, ?, ?, ?)',
         [title, category, targetQty, unitPrice, description, imageUrl || '']
@@ -113,17 +135,23 @@ export async function POST(req: Request) {
     }
 
     if (action === 'create_update') {
-      const { title, content, priority } = payload;
+      const title = sanitizeString(payload.title, 255);
+      const content = sanitizeString(payload.content, 4000);
+      const priority = sanitizeString(payload.priority, 50) || 'normal';
+
       await db.query(
         'INSERT INTO event_updates (title, content, priority) VALUES (?, ?, ?)',
-        [title, content, priority || 'normal']
+        [title, content, priority]
       );
       await logAdminActivity(adminEmail, adminName, 'Posted Event Announcement', `Title: ${title}`);
       return NextResponse.json({ success: true });
     }
 
     if (action === 'add_ai_knowledge') {
-      const { topic, question, answer } = payload;
+      const topic = sanitizeString(payload.topic, 255);
+      const question = sanitizeString(payload.question, 500);
+      const answer = sanitizeString(payload.answer, 4000);
+
       await db.query(
         'INSERT INTO ai_knowledge (topic, question, answer) VALUES (?, ?, ?)',
         [topic, question, answer]
@@ -133,7 +161,9 @@ export async function POST(req: Request) {
     }
 
     if (action === 'save_setting') {
-      const { key, value } = payload;
+      const key = sanitizeString(payload.key, 100);
+      const value = sanitizeString(payload.value, 2000);
+
       await db.query(
         'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
         [key, value, value]
@@ -143,24 +173,35 @@ export async function POST(req: Request) {
     }
 
     if (action === 'delete_campaign') {
-      const { id } = payload;
+      const id = Number(payload.id);
       await db.query('DELETE FROM sadaqah_campaigns WHERE id = ?', [id]);
       await logAdminActivity(adminEmail, adminName, 'Deleted Sadaqah Campaign', `ID: ${id}`);
       return NextResponse.json({ success: true });
     }
 
     if (action === 'update_campaign') {
-      const { id, title, category, targetQty, currentQty, unitPrice, description, is_active } = payload;
+      const id = Number(payload.id);
+      const title = sanitizeString(payload.title, 255);
+      const category = sanitizeString(payload.category, 100);
+      const targetQty = Number(payload.targetQty) || 100;
+      const currentQty = Number(payload.currentQty) || 0;
+      const unitPrice = Number(payload.unitPrice) || 0;
+      const description = sanitizeString(payload.description, 2000);
+      const isActive = payload.is_active ? 1 : 0;
+
       await db.query(
         'UPDATE sadaqah_campaigns SET title = ?, category = ?, target_qty = ?, current_qty = ?, unit_price = ?, description = ?, is_active = ? WHERE id = ?',
-        [title, category, targetQty, currentQty, unitPrice, description, is_active ? 1 : 0, id]
+        [title, category, targetQty, currentQty, unitPrice, description, isActive, id]
       );
       await logAdminActivity(adminEmail, adminName, 'Updated Sadaqah Campaign', `ID: ${id}, Title: ${title}`);
       return NextResponse.json({ success: true });
     }
 
     if (action === 'save_paystack_settings') {
-      const { mode, publicKey, secretKey } = payload;
+      const mode = sanitizeString(payload.mode, 20);
+      const publicKey = sanitizeString(payload.publicKey, 255);
+      const secretKey = sanitizeString(payload.secretKey, 255);
+
       await db.query(
         'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
         ['paystack_mode', mode, mode]
@@ -183,4 +224,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
-

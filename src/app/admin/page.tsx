@@ -33,6 +33,7 @@ import {
   Send,
   MessageSquare,
   Eye,
+  EyeOff,
   Check,
   Paperclip,
   Smile,
@@ -116,8 +117,9 @@ const ALL_PERMISSIONS = [
 export default function AdminPage() {
   // Authentication State
   const [user, setUser] = useState<AdminUser | null>(null);
-  const [emailInput, setEmailInput] = useState("admin@lateefulakbar.com");
-  const [passwordInput, setPasswordInput] = useState("Master@123");
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -682,7 +684,7 @@ export default function AdminPage() {
                 required
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
-                placeholder="admin@lateefulakbar.com"
+                placeholder="Enter email address"
                 className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-3 text-sm text-ink focus:outline-none focus:border-vivid transition-colors"
               />
             </div>
@@ -691,32 +693,37 @@ export default function AdminPage() {
               <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
                 Password
               </label>
-              <input
-                type="password"
-                required
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                placeholder="••••••••••••"
-                className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-3 text-sm text-ink focus:outline-none focus:border-vivid transition-colors"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  placeholder="Enter password"
+                  className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-3 pr-12 text-sm text-ink focus:outline-none focus:border-vivid transition-colors"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-faded hover:text-pine transition-colors focus:outline-none"
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={authLoading}
-              className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md disabled:opacity-50"
+              className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md disabled:opacity-50 mt-2"
             >
               {authLoading ? "Authenticating..." : "Sign In to Admin Console"}
             </button>
-
-            <div className="pt-4 border-t border-ink/10 text-center">
-              <span className="text-[11px] text-faded block">
-                Authorized Credentials:
-              </span>
-              <span className="text-[11px] font-mono text-pine block mt-1">
-                admin@lateefulakbar.com &bull; Master@123
-              </span>
-            </div>
           </form>
         </div>
       </div>

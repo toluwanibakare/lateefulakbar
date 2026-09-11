@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
+import { verifyAdminToken } from '@/lib/security';
 
 export async function GET(req: Request) {
   try {
+    // Authorization Check
+    if (!verifyAdminToken(req.headers.get('authorization'))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
+    }
+
     const db = await getDb();
 
     // 1. Registrations count & today's count
