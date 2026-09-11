@@ -69,7 +69,7 @@ export default function SadaqahGiving() {
     setSubmitting(true);
 
     try {
-      const res = await fetch('/api/donate', {
+      const res = await fetch('/api/paystack/init', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -81,15 +81,19 @@ export default function SadaqahGiving() {
       });
 
       const data = await res.json();
-      if (data.success) {
+      if (data.authorizationUrl) {
+        window.location.href = data.authorizationUrl;
+      } else if (data.success) {
         setDone(true);
-        // Increment local progress state dynamically
         setCampaigns((list) =>
           list.map((c) => (c.id === open.id ? { ...c, raised: c.raised + (open.unitPrice ? qty : 1) } : c))
         );
+      } else {
+        alert(data.error || 'Failed to process donation');
       }
     } catch (err) {
       console.error('Failed to log donation:', err);
+      alert('Network error. Please try again.');
     } finally {
       setSubmitting(false);
     }

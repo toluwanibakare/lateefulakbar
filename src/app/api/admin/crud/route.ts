@@ -142,9 +142,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true });
     }
 
+    if (action === 'delete_campaign') {
+      const { id } = payload;
+      await db.query('DELETE FROM sadaqah_campaigns WHERE id = ?', [id]);
+      await logAdminActivity(adminEmail, adminName, 'Deleted Sadaqah Campaign', `ID: ${id}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'update_campaign') {
+      const { id, title, category, targetQty, currentQty, unitPrice, description, is_active } = payload;
+      await db.query(
+        'UPDATE sadaqah_campaigns SET title = ?, category = ?, target_qty = ?, current_qty = ?, unit_price = ?, description = ?, is_active = ? WHERE id = ?',
+        [title, category, targetQty, currentQty, unitPrice, description, is_active ? 1 : 0, id]
+      );
+      await logAdminActivity(adminEmail, adminName, 'Updated Sadaqah Campaign', `ID: ${id}, Title: ${title}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'save_paystack_settings') {
+      const { mode, publicKey, secretKey } = payload;
+      await db.query(
+        'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+        ['paystack_mode', mode, mode]
+      );
+      await db.query(
+        'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+        ['paystack_public_key', publicKey, publicKey]
+      );
+      await db.query(
+        'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+        ['paystack_secret_key', secretKey, secretKey]
+      );
+      await logAdminActivity(adminEmail, adminName, 'Updated Paystack Payment Gateway Settings', `Mode: ${mode}`);
+      return NextResponse.json({ success: true });
+    }
+
     return NextResponse.json({ success: false, error: 'Unknown action' }, { status: 400 });
   } catch (error) {
     console.error('Error in admin POST action:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
+

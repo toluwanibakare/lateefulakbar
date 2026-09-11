@@ -29,15 +29,42 @@ export default function SadaqahQuickGive() {
   const [monthly, setMonthly] = useState(false);
   const [anonymous, setAnonymous] = useState(false);
   const [done, setDone] = useState(false);
-
+  const [submitting, setSubmitting] = useState(false);
   const effective = custom ? parseFloat(custom) || 0 : amount || 0;
 
-  const pay = (e: React.FormEvent) => {
+  const pay = async (e: React.FormEvent) => {
     e.preventDefault();
     if (effective < 100 || !name || !email) return;
-    // Frontend phase: simulate Paystack handoff. Wire to Paystack inline here later.
-    setDone(true);
+    setSubmitting(true);
+
+    try {
+      const res = await fetch('/api/paystack/init', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: effective,
+          email,
+          donorName: anonymous ? 'Anonymous' : name,
+          category: 'General Sadaqah',
+        }),
+      });
+
+      const data = await res.json();
+      if (data.authorizationUrl) {
+        window.location.href = data.authorizationUrl;
+      } else if (data.success) {
+        setDone(true);
+      } else {
+        alert(data.error || 'Payment failed to initialize');
+      }
+    } catch (err) {
+      console.error('Error processing sadaqah:', err);
+      alert('Error initiating payment. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
+
 
   return (
     <section className="bg-paper">

@@ -184,6 +184,20 @@ export default function AdminPage() {
   const [aiQuestion, setAiQuestion] = useState("");
   const [aiAnswer, setAiAnswer] = useState("");
 
+  // Paystack Gateway Configuration State
+  const [paystackMode, setPaystackMode] = useState<"test" | "live">("test");
+  const [paystackPublicKey, setPaystackPublicKey] = useState("");
+  const [paystackSecretKey, setPaystackSecretKey] = useState("");
+  const [paystackSaveStatus, setPaystackSaveStatus] = useState("");
+
+  // Campaign Form State
+  const [newCampaignTitle, setNewCampaignTitle] = useState("");
+  const [newCampaignCategory, setNewCampaignCategory] = useState("");
+  const [newCampaignTargetQty, setNewCampaignTargetQty] = useState(500);
+  const [newCampaignUnitPrice, setNewCampaignUnitPrice] = useState(25000);
+  const [newCampaignDescription, setNewCampaignDescription] = useState("");
+  const [newCampaignImageUrl, setNewCampaignImageUrl] = useState("");
+
   // Check saved session on load
   useEffect(() => {
     const savedUser = localStorage.getItem("admin_user");
@@ -269,11 +283,100 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/users?type=donations_list");
         const data = await res.json();
         if (data.success) setDonationsList(data.donations || []);
+      } else if (section === "settings") {
+        const res = await fetch("/api/admin/crud?type=settings");
+        const data = await res.json();
+        if (data.success && data.data) {
+          if (data.data.paystack_mode) setPaystackMode(data.data.paystack_mode as any);
+          if (data.data.paystack_public_key) setPaystackPublicKey(data.data.paystack_public_key);
+          if (data.data.paystack_secret_key) setPaystackSecretKey(data.data.paystack_secret_key);
+        }
       }
     } catch (e) {
       console.error(e);
     }
   };
+
+  const handleSavePaystackSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/admin/crud", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "save_paystack_settings",
+          payload: { mode: paystackMode, publicKey: paystackPublicKey, secretKey: paystackSecretKey },
+          adminEmail: user?.email,
+          adminName: user?.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPaystackSaveStatus("Paystack settings saved!");
+        setTimeout(() => setPaystackSaveStatus(""), 4000);
+      }
+    } catch (e) {
+      alert("Error saving Paystack settings");
+    }
+  };
+
+  const handleCreateCampaign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCampaignTitle) return;
+    try {
+      const res = await fetch("/api/admin/crud", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "create_campaign",
+          payload: {
+            title: newCampaignTitle,
+            category: newCampaignCategory || newCampaignTitle,
+            targetQty: newCampaignTargetQty,
+            unitPrice: newCampaignUnitPrice,
+            description: newCampaignDescription,
+            imageUrl: newCampaignImageUrl,
+          },
+          adminEmail: user?.email,
+          adminName: user?.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewCampaignTitle("");
+        setNewCampaignCategory("");
+        setNewCampaignDescription("");
+        setNewCampaignImageUrl("");
+        alert("Campaign created!");
+        loadSectionData("sadaqah");
+      }
+    } catch (e) {
+      alert("Error creating campaign");
+    }
+  };
+
+  const handleDeleteCampaign = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this campaign?")) return;
+    try {
+      const res = await fetch("/api/admin/crud", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "delete_campaign",
+          payload: { id },
+          adminEmail: user?.email,
+          adminName: user?.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadSectionData("sadaqah");
+      }
+    } catch (e) {
+      alert("Error deleting campaign");
+    }
+  };
+
 
   useEffect(() => {
     if (user) {
@@ -1096,7 +1199,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* SECTION: WEBSITE SETTINGS & CHANGE PASSWORD */}
+          {/* SECTION: WEBSITE SETTINGS & PAYSTACK CONFIGURATION */}
           {activeSection === "settings" && (
             <div className="grid gap-8 lg:grid-cols-12">
               <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
@@ -1165,24 +1268,261 @@ export default function AdminPage() {
                 </form>
               </div>
 
-              <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-4">
-                <h2 className="text-base font-bold text-pine flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-gilt" /> System Configuration
-                </h2>
-                <p className="text-xs text-faded">Global website settings & Paystack API configuration</p>
+              <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                      <Settings className="h-5 w-5 text-gilt" /> Paystack Payment Gateway
+                    </h2>
+                    <p className="text-xs text-faded">Switch environment & manage Paystack API keys</p>
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                    paystackSecretKey.startsWith("sk_")
+                      ? paystackMode === "live"
+                        ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                        : "bg-amber-100 text-amber-800 border border-amber-300"
+                      : "bg-slate-100 text-slate-700 border border-slate-300"
+                  }`}>
+                    {paystackSecretKey.startsWith("sk_")
+                      ? paystackMode === "live"
+                        ? "Connected (Live Production)"
+                        : "Connected (Test Mode)"
+                      : "Not Configured (Fallback Mode)"}
+                  </span>
+                </div>
 
-                <div className="space-y-3 text-xs">
-                  <div className="p-3.5 rounded-xl bg-cream border border-ink/10 flex justify-between items-center">
-                    <span className="font-semibold text-ink">Event Date Target</span>
-                    <span className="text-pine font-mono font-bold">24 January 2027</span>
+                {paystackSaveStatus && (
+                  <div className="p-3 rounded-xl bg-mist border border-sage text-pine text-xs font-semibold">
+                    {paystackSaveStatus}
                   </div>
-                  <div className="p-3.5 rounded-xl bg-cream border border-ink/10 flex justify-between items-center">
-                    <span className="font-semibold text-ink">Paystack Gateway</span>
-                    <span className="text-vivid font-mono font-bold">Live Production Connected</span>
+                )}
+
+                <form onSubmit={handleSavePaystackSettings} className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                      Paystack Environment Mode
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPaystackMode("test")}
+                        className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all border ${
+                          paystackMode === "test"
+                            ? "bg-amber-50 border-amber-400 text-amber-900 shadow-sm"
+                            : "bg-cream border-ink/15 text-faded"
+                        }`}
+                      >
+                        🧪 Test Mode
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaystackMode("live")}
+                        className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all border ${
+                          paystackMode === "live"
+                            ? "bg-vivid text-white border-vivid shadow-sm"
+                            : "bg-cream border-ink/15 text-faded"
+                        }`}
+                      >
+                        🚀 Live Production
+                      </button>
+                    </div>
                   </div>
-                  <div className="p-3.5 rounded-xl bg-cream border border-ink/10 flex justify-between items-center">
-                    <span className="font-semibold text-ink">Database Host</span>
-                    <span className="text-faded font-mono">127.0.0.1 (MySQL Port 3306)</span>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                      Paystack Public Key ({paystackMode.toUpperCase()})
+                    </label>
+                    <input
+                      type="text"
+                      value={paystackPublicKey}
+                      onChange={(e) => setPaystackPublicKey(e.target.value)}
+                      placeholder={paystackMode === "live" ? "pk_live_xxxxxxxx..." : "pk_test_xxxxxxxx..."}
+                      className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                      Paystack Secret Key ({paystackMode.toUpperCase()})
+                    </label>
+                    <input
+                      type="password"
+                      value={paystackSecretKey}
+                      onChange={(e) => setPaystackSecretKey(e.target.value)}
+                      placeholder={paystackMode === "live" ? "sk_live_xxxxxxxx..." : "sk_test_xxxxxxxx..."}
+                      className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-md"
+                  >
+                    Save Paystack Gateway Settings
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: SADAQAH CAMPAIGNS & THRESHOLDS */}
+          {activeSection === "sadaqah" && (
+            <div className="space-y-8">
+              <div className="grid gap-8 lg:grid-cols-12">
+                <div className="lg:col-span-5 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
+                  <div>
+                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                      <HeartIcon className="h-5 w-5 text-vivid" /> Create Donation Campaign
+                    </h2>
+                    <p className="text-xs text-faded mt-0.5">Add a new physical item campaign with threshold & unit price</p>
+                  </div>
+
+                  <form onSubmit={handleCreateCampaign} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Campaign Title
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Provide Cooling Fans"
+                        value={newCampaignTitle}
+                        onChange={(e) => setNewCampaignTitle(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-semibold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Category Key
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. cooling, water, mats, media"
+                        value={newCampaignCategory}
+                        onChange={(e) => setNewCampaignCategory(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Target Threshold
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          value={newCampaignTargetQty}
+                          onChange={(e) => setNewCampaignTargetQty(Number(e.target.value))}
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Unit Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          min={100}
+                          value={newCampaignUnitPrice}
+                          onChange={(e) => setNewCampaignUnitPrice(Number(e.target.value))}
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Short Description
+                      </label>
+                      <textarea
+                        rows={3}
+                        placeholder="Describe what this campaign sponsors..."
+                        value={newCampaignDescription}
+                        onChange={(e) => setNewCampaignDescription(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Cover Image URL
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="/assets/donation-cooling.jpg"
+                        value={newCampaignImageUrl}
+                        onChange={(e) => setNewCampaignImageUrl(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md"
+                    >
+                      Publish Donation Campaign
+                    </button>
+                  </form>
+                </div>
+
+                <div className="lg:col-span-7 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
+                  <div>
+                    <h2 className="text-base font-bold text-pine">Active Donation Campaigns ({campaigns.length})</h2>
+                    <p className="text-xs text-faded">Threshold progress, items raised, and unit prices</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    {campaigns.map((c) => {
+                      const pct = Math.min(100, Math.round(((c.current_qty || 0) / (c.target_qty || 1)) * 100));
+                      return (
+                        <div key={c.id} className="p-5 rounded-2xl bg-cream border border-ink/10 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="font-bold text-sm text-pine">{c.title}</h3>
+                              <span className="text-[10px] text-faded">Category: {c.category}</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs font-bold text-vivid">
+                                ₦{Number(c.unit_price || 0).toLocaleString()} / item
+                              </span>
+                              <div className="text-[10px] text-faded">
+                                Target: {c.target_qty} items
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-xs font-bold mb-1">
+                              <span className="text-ink">
+                                {c.current_qty || 0} / {c.target_qty || 100} items raised
+                              </span>
+                              <span className="text-vivid">{pct}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-mist rounded-full overflow-hidden">
+                              <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center pt-1 text-xs">
+                            <span className="text-faded text-[11px] max-w-sm truncate">{c.description}</span>
+                            <button
+                              onClick={() => handleDeleteCampaign(c.id)}
+                              className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {campaigns.length === 0 && (
+                      <div className="text-center py-10 text-faded text-xs">No active donation campaigns found</div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -1275,51 +1615,77 @@ export default function AdminPage() {
 
           {/* SECTION: DONATIONS LIST */}
           {activeSection === "donations" && (
-            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-base font-bold text-pine">Donation Payments Log</h2>
-                  <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions</p>
+            <div className="space-y-6">
+              <div className="grid gap-5 sm:grid-cols-3">
+                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Raised</span>
+                  <div className="text-2xl font-extrabold text-pine mt-1">
+                    ₦{donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Donors</span>
+                  <div className="text-2xl font-extrabold text-vivid mt-1">
+                    {donationsList.length} donors
+                  </div>
+                </div>
+                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Avg Contribution</span>
+                  <div className="text-2xl font-extrabold text-gilt mt-1">
+                    ₦{donationsList.length > 0
+                      ? Math.round(donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0) / donationsList.length).toLocaleString()
+                      : 0}
+                  </div>
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
-                      <th className="py-3 px-4">Donor Name</th>
-                      <th className="py-3 px-4">Email</th>
-                      <th className="py-3 px-4">Category</th>
-                      <th className="py-3 px-4">Amount</th>
-                      <th className="py-3 px-4">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-ink/10">
-                    {donationsList.map((d) => (
-                      <tr key={d.id} className="hover:bg-cream/60">
-                        <td className="py-3.5 px-4 font-bold text-ink">{d.donor_name}</td>
-                        <td className="py-3.5 px-4 text-faded">{d.email}</td>
-                        <td className="py-3.5 px-4 font-semibold text-pine">{d.category}</td>
-                        <td className="py-3.5 px-4 font-extrabold text-vivid">
-                          ₦{Number(d.amount).toLocaleString()}
-                        </td>
-                        <td className="py-3.5 px-4 text-faded">
-                          {new Date(d.created_at).toLocaleDateString()}
-                        </td>
+              <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-base font-bold text-pine">Donation Payments Log</h2>
+                    <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions</p>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                        <th className="py-3 px-4">Donor Name</th>
+                        <th className="py-3 px-4">Email</th>
+                        <th className="py-3 px-4">Category</th>
+                        <th className="py-3 px-4">Amount</th>
+                        <th className="py-3 px-4">Date</th>
                       </tr>
-                    ))}
-                    {donationsList.length === 0 && (
-                      <tr>
-                        <td colSpan={5} className="py-8 text-center text-faded">
-                          No donation payment records in database yet.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-ink/10">
+                      {donationsList.map((d) => (
+                        <tr key={d.id} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-4 font-bold text-ink">{d.donor_name}</td>
+                          <td className="py-3.5 px-4 text-faded">{d.email}</td>
+                          <td className="py-3.5 px-4 font-semibold text-pine">{d.category}</td>
+                          <td className="py-3.5 px-4 font-extrabold text-vivid">
+                            ₦{Number(d.amount).toLocaleString()}
+                          </td>
+                          <td className="py-3.5 px-4 text-faded">
+                            {new Date(d.created_at).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                      {donationsList.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-faded">
+                            No donation payment records in database yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
+
 
           {/* SECTION: LIVE CHAT SUPPORT PAGE */}
           {activeSection === "messages" && (
