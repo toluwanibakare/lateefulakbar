@@ -283,6 +283,10 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/users?type=donations_list");
         const data = await res.json();
         if (data.success) setDonationsList(data.donations || []);
+
+        const cRes = await fetch("/api/admin/crud?type=campaigns");
+        const cData = await cRes.json();
+        if (cData.success) setCampaigns(cData.data || []);
       } else if (section === "settings") {
         const res = await fetch("/api/admin/crud?type=settings");
         const data = await res.json();
@@ -1613,10 +1617,11 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* SECTION: DONATIONS LIST */}
+          {/* SECTION: DONATION MANAGEMENT (CAMPAIGNS, THRESHOLDS & PAYMENTS) */}
           {activeSection === "donations" && (
-            <div className="space-y-6">
-              <div className="grid gap-5 sm:grid-cols-3">
+            <div className="space-y-8">
+              {/* Overview Metrics Cards */}
+              <div className="grid gap-5 sm:grid-cols-4">
                 <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
                   <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Raised</span>
                   <div className="text-2xl font-extrabold text-pine mt-1">
@@ -1637,13 +1642,180 @@ export default function AdminPage() {
                       : 0}
                   </div>
                 </div>
+                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Active Campaigns</span>
+                  <div className="text-2xl font-extrabold text-pine mt-1">
+                    {campaigns.length} projects
+                  </div>
+                </div>
               </div>
 
+              {/* Campaigns & Thresholds Management Section */}
+              <div className="grid gap-8 lg:grid-cols-12">
+                <div className="lg:col-span-5 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
+                  <div>
+                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                      <HeartIcon className="h-5 w-5 text-vivid" /> Add New Donation Item
+                    </h2>
+                    <p className="text-xs text-faded mt-0.5">Publish a physical item campaign for visitors on the live site</p>
+                  </div>
+
+                  <form onSubmit={handleCreateCampaign} className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Donation Item Title
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. Provide Cooling Fans"
+                        value={newCampaignTitle}
+                        onChange={(e) => setNewCampaignTitle(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-semibold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Category Key
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. cooling, water, mats, media"
+                        value={newCampaignCategory}
+                        onChange={(e) => setNewCampaignCategory(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Target Threshold (Qty)
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          min={1}
+                          value={newCampaignTargetQty}
+                          onChange={(e) => setNewCampaignTargetQty(Number(e.target.value))}
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Unit Price (₦)
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          min={100}
+                          value={newCampaignUnitPrice}
+                          onChange={(e) => setNewCampaignUnitPrice(Number(e.target.value))}
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Description
+                      </label>
+                      <textarea
+                        rows={3}
+                        placeholder="Describe what visitors sponsor with this item..."
+                        value={newCampaignDescription}
+                        onChange={(e) => setNewCampaignDescription(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Cover Image URL
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="/assets/donation-cooling.jpg"
+                        value={newCampaignImageUrl}
+                        onChange={(e) => setNewCampaignImageUrl(e.target.value)}
+                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md"
+                    >
+                      Publish Item to Live Site
+                    </button>
+                  </form>
+                </div>
+
+                <div className="lg:col-span-7 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
+                  <div>
+                    <h2 className="text-base font-bold text-pine">Live Site Donation Items & Thresholds ({campaigns.length})</h2>
+                    <p className="text-xs text-faded">Displays item targets, current raised counts, and unit prices</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    {campaigns.map((c) => {
+                      const pct = Math.min(100, Math.round(((c.current_qty || 0) / (c.target_qty || 1)) * 100));
+                      return (
+                        <div key={c.id} className="p-5 rounded-2xl bg-cream border border-ink/10 space-y-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="font-bold text-sm text-pine">{c.title}</h3>
+                              <span className="text-[10px] text-faded">Category: {c.category}</span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xs font-bold text-vivid">
+                                ₦{Number(c.unit_price || 0).toLocaleString()} / item
+                              </span>
+                              <div className="text-[10px] text-faded">
+                                Threshold Target: {c.target_qty} items
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <div className="flex justify-between text-xs font-bold mb-1">
+                              <span className="text-ink">
+                                {c.current_qty || 0} / {c.target_qty || 100} items raised
+                              </span>
+                              <span className="text-vivid">{pct}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-mist rounded-full overflow-hidden">
+                              <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
+                            </div>
+                          </div>
+
+                          <div className="flex justify-between items-center pt-1 text-xs">
+                            <span className="text-faded text-[11px] max-w-sm truncate">{c.description}</span>
+                            <button
+                              onClick={() => handleDeleteCampaign(c.id)}
+                              className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {campaigns.length === 0 && (
+                      <div className="text-center py-10 text-faded text-xs">No active donation items found</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Transactions Log Section */}
               <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-base font-bold text-pine">Donation Management Log</h2>
-                    <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions</p>
+                    <h2 className="text-base font-bold text-pine">Completed Donation Transactions Log</h2>
+                    <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions from live site visitors</p>
                   </div>
                 </div>
 
@@ -1653,7 +1825,7 @@ export default function AdminPage() {
                       <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
                         <th className="py-3 px-4">Donor Name</th>
                         <th className="py-3 px-4">Email</th>
-                        <th className="py-3 px-4">Category</th>
+                        <th className="py-3 px-4">Item / Category</th>
                         <th className="py-3 px-4">Amount</th>
                         <th className="py-3 px-4">Date</th>
                       </tr>
