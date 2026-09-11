@@ -122,7 +122,7 @@ export default function AdminPage() {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSignoutModal, setShowSignoutModal] = useState(false);
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -738,15 +738,7 @@ export default function AdminPage() {
             </div>
 
             <button
-              type="button"
-              onClick={() => {
-                if (!emailInput || !passwordInput) {
-                  setAuthError("Please enter your admin email and password.");
-                  return;
-                }
-                setAuthError("");
-                setShowConfirmModal(true);
-              }}
+              type="submit"
               disabled={authLoading}
               className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md disabled:opacity-50 mt-2"
             >
@@ -754,42 +746,6 @@ export default function AdminPage() {
             </button>
           </form>
         </div>
-
-        {/* Confirmation Modal */}
-        {showConfirmModal && (
-          <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-ink/15 shadow-2xl space-y-4 animate-in fade-in zoom-in duration-150 text-center">
-              <div className="mx-auto h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-200">
-                <ShieldAlert className="h-6 w-6" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-pine">Confirm Sign In</h3>
-                <p className="text-xs text-faded mt-1">
-                  Are you sure you want to log in as <span className="font-semibold text-ink">{emailInput}</span>?
-                </p>
-              </div>
-              <div className="flex items-center gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmModal(false)}
-                  className="flex-1 bg-cream hover:bg-mist text-pine font-bold py-2.5 rounded-xl text-xs border border-ink/15 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    setShowConfirmModal(false);
-                    handleLogin(e);
-                  }}
-                  className="flex-1 bg-vivid hover:bg-vivid-deep text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md"
-                >
-                  Yes, Proceed
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -924,13 +880,49 @@ export default function AdminPage() {
         {/* Footer Logout */}
         <div className="p-4 border-t border-ink/15">
           <button
-            onClick={handleLogout}
+            onClick={() => setShowSignoutModal(true)}
             className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-mist hover:bg-rose-50 hover:text-rose-700 text-xs font-semibold text-pine transition-all border border-ink/10"
           >
             <LogOut className="h-4 w-4" /> Sign Out
           </button>
         </div>
       </aside>
+
+      {/* Sign Out Confirmation Modal */}
+      {showSignoutModal && (
+        <div className="fixed inset-0 z-50 bg-ink/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-ink/15 shadow-2xl space-y-4 text-center">
+            <div className="mx-auto h-12 w-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-200">
+              <LogOut className="h-6 w-6" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-pine">Confirm Sign Out</h3>
+              <p className="text-xs text-faded mt-1">
+                Are you sure you want to end your session and sign out of the Admin Console?
+              </p>
+            </div>
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowSignoutModal(false)}
+                className="flex-1 bg-cream hover:bg-mist text-pine font-bold py-2.5 rounded-xl text-xs border border-ink/15 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSignoutModal(false);
+                  handleLogout();
+                }}
+                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-md"
+              >
+                Yes, Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto max-h-screen">
