@@ -11,7 +11,6 @@ let initialized = false;
 
 export async function getDb() {
   if (!pool) {
-    // 1. Ensure database exists
     const rootConnection = await mysql.createConnection({
       host: DB_HOST,
       port: DB_PORT,
@@ -22,7 +21,6 @@ export async function getDb() {
     await rootConnection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_NAME}\`;`);
     await rootConnection.end();
 
-    // 2. Create pool attached to target database
     pool = mysql.createPool({
       host: DB_HOST,
       port: DB_PORT,
@@ -45,7 +43,7 @@ export async function getDb() {
 
 async function initSchema(p: mysql.Pool) {
   try {
-    // Registrations table
+    // 1. Registrations table with referral code & referrer support
     await p.query(`
       CREATE TABLE IF NOT EXISTS registrations (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -54,11 +52,14 @@ async function initSchema(p: mysql.Pool) {
         phone VARCHAR(50) NOT NULL,
         ticket_type VARCHAR(100) DEFAULT 'Standard Pass',
         pass_code VARCHAR(50) UNIQUE NOT NULL,
+        referral_code VARCHAR(50) UNIQUE,
+        referred_by VARCHAR(50),
+        status VARCHAR(50) DEFAULT 'active',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
-    // Tasbih count table (single row global counter)
+    // 2. Tasbih count table
     await p.query(`
       CREATE TABLE IF NOT EXISTS tasbih (
         id INT PRIMARY KEY DEFAULT 1,
@@ -67,12 +68,11 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
-    // Seed default tasbih row if empty
     await p.query(`
       INSERT IGNORE INTO tasbih (id, count) VALUES (1, 0);
     `);
 
-    // Donations table
+    // 3. Donations table
     await p.query(`
       CREATE TABLE IF NOT EXISTS donations (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -86,7 +86,7 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
-    // Blog engagement (likes & views per slug)
+    // 4. Blog stats
     await p.query(`
       CREATE TABLE IF NOT EXISTS blog_stats (
         slug VARCHAR(255) PRIMARY KEY,
@@ -96,7 +96,7 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
-    // Support tickets (for Customer Support Handoff)
+    // 5. Support tickets
     await p.query(`
       CREATE TABLE IF NOT EXISTS support_tickets (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -109,7 +109,7 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
-    // Chat history / analytics
+    // 6. Chat logs
     await p.query(`
       CREATE TABLE IF NOT EXISTS chat_logs (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -119,6 +119,77 @@ async function initSchema(p: mysql.Pool) {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    // 7. Activity Log table
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS activity_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        admin_email VARCHAR(255) NOT NULL,
+        admin_name VARCHAR(255) NOT NULL,
+        action VARCHAR(255) NOT NULL,
+        details TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // 8. Event Updates / Announcements
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS event_updates (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        priority VARCHAR(50) DEFAULT 'normal',
+        is_active TINYINT(1) DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // 9. Newsletter Subscribers
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        status VARCHAR(50) DEFAULT 'active',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // 10. Sadaqah Campaigns table
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS sadaqah_campaigns (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        target_qty INT DEFAULT 100,
+        current_qty INT DEFAULT 0,
+        unit_price DECIMAL(12,2) DEFAULT 0.00,
+        image_url VARCHAR(500),
+        description TEXT,
+        is_active TINYINT(1) DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // 11. AI Knowledge Base override table
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS ai_knowledge (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        topic VARCHAR(255) NOT NULL,
+        question VARCHAR(500) NOT NULL,
+        answer TEXT NOT NULL,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // 12. App Settings key-value table
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS app_settings (
+        setting_key VARCHAR(100) PRIMARY KEY,
+        setting_value TEXT NOT NULL,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
   } catch (err) {
     console.error('Error initializing MySQL database schema:', err);
   }

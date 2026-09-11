@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import AiAssistant from "@/components/AiAssistant";
-import { BackToTop, ScrollProgress } from "@/components/ui";
+import ClientLayoutWrapper from "@/components/ClientLayoutWrapper";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -53,12 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"){document.documentElement.classList.add("dark")}else{document.documentElement.classList.remove("dark")}}catch(e){}})()`,
           }}
         />
-        <ScrollProgress />
-        <Navbar />
-        <div className="min-h-screen overflow-x-hidden max-w-full w-full">{children}</div>
-        <Footer />
-        <AiAssistant />
-        <BackToTop />
+        <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
       </body>
     </html>
   );
