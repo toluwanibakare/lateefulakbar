@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
 import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
+import { logAdminActivity } from '@/app/api/admin/crud/route';
 
 const SUPER_ADMIN_PASSWORD = process.env.SUPER_ADMIN_PASSWORD || 'Master@123';
 const CONTENT_ADMIN_PASSWORD = process.env.CONTENT_ADMIN_PASSWORD || 'Content@123';
@@ -33,6 +34,7 @@ export async function POST(req: Request) {
 
     // Master Super Admin
     if (email === 'admin@lateefulakbar.com' && password === SUPER_ADMIN_PASSWORD) {
+      await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'User Login', 'Authenticated as Super Admin');
       return NextResponse.json({
         success: true,
         user: {
@@ -47,6 +49,7 @@ export async function POST(req: Request) {
 
     // Preset Role Accounts
     if (email === 'content@lateefulakbar.com' && password === CONTENT_ADMIN_PASSWORD) {
+      await logAdminActivity('content@lateefulakbar.com', 'Content Manager', 'User Login', 'Authenticated as Content Admin');
       return NextResponse.json({
         success: true,
         user: {
@@ -60,6 +63,7 @@ export async function POST(req: Request) {
     }
 
     if (email === 'event@lateefulakbar.com' && password === EVENT_ADMIN_PASSWORD) {
+      await logAdminActivity('event@lateefulakbar.com', 'Event Coordinator', 'User Login', 'Authenticated as Event Admin');
       return NextResponse.json({
         success: true,
         user: {
@@ -73,6 +77,7 @@ export async function POST(req: Request) {
     }
 
     if (email === 'finance@lateefulakbar.com' && password === FINANCE_ADMIN_PASSWORD) {
+      await logAdminActivity('finance@lateefulakbar.com', 'Finance Controller', 'User Login', 'Authenticated as Finance Admin');
       return NextResponse.json({
         success: true,
         user: {
@@ -100,6 +105,8 @@ export async function POST(req: Request) {
       } catch (e) {
         perms = ['dashboard'];
       }
+
+      await logAdminActivity(u.email, u.name, 'User Login', `Authenticated as ${u.role}`);
 
       return NextResponse.json({
         success: true,

@@ -2530,8 +2530,97 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* SECTION: ACTIVITY AUDIT LOG */}
+          {activeSection === "activity_log" && (
+            <div className="space-y-6">
+              {/* Header & Refresh */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white border border-ink/15 p-6 rounded-2xl shadow-sm">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <Activity className="h-5 w-5 text-vivid" />
+                    <h2 className="text-lg font-bold text-pine">Activity Audit Log</h2>
+                  </div>
+                  <p className="text-xs text-faded mt-1">
+                    System-wide audit trail recording actions, logins, updates, and changes across all admin staff members.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-mist text-pine border border-sage">
+                    {logs.length} Total Log Entries
+                  </span>
+                  <button
+                    onClick={() => loadSectionData("activity_log")}
+                    className="flex items-center gap-2 bg-cream hover:bg-mist text-pine font-bold px-4 py-2 rounded-xl text-xs border border-ink/15 transition-all shadow-sm"
+                  >
+                    <RefreshCw className="h-3.5 w-3.5" /> Refresh Logs
+                  </button>
+                </div>
+              </div>
+
+              {/* Log Entries Table / List */}
+              <div className="bg-white border border-ink/15 rounded-2xl overflow-hidden shadow-sm">
+                <div className="px-6 py-4 border-b border-ink/10 bg-cream/50 flex items-center justify-between">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-pine">Recent System Events</h3>
+                  <span className="text-[11px] text-faded">Auto-logged in real-time</span>
+                </div>
+
+                {logs.length === 0 ? (
+                  <div className="p-12 text-center text-faded text-xs space-y-2">
+                    <Activity className="h-8 w-8 text-faded mx-auto opacity-50" />
+                    <p className="font-semibold text-ink">No activity records found</p>
+                    <p>Actions performed by admins will automatically be recorded here.</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-ink/10">
+                    {logs.map((log: any, idx: number) => {
+                      const isLogin = log.action?.toLowerCase().includes("login");
+                      const isDelete = log.action?.toLowerCase().includes("delete");
+                      const isCreate = log.action?.toLowerCase().includes("create") || log.action?.toLowerCase().includes("add") || log.action?.toLowerCase().includes("post");
+                      
+                      return (
+                        <div key={log.id || idx} className="p-5 hover:bg-cream/40 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                          <div className="flex items-start gap-4">
+                            <div className={`mt-0.5 p-2.5 rounded-xl border flex-shrink-0 ${
+                              isLogin 
+                                ? "bg-emerald-50 border-emerald-200 text-emerald-700" 
+                                : isDelete 
+                                ? "bg-red-50 border-red-200 text-red-700" 
+                                : isCreate 
+                                ? "bg-blue-50 border-blue-200 text-blue-700" 
+                                : "bg-amber-50 border-amber-200 text-amber-700"
+                            }`}>
+                              <Activity className="h-4 w-4" />
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-bold text-xs text-ink">{log.action}</span>
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-cream text-pine border border-ink/15">
+                                  {log.admin_name || "Admin"} ({log.admin_email})
+                                </span>
+                              </div>
+                              <p className="text-xs text-faded">{log.details || "No additional details provided."}</p>
+                            </div>
+                          </div>
+
+                          <div className="text-left sm:text-right flex-shrink-0">
+                            <span className="text-[11px] font-mono text-faded bg-cream px-2.5 py-1 rounded-lg border border-ink/10 inline-block">
+                              {log.created_at ? new Date(log.created_at).toLocaleString('en-NG', {
+                                dateStyle: 'medium',
+                                timeStyle: 'short'
+                              }) : 'Just now'}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* FALLBACK / GENERIC PLACEHOLDER FOR OTHER SECTIONS */}
-          {!["dashboard", "attendees", "referrals", "messages", "newsletter", "live_event", "updates", "ai_assistant", "knowledge_base", "admin_users", "settings", "blog", "gallery", "donations", "sadaqah"].includes(
+          {!["dashboard", "attendees", "referrals", "messages", "newsletter", "live_event", "updates", "ai_assistant", "knowledge_base", "admin_users", "settings", "blog", "gallery", "donations", "sadaqah", "activity_log"].includes(
             activeSection
           ) && (
             <div className="bg-white border border-ink/15 rounded-2xl p-12 text-center space-y-4 shadow-sm">

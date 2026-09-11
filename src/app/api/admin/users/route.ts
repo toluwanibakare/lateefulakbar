@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
 import { sanitizeString, isValidEmail } from '@/lib/security';
+import { logAdminActivity } from '@/app/api/admin/crud/route';
 
 export async function GET(req: Request) {
   try {
@@ -98,6 +99,7 @@ export async function POST(req: Request) {
         'INSERT INTO admin_users (name, email, password, role, permissions) VALUES (?, ?, ?, ?, ?)',
         [cleanName, cleanEmail, cleanPassword, cleanRole, permsJson]
       );
+      await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Created Admin User', `Name: ${cleanName}, Role: ${cleanRole}, Email: ${cleanEmail}`);
 
       return NextResponse.json({ success: true });
     }
@@ -113,12 +115,14 @@ export async function POST(req: Request) {
 
       // Check if it's dynamic admin user
       await db.query('UPDATE admin_users SET password = ? WHERE email = ?', [cleanNewPassword, cleanEmail]);
+      await logAdminActivity(cleanEmail, cleanEmail, 'Changed Password', 'Admin password successfully updated');
       return NextResponse.json({ success: true, message: 'Password updated successfully' });
     }
 
     if (action === 'delete_admin_user') {
       const { id } = payload;
       await db.query('DELETE FROM admin_users WHERE id = ?', [Number(id)]);
+      await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Deleted Admin User', `User ID: ${id}`);
       return NextResponse.json({ success: true });
     }
 
