@@ -2023,8 +2023,30 @@ export default function AdminPage() {
                         </div>
 
                         <button
-                          onClick={() => alert("Chat thread marked as resolved!")}
-                          className="px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold hover:bg-emerald-100"
+                          onClick={async () => {
+                            try {
+                              const res = await fetch("/api/admin/messages", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({
+                                  action: "update_status",
+                                  ticketId: activeTicket.id,
+                                  status: "resolved",
+                                }),
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setActiveTicket((prev: any) => prev ? { ...prev, status: "resolved" } : null);
+                                setChatTickets((prev) =>
+                                  prev.map((t) => (t.id === activeTicket.id ? { ...t, status: "resolved" } : t))
+                                );
+                                alert("Chat thread marked as resolved in DB!");
+                              }
+                            } catch (e) {
+                              alert("Failed to update status");
+                            }
+                          }}
+                          className="px-3.5 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold hover:bg-emerald-100 transition-all"
                         >
                           Resolve Chat
                         </button>
