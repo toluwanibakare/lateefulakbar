@@ -44,7 +44,7 @@ export default function SadaqahGiving() {
     fetch('/api/donate')
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && data.campaigns && data.campaigns.length > 0) {
+        if (data.success && Array.isArray(data.campaigns) && data.campaigns.length > 0) {
           const dbCampaigns: Campaign[] = data.campaigns.map((dbC: any) => ({
             id: String(dbC.id),
             title: dbC.title,
@@ -57,9 +57,14 @@ export default function SadaqahGiving() {
             unitPrice: Number(dbC.unit_price) || 25000,
           }));
           setCampaigns(dbCampaigns);
+        } else {
+          setCampaigns(INITIAL);
         }
       })
-      .catch((err) => console.error('Error fetching donation campaigns:', err));
+      .catch((err) => {
+        console.error('Error fetching donation campaigns:', err);
+        setCampaigns(INITIAL);
+      });
   }, []);
 
   const totalPay = open?.unitPrice ? open.unitPrice * Math.max(1, qty) : Number(amount) || 0;
