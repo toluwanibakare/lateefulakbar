@@ -134,13 +134,13 @@ export default function SadaqahGiving() {
           </FadeIn>
         </div>
 
-        <StaggerContainer className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {campaigns.map((c) => {
             const Icon = c.icon;
             const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
 
             return (
-              <StaggerItem key={c.id}>
+              <div key={c.id}>
                 <TiltCard className="group h-full border border-ink/15 bg-white transition-all hover:border-vivid hover:shadow-xl">
                   <div className="relative aspect-[16/10] w-full overflow-hidden bg-cream">
                     <Image
@@ -195,10 +195,10 @@ export default function SadaqahGiving() {
                     </div>
                   </div>
                 </TiltCard>
-              </StaggerItem>
+              </div>
             );
           })}
-        </StaggerContainer>
+        </div>
       </div>
 
       {/* Modal */}
