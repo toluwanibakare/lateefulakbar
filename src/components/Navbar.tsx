@@ -283,7 +283,7 @@ export default function Navbar() {
                   className="h-9 w-auto object-contain"
                 />
                 <Image
-                  src="/assets/brand/lateeful akbar logo Green.png"
+                  src="/assets/brand/lateeful-akbar-logo-green.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
                   width={170}
                   height={46}

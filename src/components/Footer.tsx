@@ -68,7 +68,7 @@ export default function Footer() {
                 />
                 <span aria-hidden className="h-12 w-px shrink-0 bg-ink/15 dark:bg-white/30" />
                 <Image
-                  src="/assets/brand/lateeful akbar logo Green.png"
+                  src="/assets/brand/lateeful-akbar-logo-green.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
                   width={260}
                   height={75}
