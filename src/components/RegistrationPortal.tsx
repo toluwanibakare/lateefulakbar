@@ -81,7 +81,7 @@ export default function RegistrationPortal() {
       ctx.fillStyle = "#475569";
       ctx.font = "400 24px sans-serif";
       ctx.fillText(EVENT.dateLong, 450, 680);
-      ctx.fillText("National Mosque Auditorium, Abuja", 450, 720);
+      ctx.fillText("Tafawa Balewa Square (TBS), Lagos", 450, 720);
       ctx.fillText("Dress code: Clean White Attire", 450, 760);
 
       if (qrEl) {

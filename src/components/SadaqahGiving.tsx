@@ -216,7 +216,7 @@ export default function SadaqahGiving() {
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg border border-ink/15 bg-white p-6 shadow-2xl sm:p-8"
+              className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto border border-ink/15 bg-white p-6 shadow-2xl sm:p-8 rounded-xl"
             >
               <button
                 onClick={() => setOpen(null)}
