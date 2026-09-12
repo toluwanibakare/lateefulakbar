@@ -60,7 +60,7 @@ export default function Footer() {
             <StaggerItem className="md:col-span-4">
               <div className="inline-flex flex-row items-center gap-4 bg-white dark:bg-emerald-950/80 p-5 shadow-md rounded-xl border border-transparent dark:border-emerald-500/30">
                 <Image
-                  src="/assets/brand/nadwa-logo.png"
+                  src="/assets/nadwa-logo.png"
                   alt="Nadwat Global Assembly logo"
                   width={220}
                   height={70}
@@ -68,7 +68,7 @@ export default function Footer() {
                 />
                 <span aria-hidden className="h-12 w-px shrink-0 bg-ink/15 dark:bg-white/30" />
                 <Image
-                  src="/assets/brand/lateeful-akbar-logo-green.png"
+                  src="/assets/lateef-logo.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
                   width={260}
                   height={75}
