@@ -45,17 +45,28 @@ export default function SadaqahGiving() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.campaigns) && data.campaigns.length > 0) {
-          const dbCampaigns: Campaign[] = data.campaigns.map((dbC: any) => ({
-            id: String(dbC.id),
-            title: dbC.title,
-            text: dbC.description || "Community donation project for Lateeful Akbar 2027",
-            icon: dbC.title.toLowerCase().includes("fan") ? Wind : dbC.title.toLowerCase().includes("water") ? Droplets : dbC.title.toLowerCase().includes("mat") ? Layers : Video,
-            image: dbC.image_url || "/assets/praying_mat.jpeg",
-            target: dbC.target_qty || 100,
-            raised: dbC.current_qty || 0,
-            unit: "units",
-            unitPrice: Number(dbC.unit_price) || 25000,
-          }));
+          const dbCampaigns: Campaign[] = data.campaigns.map((dbC: any) => {
+            const titleLower = dbC.title.toLowerCase();
+            const fallbackImg = titleLower.includes("water")
+              ? "/assets/donation-water.jpg"
+              : titleLower.includes("fan") || titleLower.includes("cool")
+              ? "/assets/donation-cooling.jpg"
+              : titleLower.includes("broadcast") || titleLower.includes("media") || titleLower.includes("tv")
+              ? "/assets/user-donation-media.jpg"
+              : "/assets/praying_mat.jpeg";
+
+            return {
+              id: String(dbC.id),
+              title: dbC.title,
+              text: dbC.description || "Community donation project for Lateeful Akbar 2027",
+              icon: titleLower.includes("fan") || titleLower.includes("cool") ? Wind : titleLower.includes("water") ? Droplets : titleLower.includes("mat") ? Layers : Video,
+              image: dbC.image_url || fallbackImg,
+              target: dbC.target_qty || 100,
+              raised: dbC.current_qty || 0,
+              unit: titleLower.includes("mat") ? "mats" : titleLower.includes("water") ? "packs" : titleLower.includes("fan") ? "fans" : "units",
+              unitPrice: Number(dbC.unit_price) || 25000,
+            };
+          });
           setCampaigns(dbCampaigns);
         } else {
           setCampaigns(INITIAL);
