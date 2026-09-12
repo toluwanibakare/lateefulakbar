@@ -212,7 +212,7 @@ export default function Footer() {
           </StaggerContainer>
 
           <div className="w-full max-w-full overflow-hidden" aria-hidden>
-            <p className="font-display text-outline relative -mb-4 hidden w-full text-center text-[11vw] leading-none font-semibold tracking-tight whitespace-nowrap select-none md:block opacity-60">
+            <p className="font-display text-outline relative -mb-2 sm:-mb-4 block w-full text-center text-[10vw] sm:text-[11vw] leading-none font-semibold tracking-tight whitespace-nowrap select-none opacity-50 sm:opacity-60">
               YAA LATEEF
             </p>
           </div>

@@ -276,14 +276,14 @@ export default function Navbar() {
             <div className="relative flex items-center justify-center px-5 py-4">
               <div className="flex items-center gap-2">
                 <Image
-                  src="/assets/brand/nadwa-logo.png"
+                  src="/assets/nadwa-logo.png"
                   alt="Nadwat Global Assembly logo"
                   width={120}
                   height={38}
                   className="h-9 w-auto object-contain"
                 />
                 <Image
-                  src="/assets/brand/lateeful-akbar-logo-green.png"
+                  src="/assets/lateef-logo.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
                   width={170}
                   height={46}
