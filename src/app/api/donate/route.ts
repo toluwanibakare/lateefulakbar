@@ -8,9 +8,28 @@ export async function GET() {
     const db = await getDb();
 
     // Query active donation campaigns & thresholds set by admin
-    const [campaigns] = await db.query<RowDataPacket[]>(
+    let [campaigns] = await db.query<RowDataPacket[]>(
       `SELECT * FROM sadaqah_campaigns WHERE is_active = 1 ORDER BY id ASC`
     );
+
+    // Auto-seed default campaigns if table is currently empty
+    if (campaigns.length === 0) {
+      try {
+        await db.query(`
+          INSERT INTO sadaqah_campaigns (title, category, target_qty, current_qty, unit_price, description, image_url, is_active) VALUES
+          ('Prayer Mats & Rugs', 'mats', 500, 310, 15000.00, 'Clean mats for the canopies, laid before dawn.', '/assets/praying_mat.jpeg', 1),
+          ('Water & Hydration Points', 'water', 1000, 780, 5000.00, 'Cool packs moved through the rows all morning.', '/assets/donation-water.jpg', 1),
+          ('Provide Cooling Fans', 'cooling', 200, 134, 25000.00, 'Industrial fans and shade for the midday heat.', '/assets/donation-cooling.jpg', 1),
+          ('Nadwat TV Live Broadcast', 'media', 50, 22, 100000.00, 'Cameras, drone and HD livestream production.', '/assets/user-donation-media.jpg', 1)
+        `);
+        const [seeded] = await db.query<RowDataPacket[]>(
+          `SELECT * FROM sadaqah_campaigns WHERE is_active = 1 ORDER BY id ASC`
+        );
+        campaigns = seeded;
+      } catch (seedErr) {
+        console.error('Error auto-seeding sadaqah campaigns:', seedErr);
+      }
+    }
 
     // Query totals by category
     const [rows] = await db.query<RowDataPacket[]>(
