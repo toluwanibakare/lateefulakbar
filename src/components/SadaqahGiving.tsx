@@ -22,7 +22,7 @@ const INITIAL: Campaign[] = [
   { id: "mats", title: "Prayer Mats & Rugs", text: "Clean mats for the canopies, laid before dawn.", icon: Layers, image: "/assets/praying_mat.jpeg", target: 500, raised: 310, unit: "mats", unitPrice: 15000 },
   { id: "water", title: "Water & Hydration Points", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/donation-water.jpg", target: 1000, raised: 780, unit: "packs", unitPrice: 5000 },
   { id: "cooling", title: "Provide Cooling Fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 200, raised: 134, unit: "fans", unitPrice: 25000 },
-  { id: "media", title: "Nadwat TV Live Broadcast", text: "Cameras, drone and HD livestream production.", icon: Video, image: "/assets/user-donation-media.jpg", target: 50, raised: 22, unit: "units", unitPrice: 100000 },
+  { id: "media", title: "Nadwat TV Live Broadcast", text: "Cameras, drone and HD livestream production.", icon: Video, image: "/assets/donation-media.jpg", target: 50, raised: 22, unit: "units", unitPrice: 100000 },
 ];
 
 function fmt(n: number) {
@@ -52,7 +52,7 @@ export default function SadaqahGiving() {
               : titleLower.includes("fan") || titleLower.includes("cool")
               ? "/assets/donation-cooling.jpg"
               : titleLower.includes("broadcast") || titleLower.includes("media") || titleLower.includes("tv")
-              ? "/assets/user-donation-media.jpg"
+              ? "/assets/donation-media.jpg"
               : "/assets/praying_mat.jpeg";
 
             return {

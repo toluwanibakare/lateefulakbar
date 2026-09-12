@@ -42,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className="overflow-x-hidden max-w-full"
     >
-      <body className="bg-paper text-ink font-body antialiased overflow-x-hidden max-w-full w-full">
+      <body className="bg-paper text-ink font-body antialiased overflow-x-hidden max-w-full w-full" suppressHydrationWarning>
         <Script
           id="theme-init"
           strategy="beforeInteractive"
