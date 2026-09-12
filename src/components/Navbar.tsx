@@ -115,7 +115,7 @@ export default function Navbar() {
           {/* Both logos, shown fully. No circles, no backgrounds, no cropping. */}
           <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3" aria-label="Home">
             <Image
-              src="/assets/nadwa-logo.png"
+              src="/assets/brand/nadwa-logo.png"
               alt="Nadwat Global Assembly logo"
               width={150}
               height={48}
@@ -131,7 +131,7 @@ export default function Navbar() {
               className={`h-7 w-px shrink-0 transition-colors sm:h-9 ${solid ? "bg-ink/15 dark:bg-white/30" : "bg-white/30"}`}
             />
             <Image
-              src="/assets/lateef-logo.png"
+              src={solid ? "/assets/brand/lateeful akbar logo Green.png" : "/assets/brand/lateeful akbar logo ASH.png"}
               alt="Lateeful Ul Akbar Il Aazam logo"
               width={220}
               height={60}
@@ -276,14 +276,14 @@ export default function Navbar() {
             <div className="relative flex items-center justify-center px-5 py-4">
               <div className="flex items-center gap-2">
                 <Image
-                  src="/assets/nadwa-logo.png"
+                  src="/assets/brand/nadwa-logo.png"
                   alt="Nadwat Global Assembly logo"
                   width={120}
                   height={38}
                   className="h-9 w-auto object-contain"
                 />
                 <Image
-                  src="/assets/lateef-logo.png"
+                  src="/assets/brand/lateeful akbar logo Green.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
                   width={170}
                   height={46}
