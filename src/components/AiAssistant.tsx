@@ -53,7 +53,7 @@ function getTimeStr() {
 const DEFAULT_WELCOME: Msg = {
   id: "welcome",
   from: "bot",
-  text: "Assalamu Alaikum! I am Noor AI, your guide for Lateeful Akbar 2027. How can I assist you today with registration, schedule, donations, or support?",
+  text: "Assalamu Alaikum! I am SmartLateef, your guide for Lateeful Akbar 2027. How can I assist you today with registration, schedule, donations, or support?",
   time: getTimeStr(),
   buttons: [
     { label: "🎟️ Register Pass", action: "link", target: "/register" },
@@ -282,7 +282,7 @@ export default function AiAssistant() {
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="font-semibold text-base tracking-wide text-white">
-                      Noor AI Assistant
+                      SmartLateef
                     </h3>
                     <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-medium text-emerald-200 border border-emerald-300/30">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -442,7 +442,7 @@ export default function AiAssistant() {
                   </div>
                   <div className="rounded-2xl rounded-bl-xs border border-ink/10 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3 text-xs text-faded dark:text-slate-400 shadow-sm">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[11px] font-medium">Noor AI is thinking</span>
+                      <span className="text-[11px] font-medium">SmartLateef is thinking</span>
                       <span className="flex gap-1">
                         {[0, 1, 2].map((d) => (
                           <span
@@ -499,7 +499,7 @@ export default function AiAssistant() {
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask Noor AI about passes, venue, schedule..."
+                placeholder="Ask SmartLateef about passes, venue, schedule..."
                 aria-label="Ask about the event"
                 className="min-w-0 flex-1 rounded-xl border border-ink/20 dark:border-slate-700 bg-white dark:bg-slate-800/80 px-4 py-2.5 text-xs text-ink dark:text-white placeholder:text-faded dark:placeholder:text-slate-500 focus:border-vivid focus:outline-none focus:ring-2 focus:ring-vivid/20"
               />

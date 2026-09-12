@@ -68,7 +68,7 @@ export async function POST(req: Request) {
             messages: [
               {
                 role: 'system',
-                content: `You are "Noor AI", the official intelligent assistant for Lateeful Akbar 2027. Answer politely, warmly, and accurately using the Knowledge Base below. Keep answers concise (2-4 sentences maximum). If the user asks for human customer support, inform them to click the "Talk to Support Agent" button.
+                content: `You are "SmartLateef", the official intelligent assistant for Lateeful Akbar 2027. Answer politely, warmly, and accurately using the Knowledge Base below. Keep answers concise (2-4 sentences maximum). If the user asks for human customer support, inform them to click the "Talk to Support Agent" button.
 
 
 Knowledge Base:
@@ -109,7 +109,7 @@ ${EVENT_KNOWLEDGE_BASE}`,
       } else if (q.includes('donate') || q.includes('sadaqah')) {
         reply = 'You can support the gathering by contributing to water supply, prayer mats, cooling fans, tents, or media broadcast setup.';
       } else {
-        reply = 'Assalamu Alaikum! I am Noor AI, your guide for Lateeful Akbar 2027. How may I assist you with event registration, schedule, or donations?';
+        reply = 'Assalamu Alaikum! I am SmartLateef, your guide for Lateeful Akbar 2027. How may I assist you with event registration, schedule, or donations?';
       }
     }
 
