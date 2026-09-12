@@ -149,37 +149,31 @@ export default function VenueMapAndRules() {
 
             {/* Route Planning Widget */}
             <FadeIn direction="up" delay={0.15}>
-              <div className="mt-6 border-2 border-vivid bg-cream p-5 shadow-md sm:p-6">
+              <div className="mt-8 border-2 border-vivid bg-cream p-5 shadow-md sm:p-6 rounded-xl">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center bg-vivid text-white shadow-sm">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center bg-vivid text-white shadow-sm rounded-lg">
                       <Navigation className="h-5 w-5 animate-pulse" />
                     </div>
                     <div>
                       <h4 className="font-display text-lg font-semibold text-ink">
-                        Find Your Route to Tafawa Balewa Square
+                        Direct Route to Tafawa Balewa Square
                       </h4>
                       <p className="text-xs text-faded">
                         {dist !== null
                           ? `You are approximately ${dist} km from the venue.`
-                          : "Locate your live distance and open direct Google Maps directions."}
+                          : "Open direct Google Maps GPS turn-by-turn navigation."}
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <button
-                      onClick={locate}
-                      className="inline-flex items-center gap-2 bg-pine px-5 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-ink transition-all hover:scale-105"
-                    >
-                      <MapPin className="h-4 w-4 text-sage" />
-                      <span>Locate My Distance</span>
-                    </button>
+                  <div>
                     <a
-                      href="https://www.google.com/maps/place/TAFAWA+BALEWA+SQUARE+MANAGEMENT+BOARD/@6.4470597,3.4022796,21z/data=!4m17!1m10!4m9!1m4!2m2!1d7.4705944!2d9.0802621!4e1!1m3!2m2!1d3.398!2d6.4475!3m5!1s0x103b8b171e80facf:0x3327c8431972bd22!8m2!3d6.447135!4d3.4024354!16s%2Fg%2F11k0tbk0kh?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D"
+                      href="https://www.google.com/maps/dir/?api=1&destination=Tafawa+Balewa+Square+Main+Bowl+Lagos&destination_place_id=ChIJz6qAChu7OBARIr0yGUPIDzM"
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 bg-vivid px-5 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-sm hover:bg-vivid-deep transition-all hover:scale-105"
+                      className="inline-flex items-center gap-2 bg-vivid px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-vivid-deep transition-all hover:scale-105 rounded-lg"
                     >
+                      <MapPin className="h-4 w-4 text-amber-300" />
                       <span>Take me to the event</span>
                       <ArrowUpRight className="h-4 w-4" />
                     </a>
