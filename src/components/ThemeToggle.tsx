@@ -11,16 +11,13 @@ export default function ThemeToggle({ className = "" }: { className?: string }) 
     setMounted(true);
     try {
       const saved = localStorage.getItem("theme") as "light" | "dark" | null;
-      if (saved) {
-        setTheme(saved);
-        if (saved === "dark") {
-          document.documentElement.classList.add("dark");
-        } else {
-          document.documentElement.classList.remove("dark");
-        }
-      } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      if (saved === "dark") {
         setTheme("dark");
         document.documentElement.classList.add("dark");
+      } else {
+        setTheme("light");
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("theme", "light");
       }
     } catch {}
   }, []);
