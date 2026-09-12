@@ -133,9 +133,9 @@ export default function Navbar() {
             <Image
               src="/assets/lateef-logo.png"
               alt="Lateeful Ul Akbar Il Aazam logo"
-              width={280}
-              height={80}
-              className={`h-9 w-auto min-w-0 object-contain sm:h-13 transition-all ${
+              width={320}
+              height={96}
+              className={`h-11 w-auto min-w-0 object-contain sm:h-16 transition-all ${
                 solid
                   ? "brightness-100 dark:brightness-110 dark:drop-shadow-[0_1px_6px_rgba(255,255,255,0.35)]"
                   : "brightness-110 drop-shadow-[0_1px_8px_rgba(255,255,255,0.5)]"
@@ -285,9 +285,9 @@ export default function Navbar() {
                 <Image
                   src="/assets/lateef-logo.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
-                  width={170}
-                  height={46}
-                  className="h-8 w-auto object-contain"
+                  width={200}
+                  height={56}
+                  className="h-10 w-auto object-contain"
                 />
               </div>
               <button onClick={() => setOpen(false)} aria-label="Close menu" className="absolute right-5 p-2">

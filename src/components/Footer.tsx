@@ -70,9 +70,9 @@ export default function Footer() {
                 <Image
                   src="/assets/lateef-logo.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
-                  width={220}
-                  height={64}
-                  className="h-11 w-auto shrink-0 object-contain"
+                  width={260}
+                  height={75}
+                  className="h-14 w-auto shrink-0 object-contain"
                 />
               </div>
               <p className="mt-5 max-w-xs text-[13px] leading-relaxed text-emerald-100/80">
