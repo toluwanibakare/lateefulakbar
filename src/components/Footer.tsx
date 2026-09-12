@@ -58,21 +58,21 @@ export default function Footer() {
         <div className="relative mx-auto max-w-7xl px-5 pt-14 sm:px-6">
           <StaggerContainer staggerDelay={0.08} className="grid gap-10 pb-12 md:grid-cols-12">
             <StaggerItem className="md:col-span-4">
-              <div className="inline-flex flex-row items-center gap-4 bg-white dark:bg-emerald-950/80 p-5 shadow-md rounded-xl border border-transparent dark:border-emerald-500/30">
+              <div className="inline-flex flex-row items-center gap-4 bg-white/95 p-4 shadow-md rounded-xl border border-white/20">
                 <Image
                   src="/assets/nadwa-logo.png"
                   alt="Nadwat Global Assembly logo"
-                  width={220}
-                  height={70}
-                  className="h-16 w-auto shrink-0 object-contain dark:brightness-0 dark:invert"
+                  width={180}
+                  height={56}
+                  className="h-12 w-auto shrink-0 object-contain"
                 />
-                <span aria-hidden className="h-12 w-px shrink-0 bg-ink/15 dark:bg-white/30" />
+                <span aria-hidden className="h-10 w-px shrink-0 bg-ink/20" />
                 <Image
                   src="/assets/lateef-logo.png"
                   alt="Lateeful Ul Akbar Il Aazam logo"
-                  width={260}
-                  height={75}
-                  className="h-14 w-auto shrink-0 object-contain dark:brightness-0 dark:invert"
+                  width={220}
+                  height={64}
+                  className="h-11 w-auto shrink-0 object-contain"
                 />
               </div>
               <p className="mt-5 max-w-xs text-[13px] leading-relaxed text-emerald-100/80">
