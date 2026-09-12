@@ -60,7 +60,7 @@ export default function SadaqahGiving() {
               title: dbC.title,
               text: dbC.description || "Community donation project for Lateeful Akbar 2027",
               icon: titleLower.includes("fan") || titleLower.includes("cool") ? Wind : titleLower.includes("water") ? Droplets : titleLower.includes("mat") ? Layers : Video,
-              image: dbC.image_url || fallbackImg,
+              image: (!dbC.image_url || dbC.image_url.includes("user-donation-media")) ? fallbackImg : dbC.image_url,
               target: dbC.target_qty || 100,
               raised: dbC.current_qty || 0,
               unit: titleLower.includes("mat") ? "mats" : titleLower.includes("water") ? "packs" : titleLower.includes("fan") ? "fans" : "units",
