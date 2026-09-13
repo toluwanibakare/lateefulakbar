@@ -57,97 +57,77 @@ export default function RegistrationPortal() {
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    canvas.width = 900;
-    canvas.height = 1200;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, 900, 1200);
-    ctx.fillStyle = "#0F766E";
-    ctx.fillRect(0, 0, 900, 200);
-    ctx.fillStyle = "#DCEBE0";
-    ctx.font = "600 26px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("LATEEFUL AKBAR 2027", 450, 80);
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "300 56px Georgia, serif";
-    ctx.fillText("Official Guest Pass", 450, 150);
 
-    const finishDrawing = (userImg: HTMLImageElement | null, qrImg: HTMLImageElement | null) => {
+    // Use dimensions of template or standard high-res scale (800x1131)
+    const templateWidth = 800;
+    const templateHeight = 1131;
+    canvas.width = templateWidth;
+    canvas.height = templateHeight;
+
+    const bgImg = new window.Image();
+    bgImg.src = "/I_will_be_attending.png";
+
+    const finishDrawing = (userImg: HTMLImageElement | null) => {
+      // 1. Draw the template flyer background
+      ctx.drawImage(bgImg, 0, 0, templateWidth, templateHeight);
+
+      // 2. Draw user photo placed precisely within the circle overlay
+      // Circle center: (400, 442), Radius: 190
+      const cx = 400;
+      const cy = 442;
+      const radius = 190;
+
       if (userImg) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(450, 360, 110, 0, Math.PI * 2);
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
         ctx.closePath();
         ctx.clip();
-        ctx.drawImage(userImg, 340, 250, 220, 220);
+
+        // Draw image aspect-cover centered inside the circle
+        const scale = Math.max((radius * 2) / userImg.width, (radius * 2) / userImg.height);
+        const w = userImg.width * scale;
+        const h = userImg.height * scale;
+        const x = cx - w / 2;
+        const y = cy - h / 2;
+
+        ctx.drawImage(userImg, x, y, w, h);
         ctx.restore();
-        ctx.strokeStyle = "#0F766E";
-        ctx.lineWidth = 6;
-        ctx.beginPath();
-        ctx.arc(450, 360, 110, 0, Math.PI * 2);
-        ctx.stroke();
-      } else {
-        ctx.fillStyle = "#F1F5F9";
-        ctx.beginPath();
-        ctx.arc(450, 360, 110, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "#0F766E";
-        ctx.font = "bold 90px Georgia, serif";
-        ctx.fillText(name.charAt(0).toUpperCase() || "L", 450, 390);
       }
-
-      ctx.fillStyle = "#0F172A";
-      ctx.font = "bold 42px Georgia, serif";
-      ctx.fillText((name || "Honored Guest").toUpperCase().slice(0, 26), 450, 560);
-      
-      ctx.fillStyle = "#0D9488";
-      ctx.font = "600 28px monospace";
-      ctx.fillText(`PASS CODE: ${id}`, 450, 610);
-
-      ctx.fillStyle = "#475569";
-      ctx.font = "400 24px sans-serif";
-      ctx.fillText(EVENT.dateLong, 450, 680);
-      ctx.fillText("Tafawa Balewa Square (TBS), Lagos", 450, 720);
-      ctx.fillText("Dress code: Clean White Attire", 450, 760);
-
-      if (qrImg) {
-        ctx.drawImage(qrImg, 350, 800, 200, 200);
-        ctx.fillStyle = "#64748b";
-        ctx.font = "400 18px sans-serif";
-        ctx.fillText("Scan QR code for venue entrance accreditation", 450, 1030);
-      }
-
-      ctx.fillStyle = "#0F766E";
-      ctx.font = "400 26px Georgia, serif";
-      ctx.fillText("Nadwat Global Assembly — www.lateefulakbar.com", 450, 1130);
     };
 
-    let loadedImg: HTMLImageElement | null = null;
-    let qrEl: HTMLImageElement | null = null;
-    let imgLoaded = false;
-    let qrLoaded = false;
+    let loadedUserImg: HTMLImageElement | null = null;
+    let bgLoaded = false;
+    let userImgLoaded = false;
 
     const checkDone = () => {
-      if ((!img || imgLoaded) && (!qrDataUrl || qrLoaded)) {
-        finishDrawing(loadedImg, qrEl);
+      if (bgLoaded && (!img || userImgLoaded)) {
+        finishDrawing(loadedUserImg);
       }
+    };
+
+    bgImg.onload = () => {
+      bgLoaded = true;
+      checkDone();
+    };
+    bgImg.onerror = () => {
+      bgLoaded = true;
+      checkDone();
     };
 
     if (img) {
-      loadedImg = new window.Image();
-      loadedImg.src = img;
-      loadedImg.onload = () => { imgLoaded = true; checkDone(); };
-      loadedImg.onerror = () => { imgLoaded = true; checkDone(); };
-    }
-
-    if (qrDataUrl) {
-      qrEl = new window.Image();
-      qrEl.src = qrDataUrl;
-      qrEl.onload = () => { qrLoaded = true; checkDone(); };
-      qrEl.onerror = () => { qrLoaded = true; checkDone(); };
-    }
-
-    if (!img && !qrDataUrl) {
-      finishDrawing(null, null);
+      loadedUserImg = new window.Image();
+      loadedUserImg.src = img;
+      loadedUserImg.onload = () => {
+        userImgLoaded = true;
+        checkDone();
+      };
+      loadedUserImg.onerror = () => {
+        userImgLoaded = true;
+        checkDone();
+      };
+    } else {
+      checkDone();
     }
   };
 
