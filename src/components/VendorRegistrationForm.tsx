@@ -7,12 +7,30 @@ import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal, TiltCard } from "./ui";
 
 const CATEGORIES = [
-  { id: "food", title: "Food & Drinks", price: 65000, desc: "Prepared meals, snacks, cold drinks & refreshments." },
-  { id: "clothing", title: "Clothing & Adire", desc: "Modest wear, all-white garments, caps & Adire attire.", price: 50000 },
-  { id: "books", title: "Islamic Materials & Books", desc: "Prayer books, Qur’ans, tasbīh counters & educational items.", price: 40000 },
-  { id: "accessories", title: "Accessories & Perfumes", desc: "Non-alcoholic attar perfumes, miswak & accessories.", price: 45000 },
-  { id: "services", title: "Services & Tech", desc: "Charging booths, photography services & media.", price: 55000 },
-  { id: "others", title: "Others", desc: "General approved halal products & exhibits.", price: 45000 },
+  { id: "food", title: "Food & Drinks", price: 65000, desc: "Prepared meals, snacks, cold drinks, refreshments & confectioneries." },
+  { id: "retail", title: "Retail products", price: 50000, desc: "Modest wear, caps, books, perfumes, accessories & physical products." },
+  { id: "services", title: "Services & Tech", price: 55000, desc: "Charging booths, photography, media, IT & technical service booths." },
+];
+
+const RETAIL_SUBCATEGORIES = [
+  "Modest Wear & Abaya",
+  "Caps, Turbans & Adire",
+  "Islamic Books, Qur’an & Prayer Items",
+  "Perfumes, Attar & Oils",
+  "Accessories, Jewelry & Miswak",
+  "Health, Beauty & Skincare",
+  "General Merchandise",
+  "Other (Specify your own)",
+];
+
+const SERVICES_SUBCATEGORIES = [
+  "Charging Booths & Power Stations",
+  "Photography & Videography",
+  "Branding, Printing & Media",
+  "IT, Mobile & Tech Support",
+  "Tailoring, Fitting & Repairs",
+  "Consultancy & Professional Services",
+  "Other (Specify your own)",
 ];
 
 const GUIDELINES = [
@@ -41,6 +59,8 @@ export default function VendorRegistrationForm() {
     address: "",
     socialHandle: "",
     category: "Food & Drinks",
+    subCategory: "",
+    customSubCategory: "",
     description: "",
     spaces: "1",
     electricity: "No",
@@ -60,6 +80,11 @@ export default function VendorRegistrationForm() {
     const r = new FileReader();
     r.onloadend = () => setLogo(r.result as string);
     r.readAsDataURL(file);
+  };
+
+  const effectiveCategoryString = () => {
+    const sub = form.subCategory === "Other (Specify your own)" ? form.customSubCategory : form.subCategory;
+    return sub ? `${form.category} (${sub})` : form.category;
   };
 
   const drawBadge = (name: string, brand: string, code: string, cat: string) => {
@@ -123,12 +148,13 @@ export default function VendorRegistrationForm() {
     e.preventDefault();
     if (!form.agreed) return;
 
+    const catStr = effectiveCategoryString();
     const id = "VND-" + Math.floor(1000 + Math.random() * 9000);
     const code = "ZONE-" + (form.category.charAt(0).toUpperCase()) + "-" + Math.floor(10 + Math.random() * 90);
     const ref = "PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase();
 
     setPass({ id, code, ref });
-    setTimeout(() => drawBadge(form.contactPerson, form.businessName, code, form.category), 200);
+    setTimeout(() => drawBadge(form.contactPerson, form.businessName, code, catStr), 200);
   };
 
   const downloadPass = () => {
@@ -296,7 +322,11 @@ export default function VendorRegistrationForm() {
                           </label>
                           <select
                             value={form.category}
-                            onChange={(e) => set("category", e.target.value)}
+                            onChange={(e) => {
+                              set("category", e.target.value);
+                              set("subCategory", "");
+                              set("customSubCategory", "");
+                            }}
                             className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
                           >
                             {CATEGORIES.map((c) => (
@@ -306,6 +336,78 @@ export default function VendorRegistrationForm() {
                             ))}
                           </select>
                         </div>
+
+                        {/* Subcategory selection for Retail Products */}
+                        {form.category === "Retail products" && (
+                          <div className="sm:col-span-2">
+                            <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
+                              Product Type / Subcategory *
+                            </label>
+                            <select
+                              value={form.subCategory}
+                              onChange={(e) => set("subCategory", e.target.value)}
+                              className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
+                            >
+                              <option value="">-- Select Retail Product Type --</option>
+                              {RETAIL_SUBCATEGORIES.map((sub) => (
+                                <option key={sub} value={sub}>
+                                  {sub}
+                                </option>
+                              ))}
+                            </select>
+
+                            {form.subCategory === "Other (Specify your own)" && (
+                              <div className="mt-3">
+                                <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
+                                  Specify Your Product Category *
+                                </label>
+                                <input
+                                  required
+                                  value={form.customSubCategory}
+                                  onChange={(e) => set("customSubCategory", e.target.value)}
+                                  placeholder="e.g. Handmade Leather Sandals, Honey & Spices..."
+                                  className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Subcategory selection for Services & Tech */}
+                        {form.category === "Services & Tech" && (
+                          <div className="sm:col-span-2">
+                            <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
+                              Service / Tech Subcategory *
+                            </label>
+                            <select
+                              value={form.subCategory}
+                              onChange={(e) => set("subCategory", e.target.value)}
+                              className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
+                            >
+                              <option value="">-- Select Service / Tech Type --</option>
+                              {SERVICES_SUBCATEGORIES.map((sub) => (
+                                <option key={sub} value={sub}>
+                                  {sub}
+                                </option>
+                              ))}
+                            </select>
+
+                            {form.subCategory === "Other (Specify your own)" && (
+                              <div className="mt-3">
+                                <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
+                                  Specify Your Service *
+                                </label>
+                                <input
+                                  required
+                                  value={form.customSubCategory}
+                                  onChange={(e) => set("customSubCategory", e.target.value)}
+                                  placeholder="e.g. Henna Art Studio, Event Security Solutions..."
+                                  className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        )}
 
                         <div className="sm:col-span-2">
                           <label className="text-[11px] font-semibold uppercase tracking-wider text-faded block">
@@ -342,7 +444,14 @@ export default function VendorRegistrationForm() {
                       <div className="mt-8 flex justify-end">
                         <button
                           type="button"
-                          disabled={!form.businessName || !form.contactPerson || !form.phone || !form.email}
+                          disabled={
+                            !form.businessName ||
+                            !form.contactPerson ||
+                            !form.phone ||
+                            !form.email ||
+                            (form.category === "Retail products" && (!form.subCategory || (form.subCategory === "Other (Specify your own)" && !form.customSubCategory.trim()))) ||
+                            (form.category === "Services & Tech" && (!form.subCategory || (form.subCategory === "Other (Specify your own)" && !form.customSubCategory.trim())))
+                          }
                           onClick={() => setStep(2)}
                           className="inline-flex items-center gap-2 bg-vivid px-7 py-3.5 text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep disabled:opacity-40"
                         >
