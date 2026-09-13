@@ -128,7 +128,7 @@ export default function Navbar() {
             />
             <span
               aria-hidden
-              className={`h-6 w-px shrink-0 self-center transition-colors sm:h-8 ${solid ? "bg-ink/20 dark:bg-white/30" : "bg-white/40"}`}
+              className={`h-8 w-px shrink-0 self-center transition-colors sm:h-11 ${solid ? "bg-ink/20 dark:bg-white/30" : "bg-white/40"}`}
             />
             <Image
               src="/assets/lateef-logo.png"
