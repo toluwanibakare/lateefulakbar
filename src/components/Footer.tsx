@@ -217,7 +217,21 @@ export default function Footer() {
           </div>
 
           <div className="relative flex flex-col items-center justify-between gap-3 border-t border-white/15 py-6 text-[12px] text-white/70 sm:flex-row">
-            <p>© {new Date().getFullYear()} Nadwat Global Assembly. All rights reserved.</p>
+            <div className="flex flex-col items-center gap-1 sm:flex-row sm:gap-2 text-center sm:text-left">
+              <span>© {new Date().getFullYear()} Nadwat Global Assembly. All rights reserved.</span>
+              <span className="hidden sm:inline opacity-40">||</span>
+              <span>
+                Built by{" "}
+                <a
+                  href="https://www.tmb.it.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-semibold text-emerald-300 hover:underline inline-flex items-center gap-1"
+                >
+                  TMB <ArrowUpRight className="h-3 w-3" />
+                </a>
+              </span>
+            </div>
             <p lang="ar" className="font-arabic text-base text-emerald-300">
               يَا لَطِيفُ
             </p>

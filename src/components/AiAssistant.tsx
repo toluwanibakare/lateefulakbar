@@ -271,7 +271,7 @@ export default function AiAssistant() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 28, scale: 0.95 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="fixed inset-x-2 bottom-20 z-[70] flex h-[82vh] max-h-[640px] w-auto flex-col overflow-hidden rounded-2xl border border-ink/15 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl sm:inset-x-auto sm:right-6 sm:bottom-22 sm:h-[580px] sm:w-[400px] sm:max-w-md"
+            className="fixed inset-x-3 top-14 bottom-4 z-[70] flex max-h-[calc(100vh-4.5rem)] w-auto flex-col overflow-hidden rounded-2xl border border-ink/15 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl sm:top-auto sm:inset-x-auto sm:right-6 sm:bottom-22 sm:h-[580px] sm:w-[400px] sm:max-w-md"
           >
             {/* Header */}
             <div className="relative flex items-center justify-between border-b border-white/10 bg-pine px-5 py-4 text-white">
