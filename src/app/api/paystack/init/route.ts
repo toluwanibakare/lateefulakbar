@@ -21,11 +21,11 @@ export async function POST(req: Request) {
       config[r.setting_key] = r.setting_value;
     });
 
-    const secretKey = config['paystack_secret_key'] || process.env.PAYSTACK_SECRET_KEY;
+    const secretKey = (config['paystack_secret_key'] || process.env.PAYSTACK_SECRET_KEY || config['paystack_public_key'] || process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '').trim();
     const mode = config['paystack_mode'] || 'test';
 
-    // If Paystack Secret Key is configured, make real call to Paystack API
-    if (secretKey && secretKey.startsWith('sk_')) {
+    // If Paystack Key is configured (sk_ or pk_), make real call to Paystack API
+    if (secretKey && (secretKey.startsWith('sk_') || secretKey.startsWith('pk_'))) {
       const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
         method: 'POST',
         headers: {
