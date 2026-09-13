@@ -57,6 +57,8 @@ async function initSchema(p: mysql.Pool) {
         status VARCHAR(50) DEFAULT 'active',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
     // 1b. Vendors table for vendor stall applications
     await p.query(`
       CREATE TABLE IF NOT EXISTS vendors (
