@@ -133,9 +133,9 @@ export default function Navbar() {
             <Image
               src="/assets/lateef-logo.png"
               alt="Lateeful Ul Akbar Il Aazam logo"
-              width={400}
-              height={120}
-              className={`h-14 w-auto min-w-0 object-contain sm:h-20 md:h-24 transition-all ${
+              width={350}
+              height={100}
+              className={`h-12 w-auto min-w-0 object-contain sm:h-16 md:h-18 transition-all ${
                 solid
                   ? "brightness-100 dark:brightness-0 dark:invert"
                   : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
