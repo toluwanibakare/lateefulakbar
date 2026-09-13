@@ -22,6 +22,7 @@ export async function POST(req: Request) {
     const email = body.email ? body.email.trim() : '';
     const phone = sanitizeString(body.phone, 30);
     const ticketType = sanitizeString(body.ticketType, 100);
+    const referredByInput = sanitizeString(body.referredBy || body.referral, 50);
 
     if (!fullName || !email || !phone || !isValidEmail(email)) {
       return NextResponse.json({ error: 'Valid full name, email, and phone number are required' }, { status: 400 });
@@ -32,6 +33,9 @@ export async function POST(req: Request) {
     // Generate unique Pass Code (e.g. LA2027-8F4A2)
     const randomHex = Math.random().toString(36).substring(2, 7).toUpperCase();
     const passCode = `LA2027-${randomHex}`;
+    
+    // Generate unique Referral Code (e.g. REF-8F4A2)
+    const referralCode = `REF-${randomHex}`;
 
     // Generate QR Code Data URL containing validation payload
     const qrPayload = JSON.stringify({
@@ -52,8 +56,8 @@ export async function POST(req: Request) {
     // Store in MySQL database
     const db = await getDb();
     await db.query(
-      `INSERT INTO registrations (full_name, email, phone, ticket_type, pass_code) VALUES (?, ?, ?, ?, ?)`,
-      [fullName, email, phone, type, passCode]
+      `INSERT INTO registrations (full_name, email, phone, ticket_type, pass_code, referral_code, referred_by) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [fullName, email, phone, type, passCode, referralCode, referredByInput || null]
     );
 
     // Send email pass notification (runs asynchronously)
@@ -68,6 +72,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       passCode,
+      referralCode,
       qrCodeDataUrl,
       registration: {
         fullName,
@@ -75,6 +80,7 @@ export async function POST(req: Request) {
         phone,
         ticketType: type,
         passCode,
+        referralCode,
       },
     });
   } catch (error) {

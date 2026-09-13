@@ -38,10 +38,10 @@ export async function GET(req: Request) {
 
     if (type === 'referrals') {
       const [rows] = await db.query<RowDataPacket[]>(
-        `SELECT r1.full_name, r1.email, r1.referral_code, 
+        `SELECT r1.full_name, r1.email, r1.referral_code, r1.pass_code,
                 COUNT(r2.id) as total_referrals
          FROM registrations r1
-         LEFT JOIN registrations r2 ON r2.referred_by = r1.referral_code
+         LEFT JOIN registrations r2 ON (r2.referred_by = r1.referral_code OR r2.referred_by = r1.pass_code)
          GROUP BY r1.id
          HAVING total_referrals > 0
          ORDER BY total_referrals DESC`

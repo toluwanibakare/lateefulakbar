@@ -2377,6 +2377,7 @@ export default function AdminPage() {
                       <th className="py-3 px-4">Referrer Name</th>
                       <th className="py-3 px-4">Email</th>
                       <th className="py-3 px-4">Referral Code</th>
+                      <th className="py-3 px-4">Pass Code</th>
                       <th className="py-3 px-4 text-right">Total Invited Attendees</th>
                     </tr>
                   </thead>
@@ -2398,7 +2399,8 @@ export default function AdminPage() {
                         </td>
                         <td className="py-3.5 px-4 font-bold text-ink">{ref.full_name}</td>
                         <td className="py-3.5 px-4 text-faded">{ref.email}</td>
-                        <td className="py-3.5 px-4 font-mono font-semibold text-pine">{ref.referral_code}</td>
+                        <td className="py-3.5 px-4 font-mono font-semibold text-pine">{ref.referral_code || "-"}</td>
+                        <td className="py-3.5 px-4 font-mono text-faded">{ref.pass_code || "-"}</td>
                         <td className="py-3.5 px-4 text-right font-extrabold text-vivid text-sm">
                           {ref.total_referrals} attendees
                         </td>
@@ -2406,7 +2408,7 @@ export default function AdminPage() {
                     ))}
                     {referrals.length === 0 && (
                       <tr>
-                        <td colSpan={5} className="py-8 text-center text-faded">
+                        <td colSpan={6} className="py-8 text-center text-faded">
                           No community referral tracking data recorded yet.
                         </td>
                       </tr>

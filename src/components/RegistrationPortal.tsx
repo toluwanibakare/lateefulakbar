@@ -13,8 +13,9 @@ const labelCls = "text-[11px] font-semibold uppercase tracking-[0.18em] text-fad
 export default function RegistrationPortal() {
   const [step, setStep] = useState(1);
   const [photo, setPhoto] = useState<string | null>(null);
-  const [pass, setPass] = useState<{ id: string; ref: string; qrCode?: string } | null>(null);
+  const [pass, setPass] = useState<{ id: string; ref: string; referralLink: string; qrCode?: string } | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [copied, setCopied] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [form, setForm] = useState({
     fullName: "",
@@ -32,6 +33,16 @@ export default function RegistrationPortal() {
   });
 
   const set = (k: keyof typeof form, v: any) => setForm((f) => ({ ...f, [k]: v }));
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const refParam = params.get("ref") || params.get("referral");
+      if (refParam) {
+        set("referral", refParam.trim());
+      }
+    }
+  }, []);
 
   const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,20 +69,34 @@ export default function RegistrationPortal() {
     ctx.fillText("LATEEFUL AKBAR 2027", 450, 80);
     ctx.fillStyle = "#ffffff";
     ctx.font = "300 56px Georgia, serif";
-    ctx.fillText("Official Event Pass", 450, 150);
+    ctx.fillText("Official Guest Pass", 450, 150);
 
-    const finishDrawing = (photoEl: HTMLImageElement | null, qrEl: HTMLImageElement | null) => {
-      if (photoEl) {
+    const finishDrawing = (userImg: HTMLImageElement | null, qrImg: HTMLImageElement | null) => {
+      if (userImg) {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(450, 390, 110, 0, Math.PI * 2);
+        ctx.arc(450, 360, 110, 0, Math.PI * 2);
+        ctx.closePath();
         ctx.clip();
-        ctx.drawImage(photoEl, 340, 280, 220, 220);
+        ctx.drawImage(userImg, 340, 250, 220, 220);
         ctx.restore();
+        ctx.strokeStyle = "#0F766E";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.arc(450, 360, 110, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        ctx.fillStyle = "#F1F5F9";
+        ctx.beginPath();
+        ctx.arc(450, 360, 110, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "#0F766E";
+        ctx.font = "bold 90px Georgia, serif";
+        ctx.fillText(name.charAt(0).toUpperCase() || "L", 450, 390);
       }
 
-      ctx.fillStyle = "#0F766E";
-      ctx.font = "700 36px sans-serif";
+      ctx.fillStyle = "#0F172A";
+      ctx.font = "bold 42px Georgia, serif";
       ctx.fillText((name || "Honored Guest").toUpperCase().slice(0, 26), 450, 560);
       
       ctx.fillStyle = "#0D9488";
@@ -84,8 +109,8 @@ export default function RegistrationPortal() {
       ctx.fillText("Tafawa Balewa Square (TBS), Lagos", 450, 720);
       ctx.fillText("Dress code: Clean White Attire", 450, 760);
 
-      if (qrEl) {
-        ctx.drawImage(qrEl, 350, 800, 200, 200);
+      if (qrImg) {
+        ctx.drawImage(qrImg, 350, 800, 200, 200);
         ctx.fillStyle = "#64748b";
         ctx.font = "400 18px sans-serif";
         ctx.fillText("Scan QR code for venue entrance accreditation", 450, 1030);
@@ -93,25 +118,25 @@ export default function RegistrationPortal() {
 
       ctx.fillStyle = "#0F766E";
       ctx.font = "400 26px Georgia, serif";
-      ctx.fillText("Yaa Lateef, The Most Kind", 450, 1120);
+      ctx.fillText("Nadwat Global Assembly — www.lateefulakbar.com", 450, 1130);
     };
 
-    let photoLoaded = !img;
-    let qrLoaded = !qrDataUrl;
-    let photoEl: HTMLImageElement | null = null;
+    let loadedImg: HTMLImageElement | null = null;
     let qrEl: HTMLImageElement | null = null;
+    let imgLoaded = false;
+    let qrLoaded = false;
 
     const checkDone = () => {
-      if (photoLoaded && qrLoaded) {
-        finishDrawing(photoEl, qrEl);
+      if ((!img || imgLoaded) && (!qrDataUrl || qrLoaded)) {
+        finishDrawing(loadedImg, qrEl);
       }
     };
 
     if (img) {
-      photoEl = new window.Image();
-      photoEl.src = img;
-      photoEl.onload = () => { photoLoaded = true; checkDone(); };
-      photoEl.onerror = () => { photoLoaded = true; checkDone(); };
+      loadedImg = new window.Image();
+      loadedImg.src = img;
+      loadedImg.onload = () => { imgLoaded = true; checkDone(); };
+      loadedImg.onerror = () => { imgLoaded = true; checkDone(); };
     }
 
     if (qrDataUrl) {
@@ -139,19 +164,24 @@ export default function RegistrationPortal() {
           email: form.email,
           phone: form.phone,
           ticketType: form.attendance,
+          referredBy: form.referral,
         }),
       });
 
       const data = await res.json();
       const passCode = data.passCode || ("LA2027-" + Math.floor(10000 + Math.random() * 90000));
-      const ref = "REF-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+      const refCode = data.referralCode || ("REF-" + Math.random().toString(36).slice(2, 7).toUpperCase());
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://lateefulakbar.com";
+      const referralLink = `${origin}/register?ref=${refCode}`;
 
-      setPass({ id: passCode, ref, qrCode: data.qrCodeDataUrl });
+      setPass({ id: passCode, ref: refCode, referralLink, qrCode: data.qrCodeDataUrl });
       setTimeout(() => drawPass(form.fullName, passCode, photo, data.qrCodeDataUrl), 200);
     } catch (err) {
       console.error('Registration API error:', err);
       const fallbackCode = "LA2027-" + Math.floor(10000 + Math.random() * 90000);
-      setPass({ id: fallbackCode, ref: "REF-LOCAL" });
+      const refCode = "REF-" + Math.random().toString(36).slice(2, 7).toUpperCase();
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://lateefulakbar.com";
+      setPass({ id: fallbackCode, ref: refCode, referralLink: `${origin}/register?ref=${refCode}` });
       setTimeout(() => drawPass(form.fullName, fallbackCode, photo), 200);
     } finally {
       setSubmitting(false);
@@ -293,8 +323,8 @@ export default function RegistrationPortal() {
                           </select>
                         </div>
                         <div>
-                          <label className={labelCls} htmlFor="reg-ref">How did you hear about us?</label>
-                          <input id="reg-ref" value={form.referral} onChange={(e) => set("referral", e.target.value)} placeholder="e.g. Social Media, Friend, Mosque" className={`${inputCls} mt-1.5`} />
+                          <label className={labelCls} htmlFor="reg-ref">Referral Code or How You Heard About Us (Optional)</label>
+                          <input id="reg-ref" value={form.referral} onChange={(e) => set("referral", e.target.value)} placeholder="e.g. REF-A1B2C, Social Media, Friend, Mosque" className={`${inputCls} mt-1.5`} />
                         </div>
                         <div>
                           <label className={labelCls} htmlFor="reg-int">Private Prayer Request / Intention (optional)</label>
@@ -368,15 +398,60 @@ export default function RegistrationPortal() {
                 <div className="mx-auto mt-6 max-w-sm">
                   <canvas ref={canvasRef} className="w-full border border-ink/15 bg-white shadow-lg" />
                 </div>
+
+                {/* Unique Referral Invite Box */}
+                <div className="mt-6 border border-emerald-500/30 bg-emerald-500/10 p-4 text-left rounded-lg">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-pine dark:text-emerald-300">
+                    Your Personal Referral Link & Code
+                  </p>
+                  <p className="mt-1 text-xs text-faded">
+                    Share your unique link with friends, family, and mosque members. Every registration using your link is tracked on the event leaderboard!
+                  </p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <input
+                      type="text"
+                      readOnly
+                      value={pass.referralLink}
+                      className="min-w-0 flex-1 border border-ink/20 bg-white px-3 py-2 text-xs font-mono text-ink rounded focus:outline-none"
+                    />
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(pass.referralLink);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }}
+                      className="inline-flex shrink-0 items-center gap-1.5 bg-pine px-4 py-2 text-xs font-semibold text-white rounded hover:bg-vivid transition-colors"
+                    >
+                      {copied ? <Check className="h-3.5 w-3.5 text-amber-300" /> : <Share2 className="h-3.5 w-3.5" />}
+                      <span>{copied ? "Copied!" : "Copy Link"}</span>
+                    </button>
+                  </div>
+                  <p className="mt-2 text-[11px] text-faded font-medium">
+                    Referral Code: <span className="font-mono font-bold text-pine">{pass.ref}</span>
+                  </p>
+                </div>
+
                 <div className="mt-6 flex flex-wrap justify-center gap-3">
                   <button onClick={download} className="inline-flex items-center gap-2 bg-vivid px-6 py-3 text-sm font-semibold text-white hover:bg-vivid-deep">
                     <Download className="h-4 w-4" /> Download Pass
                   </button>
                   <button
-                    onClick={() => navigator.share?.({ title: "Lateeful Akbar 2027", text: `I will be at Lateeful Akbar 2027. Join with pass ${pass.id}` }).catch(() => {})}
+                    onClick={() => {
+                      if (navigator.share) {
+                        navigator.share({
+                          title: "Lateeful Akbar 2027",
+                          text: `Register for Lateeful Akbar 2027 using my invitation link!`,
+                          url: pass.referralLink,
+                        }).catch(() => {});
+                      } else {
+                        navigator.clipboard.writeText(pass.referralLink);
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                      }
+                    }}
                     className="inline-flex items-center gap-2 border border-pine px-6 py-3 text-sm font-semibold text-pine hover:bg-vivid hover:text-white"
                   >
-                    <Share2 className="h-4 w-4" /> Share invite
+                    <Share2 className="h-4 w-4" /> Share Invite Link
                   </button>
                 </div>
               </div>
