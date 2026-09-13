@@ -113,13 +113,13 @@ export default function Navbar() {
 
         <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-2.5 sm:px-6">
           {/* Both logos, shown fully. No circles, no backgrounds, no cropping. */}
-          <Link href="/" className="flex min-w-0 items-center gap-3 sm:gap-4 py-1" aria-label="Home">
+          <Link href="/" className="flex min-w-0 items-center gap-2.5 sm:gap-3.5 py-1" aria-label="Home">
             <Image
               src="/assets/nadwa-logo.png"
               alt="Nadwat Global Assembly logo"
               width={200}
               height={64}
-              className={`h-10 w-auto shrink-0 object-contain transition-all sm:h-14 ${
+              className={`h-9 w-auto shrink-0 object-contain transition-all sm:h-12 ${
                 solid
                   ? "brightness-100 dark:brightness-0 dark:invert"
                   : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
@@ -128,14 +128,14 @@ export default function Navbar() {
             />
             <span
               aria-hidden
-              className={`h-8 w-px shrink-0 transition-colors sm:h-11 ${solid ? "bg-ink/15 dark:bg-white/30" : "bg-white/30"}`}
+              className={`h-6 w-px shrink-0 self-center transition-colors sm:h-8 ${solid ? "bg-ink/20 dark:bg-white/30" : "bg-white/40"}`}
             />
             <Image
               src="/assets/lateef-logo.png"
               alt="Lateeful Ul Akbar Il Aazam logo"
-              width={350}
-              height={100}
-              className={`h-12 w-auto min-w-0 object-contain sm:h-16 md:h-18 transition-all ${
+              width={300}
+              height={90}
+              className={`h-10 w-auto min-w-0 object-contain sm:h-13 md:h-15 transition-all ${
                 solid
                   ? "brightness-100 dark:brightness-0 dark:invert"
                   : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
