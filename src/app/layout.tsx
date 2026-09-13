@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og-image.png",
-        width: 1901,
-        height: 945,
+        width: 1200,
+        height: 630,
         alt: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
       },
     ],
