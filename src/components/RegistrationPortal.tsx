@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Download, Share2 } from "lucide-react";
 import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal } from "./ui";
