@@ -57,9 +57,30 @@ async function initSchema(p: mysql.Pool) {
         status VARCHAR(50) DEFAULT 'active',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    // 1b. Vendors table for vendor stall applications
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS vendors (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        business_name VARCHAR(255) NOT NULL,
+        contact_person VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        address TEXT,
+        social_handle VARCHAR(100),
+        category VARCHAR(100) NOT NULL,
+        sub_category VARCHAR(255),
+        description TEXT,
+        spaces INT DEFAULT 1,
+        electricity VARCHAR(10) DEFAULT 'No',
+        power_details TEXT,
+        staff_count INT DEFAULT 2,
+        total_price DECIMAL(12,2) DEFAULT 0.00,
+        pass_code VARCHAR(50) UNIQUE,
+        payment_ref VARCHAR(100),
+        status VARCHAR(50) DEFAULT 'approved',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
-
-    // 2. Tasbih count table
     await p.query(`
       CREATE TABLE IF NOT EXISTS tasbih (
         id INT PRIMARY KEY DEFAULT 1,

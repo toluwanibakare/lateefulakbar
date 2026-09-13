@@ -144,17 +144,57 @@ export default function VendorRegistrationForm() {
     ctx.fillText("Authorized by Nadwat Vendor Committee", 400, 950);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.agreed) return;
 
+    setSubmitting(true);
     const catStr = effectiveCategoryString();
-    const id = "VND-" + Math.floor(1000 + Math.random() * 9000);
-    const code = "ZONE-" + (form.category.charAt(0).toUpperCase()) + "-" + Math.floor(10 + Math.random() * 90);
-    const ref = "PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    const effectiveSub = form.subCategory === "Other (Specify your own)" ? form.customSubCategory : form.subCategory;
 
-    setPass({ id, code, ref });
-    setTimeout(() => drawBadge(form.contactPerson, form.businessName, code, catStr), 200);
+    try {
+      const res = await fetch("/api/vendor-register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          businessName: form.businessName,
+          contactPerson: form.contactPerson,
+          phone: form.phone,
+          email: form.email,
+          address: form.address,
+          socialHandle: form.socialHandle,
+          category: form.category,
+          subCategory: effectiveSub,
+          description: form.description,
+          spaces: form.spaces,
+          electricity: form.electricity,
+          powerDetails: form.powerDetails,
+          staffCount: form.staffCount,
+          totalPrice,
+        }),
+      });
+
+      const data = await res.json();
+      const code = data.stallCode || ("ZONE-" + form.category.charAt(0).toUpperCase() + "-" + Math.floor(10 + Math.random() * 90));
+      const ref = data.paymentRef || ("PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase());
+      const id = data.passCode || ("VND-" + Math.floor(1000 + Math.random() * 9000));
+
+      setPass({ id, code, ref });
+      setTimeout(() => drawBadge(form.contactPerson, form.businessName, code, catStr), 200);
+    } catch (err) {
+      console.error("Vendor registration database error:", err);
+      // Fallback local badge generation
+      const code = "ZONE-" + form.category.charAt(0).toUpperCase() + "-" + Math.floor(10 + Math.random() * 90);
+      const ref = "PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+      const id = "VND-" + Math.floor(1000 + Math.random() * 9000);
+
+      setPass({ id, code, ref });
+      setTimeout(() => drawBadge(form.contactPerson, form.businessName, code, catStr), 200);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const downloadPass = () => {

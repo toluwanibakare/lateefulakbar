@@ -36,6 +36,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: true, data: rows });
     }
 
+    if (type === 'vendors') {
+      const [rows] = await db.query<RowDataPacket[]>(
+        'SELECT * FROM vendors ORDER BY id DESC'
+      );
+      return NextResponse.json({ success: true, data: rows });
+    }
+
     if (type === 'referrals') {
       const [rows] = await db.query<RowDataPacket[]>(
         `SELECT r1.full_name, r1.email, r1.referral_code, r1.pass_code,
