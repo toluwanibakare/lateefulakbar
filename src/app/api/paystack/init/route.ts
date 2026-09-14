@@ -46,10 +46,10 @@ export async function POST(req: Request) {
       dbSettings['paystack_secret_key'] ||
       getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY') ||
       dbSettings['paystack_public_key'] ||
-      ''
+      'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e'
     ).trim();
 
-    const mode = dbSettings['paystack_mode'] || 'test';
+    const mode = 'test';
 
     // If Paystack Key is configured (sk_ or pk_), make real call to Paystack API
     if (secretKey && (secretKey.startsWith('sk_') || secretKey.startsWith('pk_'))) {

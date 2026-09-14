@@ -8,7 +8,7 @@ import { BackToTop, ScrollProgress } from "@/components/ui";
 
 export default function ClientLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdminRoute = pathname?.startsWith("/admin");
+  const isAdminRoute = pathname?.startsWith("/outofworld");
 
   if (isAdminRoute) {
     return (
