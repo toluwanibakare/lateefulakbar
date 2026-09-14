@@ -53,32 +53,36 @@ export async function POST(req: Request) {
 
     // If Paystack Key is configured (sk_ or pk_), make real call to Paystack API
     if (secretKey && (secretKey.startsWith('sk_') || secretKey.startsWith('pk_'))) {
-      const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${secretKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: Math.round(amount * 100), // Kobo conversion
-          email,
-          metadata: {
-            donorName: donorName || 'Anonymous',
-            category: category || 'General Sadaqah',
-            mode,
+      try {
+        const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${secretKey}`,
+            'Content-Type': 'application/json',
           },
-          callback_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/sadaqah?status=success`,
-        }),
-      });
-
-      const data = await paystackRes.json();
-      if (data.status && data.data?.authorization_url) {
-        return NextResponse.json({
-          success: true,
-          authorizationUrl: data.data.authorization_url,
-          reference: data.data.reference,
-          mode,
+          body: JSON.stringify({
+            amount: Math.round(amount * 100), // Kobo conversion
+            email,
+            metadata: {
+              donorName: donorName || 'Anonymous',
+              category: category || 'General Sadaqah',
+              mode,
+            },
+            callback_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/sadaqah?status=success`,
+          }),
         });
+
+        const data = await paystackRes.json();
+        if (data.status && data.data?.authorization_url) {
+          return NextResponse.json({
+            success: true,
+            authorizationUrl: data.data.authorization_url,
+            reference: data.data.reference,
+            mode,
+          });
+        }
+      } catch (paystackFetchError) {
+        console.warn('Paystack API network error, using local fallback:', paystackFetchError);
       }
     }
 
