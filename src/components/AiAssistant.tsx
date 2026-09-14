@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight,
@@ -39,7 +39,8 @@ type Msg = {
 
 const CHIPS = [
   { label: "When & Where?", icon: MapPin, query: "When and where is the event held?" },
-  { label: "Free Registration", icon: Ticket, query: "How do I register for an event pass?" },
+  { label: "Dress Code", icon: Shirt, query: "What is the official dress code for Lateeful Akbar 2027?" },
+  { label: "Free Registration", icon: Ticket, query: "How do I register for a free event pass?" },
   { label: "Sadaqah Giving", icon: Heart, query: "How can I give Sadaqah and donate?" },
   { label: "Digital Tasbīh", icon: Radio, query: "Tell me about the Digital Tasbīh counter" },
   { label: "Customer Support", icon: Headphones, query: "I want to talk to human support agent" },
@@ -50,10 +51,102 @@ function getTimeStr() {
   return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
+// Markdown Parser Component for rendering rich bot messages
+function FormattedMarkdown({ text }: { text: string }) {
+  if (!text) return null;
+
+  const lines = text.split('\n');
+
+  return (
+    <div className="space-y-1.5 leading-relaxed text-[13px]">
+      {lines.map((line, lineIdx) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={lineIdx} className="h-1" />;
+
+        // Bullet point detection (- or * or •)
+        const isBullet = trimmed.startsWith('- ') || trimmed.startsWith('* ') || trimmed.startsWith('• ');
+        const cleanLine = isBullet ? trimmed.replace(/^[-*•]\s*/, '') : line;
+
+        const parts = parseInlineMarkdown(cleanLine);
+
+        if (isBullet) {
+          return (
+            <div key={lineIdx} className="flex items-start gap-2 pl-1 my-0.5">
+              <span className="text-vivid dark:text-emerald-400 font-bold text-xs mt-0.5 shrink-0">•</span>
+              <span className="flex-1">{parts}</span>
+            </div>
+          );
+        }
+
+        return <div key={lineIdx}>{parts}</div>;
+      })}
+    </div>
+  );
+}
+
+function parseInlineMarkdown(text: string): React.ReactNode[] {
+  // Regex matcher for markdown links, bold, italic, code
+  const tokenRegex = /(\[.*?\]\([^)]+\)|\*\*.*?\*\*|\*.*?\*|`.*?`)/g;
+  const parts = text.split(tokenRegex);
+
+  return parts.map((part, index) => {
+    if (!part) return null;
+
+    // Link: [label](href)
+    if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
+      const match = part.match(/^\[(.*?)\]\((.*?)\)$/);
+      if (match) {
+        const [, label, href] = match;
+        const isExternal = href.startsWith('http');
+        return (
+          <a
+            key={index}
+            href={href}
+            target={isExternal ? '_blank' : '_self'}
+            rel={isExternal ? 'noopener noreferrer' : undefined}
+            className="font-bold underline text-vivid dark:text-emerald-400 hover:opacity-85 transition-opacity"
+          >
+            {label}
+          </a>
+        );
+      }
+    }
+
+    // Bold: **text**
+    if (part.startsWith('**') && part.endsWith('**') && part.length > 4) {
+      return (
+        <strong key={index} className="font-bold text-ink dark:text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Italic: *text*
+    if (part.startsWith('*') && part.endsWith('*') && part.length > 2) {
+      return (
+        <em key={index} className="italic">
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+
+    // Code: `text`
+    if (part.startsWith('`') && part.endsWith('`') && part.length > 2) {
+      return (
+        <code key={index} className="bg-mist dark:bg-slate-800 text-vivid dark:text-emerald-300 font-mono text-[11px] px-1.5 py-0.5 rounded">
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+
+    return <span key={index}>{part}</span>;
+  });
+}
+
 const DEFAULT_WELCOME: Msg = {
   id: "welcome",
   from: "bot",
-  text: "Assalamu Alaikum! I am SmartLateef, your guide for Lateeful Akbar 2027. How can I assist you today with registration, schedule, donations, or support?",
+  text: "Assalamu Alaikum! I am **SmartLateef**, your official AI guide for **Lateeful Akbar 2027**.\n\nKey Event Highlights:\n- **Venue**: Tafawa Balewa Square (Main Bowl), Lagos\n- **Dress Code**: Strictly ALL WHITE\n- **Date**: Sunday, Jan 24, 2027\n\nHow may I assist you today?",
   time: getTimeStr(),
   buttons: [
     { label: "🎟️ Register Pass", action: "link", target: "/register" },
@@ -391,7 +484,11 @@ export default function AiAssistant() {
                         : "rounded-bl-xs border border-ink/10 dark:border-slate-800 bg-white dark:bg-slate-900 text-ink dark:text-slate-100"
                     }`}
                   >
-                    <div>{m.text}</div>
+                    {m.from === "bot" ? (
+                      <FormattedMarkdown text={m.text} />
+                    ) : (
+                      <div>{m.text}</div>
+                    )}
 
                     {/* Interactive Navigation Quick Action Buttons */}
                     {m.buttons && m.buttons.length > 0 && (
