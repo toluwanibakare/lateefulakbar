@@ -52,10 +52,45 @@ export default function SadaqahQuickGive() {
       const data = await res.json();
       if (data.authorizationUrl) {
         window.location.href = data.authorizationUrl;
-      } else if (data.success) {
-        setDone(true);
       } else {
-        alert(data.error || 'Payment failed to initialize');
+        // Use Paystack Inline Popup client side
+        const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e';
+        const loadScript = () =>
+          new Promise((resolve) => {
+            if ((window as any).PaystackPop) return resolve(true);
+            const script = document.createElement("script");
+            script.src = "https://js.paystack.co/v1/inline.js";
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+          });
+
+        const loaded = await loadScript();
+        if (loaded && (window as any).PaystackPop) {
+          const handler = (window as any).PaystackPop.setup({
+            key: paystackKey,
+            email,
+            amount: Math.round(effective * 100),
+            currency: "NGN",
+            ref: "SAD-" + Date.now(),
+            onClose: () => {
+              setSubmitting(false);
+            },
+            callback: (response: any) => {
+              setDone(true);
+              setSubmitting(false);
+            },
+          });
+          handler.openIframe();
+          return;
+        }
+
+        // Fallback simulation if offline
+        if (data.success) {
+          setDone(true);
+        } else {
+          alert(data.error || 'Payment failed to initialize');
+        }
       }
     } catch (err) {
       console.error('Error processing sadaqah:', err);
