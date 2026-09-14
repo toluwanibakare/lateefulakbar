@@ -12,17 +12,27 @@ export async function POST(req: Request) {
     }
 
     const db = await getDb();
-    const [settings] = await db.query<RowDataPacket[]>(
-      "SELECT setting_key, setting_value FROM app_settings WHERE setting_key LIKE 'paystack_%'"
-    );
+    let dbSettings: Record<string, string> = {};
+    try {
+      const [settings] = await db.query<RowDataPacket[]>(
+        "SELECT setting_key, setting_value FROM app_settings WHERE setting_key LIKE 'paystack_%'"
+      );
+      settings.forEach((r) => {
+        dbSettings[r.setting_key] = r.setting_value;
+      });
+    } catch (err) {
+      console.warn('Could not load app_settings table:', err);
+    }
 
-    const config: Record<string, string> = {};
-    settings.forEach((r) => {
-      config[r.setting_key] = r.setting_value;
-    });
+    const secretKey = (
+      process.env.PAYSTACK_SECRET_KEY ||
+      dbSettings['paystack_secret_key'] ||
+      process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ||
+      dbSettings['paystack_public_key'] ||
+      ''
+    ).trim();
 
-    const secretKey = (config['paystack_secret_key'] || process.env.PAYSTACK_SECRET_KEY || config['paystack_public_key'] || process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || '').trim();
-    const mode = config['paystack_mode'] || 'test';
+    const mode = dbSettings['paystack_mode'] || 'test';
 
     // If Paystack Key is configured (sk_ or pk_), make real call to Paystack API
     if (secretKey && (secretKey.startsWith('sk_') || secretKey.startsWith('pk_'))) {

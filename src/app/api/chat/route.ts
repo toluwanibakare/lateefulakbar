@@ -68,8 +68,15 @@ export async function POST(req: Request) {
             messages: [
               {
                 role: 'system',
-                content: `You are "SmartLateef", the official intelligent assistant for Lateeful Akbar 2027. Answer politely, warmly, and accurately using the Knowledge Base below. Keep answers concise (2-4 sentences maximum). If the user asks for human customer support, inform them to click the "Talk to Support Agent" button.
+                content: `You are "SmartLateef", the official intelligent AI assistant for Lateeful Akbar 2027 by Nadwat Global Assembly. Answer politely, warmly, and with 100% accuracy based strictly on the Knowledge Base below. Keep answers concise (2-4 sentences max).
 
+CRITICAL ACCURACY RULES:
+- DRESS CODE: Strictly ALL WHITE.
+- VENUE: Tafawa Balewa Square (Main Bowl) Race Course, Lagos Island, Lagos, Nigeria.
+- DATE: Sunday, 24th January 2027 (Gates open at 08:00 WAT).
+- PARKING: Vehicle parking is STRICTLY PROHIBITED inside the Main Bowl. Vehicles must be parked in designated parking areas outside.
+- FOUNDER: Shaikh Dr. Abdur Rahman Ade Lawal Ph.D Mnipr (Chief Missioner of Nadwat).
+- CONTACT: Lateefulakbar@gmail.com | +234 704 700 0765 | Nadwat Mosque, Lagos.
 
 Knowledge Base:
 ${EVENT_KNOWLEDGE_BASE}`,
@@ -79,7 +86,7 @@ ${EVENT_KNOWLEDGE_BASE}`,
                 content: message,
               },
             ],
-            temperature: 0.6,
+            temperature: 0.5,
             max_tokens: 300,
           }),
         });
@@ -96,20 +103,30 @@ ${EVENT_KNOWLEDGE_BASE}`,
     // Fallback matcher if Groq API call is unreachable or unconfigured
     if (!reply) {
       const q = message.toLowerCase();
-      if (q.includes('when') || q.includes('date') || q.includes('time') || q.includes('how long') || q.includes('day')) {
+      if (q.includes('dress') || q.includes('wear') || q.includes('cloth') || q.includes('attire') || q.includes('outfit')) {
+        reply = 'The dress code for Lateeful Akbar 2027 is STRICTLY ALL WHITE. All attendees are expected to dress modestly and appropriately in white.';
+      } else if (q.includes('when') || q.includes('date') || q.includes('time') || q.includes('how long') || q.includes('day')) {
         reply = 'Lateeful Akbar 2027 is a 1-day grand spiritual gathering taking place on Sunday, January 24, 2027 (gates open at 08:00 WAT).';
-      } else if (q.includes('where') || q.includes('location') || q.includes('venue')) {
-        reply = 'The gathering will be held at the prestigious National Mosque Auditorium, Central Business District, Abuja, Nigeria.';
-      } else if (q.includes('theme') || q.includes('about')) {
-        reply = 'The theme for Lateeful Akbar 2027 is "Walking in the Footsteps of Light", focusing on spiritual revitalization and unity.';
-      } else if (q.includes('speaker') || q.includes('scholar')) {
-        reply = 'Honored speakers include Sheikh Al-Fazi (Spiritual Wisdom), Dr. Amina Yusuf (Islamic Finance), and Ustadh Umar Farooq (Youth Leadership).';
-      } else if (q.includes('ticket') || q.includes('register') || q.includes('cost') || q.includes('price')) {
-        reply = 'Registration passes are free! You can choose between Standard Pass, VIP Delegate Pass, or Virtual Streaming Access.';
-      } else if (q.includes('donate') || q.includes('sadaqah')) {
-        reply = 'You can support the gathering by contributing to water supply, prayer mats, cooling fans, tents, or media broadcast setup.';
+      } else if (q.includes('where') || q.includes('location') || q.includes('venue') || q.includes('address') || q.includes('tbs') || q.includes('lagos')) {
+        reply = 'The gathering will be held at Tafawa Balewa Square (Main Bowl) Race Course, Lagos Island, Lagos, Nigeria.';
+      } else if (q.includes('parking') || q.includes('car') || q.includes('drive') || q.includes('vehicle')) {
+        reply = 'Vehicle parking is STRICTLY PROHIBITED within the Main Bowl. All vehicles must be parked in designated official parking zones outside the main bowl.';
+      } else if (q.includes('founder') || q.includes('missioner') || q.includes('sheikh') || q.includes('ade lawal') || q.includes('lawal')) {
+        reply = 'The founder and Chief Missioner of NADWAT is Shaikh Dr. Abdur Rahman Ade Lawal Ph.D Mnipr — an Al-Azhar graduate, IVLP alumnus, media consultant, author, and marriage counselor.';
+      } else if (q.includes('theme') || q.includes('about') || q.includes('lateef') || q.includes('meaning')) {
+        reply = 'Lateeful Akbar is Nadwat’s annual spiritual gathering focused on Dhikr, Duʿā, and seeking Allah through His beautiful name Al-Lateef (The Most Subtle, The Most Gentle).';
+      } else if (q.includes('ticket') || q.includes('register') || q.includes('cost') || q.includes('price') || q.includes('pass')) {
+        reply = 'Registration passes are free! You can register for a Guest Pass, Vendor Stall Space, or Media & Blogger Accreditation on our website.';
+      } else if (q.includes('vendor') || q.includes('stall') || q.includes('food') || q.includes('booth') || q.includes('sell')) {
+        reply = 'Vendors can register for approved Halal food stalls, clothing/adire, Islamic books, or services via the Vendor Registration Portal on the website.';
+      } else if (q.includes('media') || q.includes('press') || q.includes('accreditation') || q.includes('journalist') || q.includes('camera')) {
+        reply = 'Media personnel, bloggers, photographers, and broadcast journalists can apply for official Media Accreditation via our Media Portal.';
+      } else if (q.includes('donate') || q.includes('sadaqah') || q.includes('give') || q.includes('water') || q.includes('mat') || q.includes('fan')) {
+        reply = 'You can support the gathering by contributing to Prayer Mats (1,000 pcs), Water (2,000 packs), Cooling Fans (700 pcs), Tents, Internet, or Media Broadcast facilities.';
+      } else if (q.includes('prayer book') || q.includes('book') || q.includes('asalatu') || q.includes('dua')) {
+        reply = 'The official 208-page Asalatu Nadwat Prayer Book is available to read directly inside our website on the Prayer Book page.';
       } else {
-        reply = 'Assalamu Alaikum! I am SmartLateef, your guide for Lateeful Akbar 2027. How may I assist you with event registration, schedule, or donations?';
+        reply = 'Assalamu Alaikum! I am SmartLateef, your official AI guide for Lateeful Akbar 2027. How may I assist you with event details, dress code (strictly white), venue in TBS Lagos, schedule, registration, or donations?';
       }
     }
 

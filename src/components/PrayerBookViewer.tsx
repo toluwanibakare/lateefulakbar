@@ -3,7 +3,18 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, FileText, HelpCircle, Lock, Maximize2, Minimize2, MoveVertical, SlidersHorizontal, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  HelpCircle,
+  Lock,
+  Maximize2,
+  Minimize2,
+  MoveVertical,
+  SlidersHorizontal,
+  X
+} from "lucide-react";
 import { Eyebrow, Reveal } from "./ui";
 
 const TOTAL_PAGES = 208;
@@ -34,13 +45,13 @@ export default function PrayerBookViewer() {
     if (isPageLoading) {
       const timer = setTimeout(() => {
         setIsPageLoading(false);
-      }, 650);
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [isPageLoading, currentPage]);
 
   useEffect(() => {
-    const targetUrl = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`;
+    const targetUrl = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`;
 
     if (mainIframeRef.current) {
       try {
@@ -67,10 +78,10 @@ export default function PrayerBookViewer() {
     }
 
     if (activeBtnRef.current) {
-      activeBtnRef.current.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
+      activeBtnRef.current.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
     if (modalActiveBtnRef.current) {
-      modalActiveBtnRef.current.scrollIntoView({ behavior: "auto", inline: "center", block: "nearest" });
+      modalActiveBtnRef.current.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
   }, [currentPage, isFullscreen]);
 
@@ -99,7 +110,7 @@ export default function PrayerBookViewer() {
     }
   };
 
-  const pdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=Fit`;
+  const pdfSrc = `${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`;
 
   return (
     <section id="prayer-book" className="border-t border-ink/10 bg-cream overflow-x-hidden w-full">
@@ -119,7 +130,7 @@ export default function PrayerBookViewer() {
               </Reveal>
               <Reveal delay={0.12}>
                 <p className="mt-3 text-xs xs:text-sm sm:text-[15px] leading-relaxed text-faded">
-                  Read the complete 208-page official Nadwat prayer book. Select any page number below or open full screen to view.
+                  Read the complete 208-page official Nadwat prayer book PDF directly inside the site. Select any page number below or open full screen.
                 </p>
               </Reveal>
 
@@ -231,10 +242,10 @@ export default function PrayerBookViewer() {
             </Reveal>
           </div>
 
-          {/* Main Embedded PDF Viewer */}
+          {/* Strictly Embedded PDF Viewer */}
           <div className="lg:col-span-8 min-w-0 w-full max-w-full">
             <Reveal delay={0.1}>
-              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between h-[500px] xs:h-[560px] sm:h-[680px] lg:h-[760px] min-w-0 w-full max-w-full">
+              <div className="border border-ink/15 bg-white shadow-xl rounded-2xl overflow-hidden relative flex flex-col justify-between h-[550px] xs:h-[620px] sm:h-[700px] lg:h-[780px] min-w-0 w-full max-w-full">
                 
                 {/* Header Toolbar */}
                 <div className="bg-pine text-white px-3 py-2.5 xs:px-4 sm:px-6 sm:py-4 flex items-center justify-between gap-2 border-b border-white/10 shrink-0 min-w-0 w-full">
@@ -331,7 +342,7 @@ export default function PrayerBookViewer() {
                             Loading Page {currentPage}
                           </span>
                           <span className="mt-1 text-[11px] text-white/60">
-                            Asalatu Nadwat Prayer Book
+                            Asalatu Nadwat Prayer Book PDF
                           </span>
                         </motion.div>
                       </motion.div>
@@ -346,6 +357,23 @@ export default function PrayerBookViewer() {
                     className="w-full h-full border-0 select-none"
                     title="Asalatu Nadwat PDF Page Viewer"
                   />
+                  <object
+                    data={pdfSrc}
+                    type="application/pdf"
+                    className="w-full h-full border-0 hidden"
+                  >
+                    <div className="p-6 text-center text-white flex flex-col items-center justify-center h-full space-y-3">
+                      <p>Asalatu Nadwat PDF Prayer Book</p>
+                      <a
+                        href={BASE_PDF_PATH}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="px-4 py-2 bg-vivid text-white rounded-lg text-xs font-semibold"
+                      >
+                        Open PDF Document
+                      </a>
+                    </div>
+                  </object>
                 </div>
 
                 {/* Bottom Navigation Control Bar */}
@@ -423,7 +451,7 @@ export default function PrayerBookViewer() {
                 Prayer Book Reader Controls
               </h3>
               <p className="mt-2 text-xs sm:text-sm leading-relaxed text-white/85">
-                Use these simple controls to read the official 208-page Asalatu Nadwat prayer book effortlessly:
+                Use these simple controls to read the official 208-page Asalatu Nadwat prayer book PDF effortlessly:
               </p>
 
               <div className="mt-4 grid grid-cols-3 gap-2 text-left text-[10px] sm:text-[11px] border-t border-white/15 pt-3.5 text-white/80">
@@ -451,7 +479,6 @@ export default function PrayerBookViewer() {
               >
                 Got It — Start Reading
               </button>
-              <p className="mt-2 text-[10px] text-white/50">Tap anywhere or press Esc to close</p>
             </motion.div>
           </motion.div>
         )}
@@ -470,7 +497,7 @@ export default function PrayerBookViewer() {
               <div className="flex items-center gap-2 sm:gap-3 overflow-hidden min-w-0">
                 <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
                 <span className="font-display text-xs sm:text-lg font-light truncate max-w-[140px] xs:max-w-[240px] sm:max-w-none">
-                  Asalatu Nadwat — Prayer Book
+                  Asalatu Nadwat — PDF Prayer Book
                 </span>
                 <span className="hidden sm:inline-block text-xs font-mono bg-white/10 px-2.5 py-0.5 rounded text-white/80 shrink-0">
                   Page {currentPage} of {TOTAL_PAGES}
@@ -512,7 +539,7 @@ export default function PrayerBookViewer() {
 
             <div className="bg-slate-800 px-3 py-1.5 sm:px-4 flex items-center gap-2 border-b border-white/10 min-w-0 w-full">
               <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-white/60 shrink-0">
-                Jump:
+                Page:
               </span>
               <div className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin touch-pan-x">
                 {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
@@ -568,7 +595,7 @@ export default function PrayerBookViewer() {
                         Loading Page {currentPage}
                       </span>
                       <span className="mt-1 text-[11px] text-white/60">
-                        Asalatu Nadwat Prayer Book
+                        Asalatu Nadwat Prayer Book PDF
                       </span>
                     </motion.div>
                   </motion.div>
