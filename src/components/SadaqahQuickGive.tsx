@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BadgeCheck, HeartHandshake, Lock, ShieldCheck } from "lucide-react";
 import { Eyebrow, Reveal } from "./ui";
