@@ -1,6 +1,23 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
+import fs from 'fs';
+import path from 'path';
+
+function getEnvKey(keyName: string): string {
+  if (process.env[keyName]) return process.env[keyName]!;
+  try {
+    const envPath = path.join(process.cwd(), '.env.local');
+    if (fs.existsSync(envPath)) {
+      const content = fs.readFileSync(envPath, 'utf8');
+      const match = content.match(new RegExp(`^${keyName}=(.*)$`, 'm'));
+      if (match) return match[1].trim().replace(/^["']|["']$/g, '');
+    }
+  } catch (err) {
+    // Ignore error
+  }
+  return '';
+}
 
 export async function POST(req: Request) {
   try {
@@ -25,9 +42,9 @@ export async function POST(req: Request) {
     }
 
     const secretKey = (
-      process.env.PAYSTACK_SECRET_KEY ||
+      getEnvKey('PAYSTACK_SECRET_KEY') ||
       dbSettings['paystack_secret_key'] ||
-      process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY ||
+      getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY') ||
       dbSettings['paystack_public_key'] ||
       ''
     ).trim();
