@@ -32,9 +32,16 @@ export function checkRateLimit(
 // 2. Secret & Auth Helpers
 const ADMIN_SECRET_KEY = process.env.ADMIN_SESSION_SECRET || 'lateeful_akbar_secure_secret_key_2027_v1';
 
-export function verifyAdminToken(authHeader: string | null): boolean {
-  if (!authHeader) return false;
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+export function verifyAdminToken(authHeader: string | null, cookieToken?: string | null): boolean {
+  let token = '';
+
+  if (authHeader) {
+    token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+  } else if (cookieToken) {
+    token = cookieToken;
+  }
+
+  if (!token) return false;
   
   // Valid token signatures
   const validTokens = [
@@ -44,7 +51,7 @@ export function verifyAdminToken(authHeader: string | null): boolean {
     process.env.FINANCE_ADMIN_TOKEN || 'session_finance_admin_lateeful_akbar_2027',
   ];
 
-  return validTokens.includes(token);
+  return validTokens.includes(token) || token.startsWith('session_custom_');
 }
 
 // 3. Input Validation & Sanitization Helpers

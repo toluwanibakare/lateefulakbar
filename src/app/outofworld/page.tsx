@@ -194,14 +194,94 @@ export default function AdminPage() {
   const [paystackSecretKey, setPaystackSecretKey] = useState("");
   const [paystackSaveStatus, setPaystackSaveStatus] = useState("");
 
-  // Campaign Form State
+  // Campaign Form & Editing State
   const [showAddCampaignForm, setShowAddCampaignForm] = useState(false);
+  const [editingCampaign, setEditingCampaign] = useState<any | null>(null);
   const [newCampaignTitle, setNewCampaignTitle] = useState("");
   const [newCampaignCategory, setNewCampaignCategory] = useState("");
   const [newCampaignTargetQty, setNewCampaignTargetQty] = useState(500);
+  const [newCampaignCurrentQty, setNewCampaignCurrentQty] = useState(0);
   const [newCampaignUnitPrice, setNewCampaignUnitPrice] = useState(25000);
   const [newCampaignDescription, setNewCampaignDescription] = useState("");
   const [newCampaignImageUrl, setNewCampaignImageUrl] = useState("");
+
+  const handleCreateOrUpdateCampaign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newCampaignTitle) return;
+    try {
+      const isEditing = Boolean(editingCampaign?.id);
+      const action = isEditing ? "update_campaign" : "create_campaign";
+      const payload = {
+        ...(isEditing ? { id: editingCampaign.id, currentQty: newCampaignCurrentQty } : {}),
+        title: newCampaignTitle,
+        category: newCampaignCategory || newCampaignTitle,
+        targetQty: newCampaignTargetQty,
+        unitPrice: newCampaignUnitPrice,
+        description: newCampaignDescription,
+        imageUrl: newCampaignImageUrl,
+      };
+
+      const res = await fetch("/api/admin/crud", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action,
+          payload,
+          adminEmail: user?.email,
+          adminName: user?.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewCampaignTitle("");
+        setNewCampaignCategory("");
+        setNewCampaignDescription("");
+        setNewCampaignImageUrl("");
+        setNewCampaignCurrentQty(0);
+        setEditingCampaign(null);
+        setShowAddCampaignForm(false);
+        alert(isEditing ? "Donation item updated successfully!" : "Donation item published to live site!");
+        loadSectionData("donations");
+        loadSectionData("sadaqah");
+      }
+    } catch (e) {
+      alert("Error saving campaign");
+    }
+  };
+
+  const startEditCampaign = (c: any) => {
+    setEditingCampaign(c);
+    setNewCampaignTitle(c.title || "");
+    setNewCampaignCategory(c.category || "");
+    setNewCampaignTargetQty(c.target_qty || 100);
+    setNewCampaignCurrentQty(c.current_qty || 0);
+    setNewCampaignUnitPrice(c.unit_price || 0);
+    setNewCampaignDescription(c.description || "");
+    setNewCampaignImageUrl(c.image_url || "");
+    setShowAddCampaignForm(true);
+  };
+
+  const handleDeleteCampaign = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this campaign?")) return;
+    try {
+      const res = await fetch("/api/admin/crud", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action: "delete_campaign",
+          payload: { id },
+          adminEmail: user?.email,
+          adminName: user?.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadSectionData("sadaqah");
+      }
+    } catch (e) {
+      alert("Error deleting campaign");
+    }
+  };
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("admin_token") || "session_super_admin_lateeful_akbar_2027";
@@ -344,64 +424,7 @@ export default function AdminPage() {
     }
   };
 
-  const handleCreateCampaign = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newCampaignTitle) return;
-    try {
-      const res = await fetch("/api/admin/crud", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "create_campaign",
-          payload: {
-            title: newCampaignTitle,
-            category: newCampaignCategory || newCampaignTitle,
-            targetQty: newCampaignTargetQty,
-            unitPrice: newCampaignUnitPrice,
-            description: newCampaignDescription,
-            imageUrl: newCampaignImageUrl,
-          },
-          adminEmail: user?.email,
-          adminName: user?.name,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setNewCampaignTitle("");
-        setNewCampaignCategory("");
-        setNewCampaignDescription("");
-        setNewCampaignImageUrl("");
-        setShowAddCampaignForm(false);
-        alert("Donation item published to live site!");
-        loadSectionData("donations");
-        loadSectionData("sadaqah");
-      }
-    } catch (e) {
-      alert("Error creating campaign");
-    }
-  };
 
-  const handleDeleteCampaign = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this campaign?")) return;
-    try {
-      const res = await fetch("/api/admin/crud", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "delete_campaign",
-          payload: { id },
-          adminEmail: user?.email,
-          adminName: user?.name,
-        }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        loadSectionData("sadaqah");
-      }
-    } catch (e) {
-      alert("Error deleting campaign");
-    }
-  };
 
 
   useEffect(() => {
@@ -1456,169 +1479,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* SECTION: SADAQAH CAMPAIGNS & THRESHOLDS */}
-          {activeSection === "sadaqah" && (
-            <div className="space-y-8">
-              <div className="grid gap-8 lg:grid-cols-12">
-                <div className="lg:col-span-5 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
-                  <div>
-                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
-                      <HeartIcon className="h-5 w-5 text-vivid" /> Create Donation Campaign
-                    </h2>
-                    <p className="text-xs text-faded mt-0.5">Add a new physical item campaign with threshold & unit price</p>
-                  </div>
 
-                  <form onSubmit={handleCreateCampaign} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                        Campaign Title
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g. Provide Cooling Fans"
-                        value={newCampaignTitle}
-                        onChange={(e) => setNewCampaignTitle(e.target.value)}
-                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-semibold"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                        Category Key
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. cooling, water, mats, media"
-                        value={newCampaignCategory}
-                        onChange={(e) => setNewCampaignCategory(e.target.value)}
-                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                          Target Threshold
-                        </label>
-                        <input
-                          type="number"
-                          required
-                          min={1}
-                          value={newCampaignTargetQty}
-                          onChange={(e) => setNewCampaignTargetQty(Number(e.target.value))}
-                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                          Unit Price (₦)
-                        </label>
-                        <input
-                          type="number"
-                          required
-                          min={100}
-                          value={newCampaignUnitPrice}
-                          onChange={(e) => setNewCampaignUnitPrice(Number(e.target.value))}
-                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                        Short Description
-                      </label>
-                      <textarea
-                        rows={3}
-                        placeholder="Describe what this campaign sponsors..."
-                        value={newCampaignDescription}
-                        onChange={(e) => setNewCampaignDescription(e.target.value)}
-                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                        Cover Image URL
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="/assets/donation-cooling.jpg"
-                        value={newCampaignImageUrl}
-                        onChange={(e) => setNewCampaignImageUrl(e.target.value)}
-                        className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md"
-                    >
-                      Publish Donation Campaign
-                    </button>
-                  </form>
-                </div>
-
-                <div className="lg:col-span-7 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
-                  <div>
-                    <h2 className="text-base font-bold text-pine">Active Donation Campaigns ({campaigns.length})</h2>
-                    <p className="text-xs text-faded">Threshold progress, items raised, and unit prices</p>
-                  </div>
-
-                  <div className="space-y-4">
-                    {campaigns.map((c) => {
-                      const pct = Math.min(100, Math.round(((c.current_qty || 0) / (c.target_qty || 1)) * 100));
-                      return (
-                        <div key={c.id} className="p-5 rounded-2xl bg-cream border border-ink/10 space-y-3">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <h3 className="font-bold text-sm text-pine">{c.title}</h3>
-                              <span className="text-[10px] text-faded">Category: {c.category}</span>
-                            </div>
-                            <div className="text-right">
-                              <span className="text-xs font-bold text-vivid">
-                                ₦{Number(c.unit_price || 0).toLocaleString()} / item
-                              </span>
-                              <div className="text-[10px] text-faded">
-                                Target: {c.target_qty} items
-                              </div>
-                            </div>
-                          </div>
-
-                          <div>
-                            <div className="flex justify-between text-xs font-bold mb-1">
-                              <span className="text-ink">
-                                {c.current_qty || 0} / {c.target_qty || 100} items raised
-                              </span>
-                              <span className="text-vivid">{pct}%</span>
-                            </div>
-                            <div className="h-2 w-full bg-mist rounded-full overflow-hidden">
-                              <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
-                            </div>
-                          </div>
-
-                          <div className="flex justify-between items-center pt-1 text-xs">
-                            <span className="text-faded text-[11px] max-w-sm truncate">{c.description}</span>
-                            <button
-                              onClick={() => handleDeleteCampaign(c.id)}
-                              className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {campaigns.length === 0 && (
-                      <div className="text-center py-10 text-faded text-xs">No active donation campaigns found</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* SECTION: BLOG MANAGER */}
           {activeSection === "blog" && (
@@ -1713,30 +1574,42 @@ export default function AdminPage() {
                     <h2 className="text-base font-bold text-pine flex items-center gap-2">
                       <HeartIcon className="h-5 w-5 text-vivid" /> Live Site Donation Items & Thresholds ({campaigns.length})
                     </h2>
-                    <p className="text-xs text-faded mt-0.5">Manage physical items, target quantities, and unit prices visible to visitors on the live site</p>
+                    <p className="text-xs text-faded mt-0.5">Manage physical items, target quantities, unit prices, and cover images visible to visitors on the live site</p>
                   </div>
 
                   <button
                     type="button"
-                    onClick={() => setShowAddCampaignForm((prev) => !prev)}
+                    onClick={() => {
+                      if (showAddCampaignForm && editingCampaign) {
+                        setEditingCampaign(null);
+                        setNewCampaignTitle("");
+                        setNewCampaignCategory("");
+                        setNewCampaignDescription("");
+                        setNewCampaignImageUrl("");
+                      } else {
+                        setShowAddCampaignForm((prev) => !prev);
+                      }
+                    }}
                     className="px-4 py-2.5 bg-vivid hover:bg-vivid-deep text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
                   >
                     <Plus className={`h-4 w-4 transition-transform duration-300 ${showAddCampaignForm ? "rotate-45" : ""}`} />
-                    {showAddCampaignForm ? "Close Form" : "Add New Donation Item"}
+                    {showAddCampaignForm ? (editingCampaign ? "Cancel Edit" : "Close Form") : "Add New Donation Item"}
                   </button>
                 </div>
 
-                {/* Collapsible Dropdown Form */}
+                {/* Collapsible Dropdown Form for Add & Edit */}
                 {showAddCampaignForm && (
                   <div className="p-6 rounded-2xl bg-cream border border-ink/15 space-y-5 shadow-inner">
                     <div>
                       <h3 className="text-sm font-bold text-pine flex items-center gap-2">
-                        <HeartIcon className="h-4 w-4 text-vivid" /> Add New Donation Item
+                        <HeartIcon className="h-4 w-4 text-vivid" /> {editingCampaign ? `Edit Item: ${editingCampaign.title}` : "Add New Donation Item"}
                       </h3>
-                      <p className="text-xs text-faded">Publish a physical item campaign for visitors on the live site</p>
+                      <p className="text-xs text-faded">
+                        {editingCampaign ? "Modify donation item title, price, description, target or cover image" : "Publish a physical item campaign for visitors on the live site"}
+                      </p>
                     </div>
 
-                    <form onSubmit={handleCreateCampaign} className="space-y-4">
+                    <form onSubmit={handleCreateOrUpdateCampaign} className="space-y-4">
                       <div className="grid gap-4 sm:grid-cols-2">
                         <div>
                           <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
@@ -1758,7 +1631,7 @@ export default function AdminPage() {
                           </label>
                           <input
                             type="text"
-                            placeholder="e.g. cooling, water, mats, media"
+                            placeholder="e.g. cooling, water, mats, media, tents"
                             value={newCampaignCategory}
                             onChange={(e) => setNewCampaignCategory(e.target.value)}
                             className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
@@ -1766,7 +1639,7 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="grid gap-4 sm:grid-cols-3">
                         <div>
                           <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
                             Target Threshold (Qty)
@@ -1794,6 +1667,21 @@ export default function AdminPage() {
                             className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
                           />
                         </div>
+
+                        {editingCampaign && (
+                          <div>
+                            <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                              Raised (Current Qty)
+                            </label>
+                            <input
+                              type="number"
+                              min={0}
+                              value={newCampaignCurrentQty}
+                              onChange={(e) => setNewCampaignCurrentQty(Number(e.target.value))}
+                              className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                            />
+                          </div>
+                        )}
                       </div>
 
                       <div>
@@ -1815,7 +1703,7 @@ export default function AdminPage() {
                         </label>
                         <input
                           type="text"
-                          placeholder="/assets/donation-cooling.jpg"
+                          placeholder="/assets/donation-tents.jpg"
                           value={newCampaignImageUrl}
                           onChange={(e) => setNewCampaignImageUrl(e.target.value)}
                           className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
@@ -1825,7 +1713,10 @@ export default function AdminPage() {
                       <div className="flex justify-end gap-3 pt-2">
                         <button
                           type="button"
-                          onClick={() => setShowAddCampaignForm(false)}
+                          onClick={() => {
+                            setEditingCampaign(null);
+                            setShowAddCampaignForm(false);
+                          }}
                           className="px-5 py-2.5 bg-mist text-pine text-xs font-bold rounded-xl border border-ink/10 hover:bg-sage"
                         >
                           Cancel
@@ -1834,7 +1725,7 @@ export default function AdminPage() {
                           type="submit"
                           className="px-6 py-2.5 bg-vivid hover:bg-vivid-deep text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md"
                         >
-                          Publish Item to Live Site
+                          {editingCampaign ? "Save Item Changes" : "Publish Item to Live Site"}
                         </button>
                       </div>
                     </form>
@@ -1848,6 +1739,12 @@ export default function AdminPage() {
                     return (
                       <div key={c.id} className="p-5 rounded-2xl bg-cream border border-ink/10 space-y-3 flex flex-col justify-between shadow-xs">
                         <div className="space-y-3">
+                          {c.image_url && (
+                            <div className="aspect-video relative rounded-xl overflow-hidden bg-mist border border-ink/10">
+                              <Image src={c.image_url} alt={c.title} fill className="object-cover" />
+                            </div>
+                          )}
+
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <h3 className="font-bold text-sm text-pine">{c.title}</h3>
@@ -1875,12 +1772,20 @@ export default function AdminPage() {
 
                         <div className="flex items-center justify-between border-t border-ink/10 pt-3 text-xs">
                           <span className="text-[11px] font-mono text-faded">Target: {c.target_qty} items</span>
-                          <button
-                            onClick={() => handleDeleteCampaign(c.id)}
-                            className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200"
-                          >
-                            Delete
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => startEditCampaign(c)}
+                              className="px-3 py-1 bg-white hover:bg-mist text-pine rounded-lg text-xs font-bold border border-ink/20 flex items-center gap-1"
+                            >
+                              <Edit className="h-3.5 w-3.5" /> Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCampaign(c.id)}
+                              className="px-3 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );

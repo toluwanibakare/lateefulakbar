@@ -35,7 +35,8 @@ export async function POST(req: Request) {
     // Master Super Admin
     if (email === 'admin@lateefulakbar.com' && password === SUPER_ADMIN_PASSWORD) {
       await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'User Login', 'Authenticated as Super Admin');
-      return NextResponse.json({
+      const token = process.env.SUPER_ADMIN_TOKEN || 'session_super_admin_lateeful_akbar_2027';
+      const response = NextResponse.json({
         success: true,
         user: {
           name: 'Super Admin',
@@ -43,8 +44,16 @@ export async function POST(req: Request) {
           role: 'Super Admin',
           permissions: ['dashboard', 'messages', 'live_event', 'updates', 'attendees', 'referrals', 'newsletter', 'blog', 'gallery', 'sadaqah', 'donations', 'ai_assistant', 'settings', 'admin_users', 'activity_log'],
         },
-        token: process.env.SUPER_ADMIN_TOKEN || 'session_super_admin_lateeful_akbar_2027',
+        token,
       });
+      response.cookies.set('admin_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 60 * 60 * 24 * 7, // 7 days
+        path: '/',
+      });
+      return response;
     }
 
     // Preset Role Accounts

@@ -212,11 +212,12 @@ export async function POST(req: Request) {
       const currentQty = Number(payload.currentQty) || 0;
       const unitPrice = Number(payload.unitPrice) || 0;
       const description = sanitizeString(payload.description, 2000);
-      const isActive = payload.is_active ? 1 : 0;
+      const imageUrl = sanitizeString(payload.imageUrl, 500);
+      const isActive = payload.is_active !== undefined ? (payload.is_active ? 1 : 0) : 1;
 
       await db.query(
-        'UPDATE sadaqah_campaigns SET title = ?, category = ?, target_qty = ?, current_qty = ?, unit_price = ?, description = ?, is_active = ? WHERE id = ?',
-        [title, category, targetQty, currentQty, unitPrice, description, isActive, id]
+        'UPDATE sadaqah_campaigns SET title = ?, category = ?, target_qty = ?, current_qty = ?, unit_price = ?, description = ?, image_url = ?, is_active = ? WHERE id = ?',
+        [title, category, targetQty, currentQty, unitPrice, description, imageUrl, isActive, id]
       );
       await logAdminActivity(adminEmail, adminName, 'Updated Sadaqah Campaign', `ID: ${id}, Title: ${title}`);
       return NextResponse.json({ success: true });
