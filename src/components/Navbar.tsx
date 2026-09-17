@@ -135,7 +135,11 @@ export default function Navbar() {
               alt="Lateeful Ul Akbar Il Aazam logo"
               width={300}
               height={90}
-              className="h-10 w-auto min-w-0 object-contain sm:h-13 md:h-15 transition-all"
+              className={`h-10 w-auto min-w-0 object-contain sm:h-13 md:h-15 transition-all ${
+                solid
+                  ? "brightness-100 dark:brightness-0 dark:invert"
+                  : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
+              }`}
               priority
             />
           </Link>

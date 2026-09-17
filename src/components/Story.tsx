@@ -119,7 +119,7 @@ export default function Story() {
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
               <FadeIn direction="right">
-                <Eyebrow>The Grand Gathering Of Sublime Minds</Eyebrow>
+                <Eyebrow>The Grand Spiritual Gathering Of Sublime Minds</Eyebrow>
               </FadeIn>
               <FadeIn direction="right" delay={0.08} blur>
                 <h1 className="font-display text-balance mt-4 text-4xl leading-[1.05] font-light tracking-tight text-ink sm:text-6xl">
