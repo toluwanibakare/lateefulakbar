@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
+import { sendVendorRegistrationEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   try {
@@ -66,6 +67,18 @@ export async function POST(req: Request) {
       ]
     );
 
+    // Trigger Vendor Registration Email
+    sendVendorRegistrationEmail({
+      to: email,
+      businessName,
+      contactPerson,
+      stallCode,
+      passCode,
+      category,
+      spaces,
+      totalPrice,
+    }).catch((err) => console.error('Error sending vendor email:', err));
+
     return NextResponse.json({
       success: true,
       passCode,
@@ -77,3 +90,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to submit vendor registration.' }, { status: 500 });
   }
 }
+

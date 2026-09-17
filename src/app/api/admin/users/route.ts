@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
 import { sanitizeString, isValidEmail } from '@/lib/security';
 import { logAdminActivity } from '@/app/api/admin/crud/route';
+import { sendAdminPasswordChangedEmail } from '@/lib/email';
 
 export async function GET(req: Request) {
   try {
@@ -116,6 +117,14 @@ export async function POST(req: Request) {
       // Check if it's dynamic admin user
       await db.query('UPDATE admin_users SET password = ? WHERE email = ?', [cleanNewPassword, cleanEmail]);
       await logAdminActivity(cleanEmail, cleanEmail, 'Changed Password', 'Admin password successfully updated');
+      
+      // Trigger Security Email Alert
+      sendAdminPasswordChangedEmail({
+        to: cleanEmail,
+        adminName: cleanEmail,
+        changeTime: new Date().toUTCString(),
+      }).catch((err) => console.error('Error sending admin password alert:', err));
+
       return NextResponse.json({ success: true, message: 'Password updated successfully' });
     }
 

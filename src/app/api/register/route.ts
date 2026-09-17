@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { sendRegistrationEmail } from '@/lib/email';
+import { sendRegistrationEmail, sendReferralNotificationEmail } from '@/lib/email';
 import QRCode from 'qrcode';
 import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
+import { RowDataPacket } from 'mysql2';
 
 export async function POST(req: Request) {
   try {
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
 
     // Generate QR Code Data URL containing validation payload
     const qrPayload = JSON.stringify({
-      event: 'Lateeful Akbar 2027',
+      event: 'Lateeful-Ul-Akbar 2027',
       passCode,
       name: fullName,
       type,
@@ -66,8 +67,42 @@ export async function POST(req: Request) {
       name: fullName,
       ticketType: type,
       passCode,
+      referralCode,
       qrCodeDataUrl,
     }).catch((err) => console.error('Background email sending error:', err));
+
+    // Handle Referral Notification Email if referredByInput was provided
+    if (referredByInput) {
+      (async () => {
+        try {
+          // Find referrer details & total count
+          const [referrerRows] = await db.query<RowDataPacket[]>(
+            `SELECT full_name, email, referral_code, pass_code FROM registrations WHERE referral_code = ? OR pass_code = ? LIMIT 1`,
+            [referredByInput, referredByInput]
+          );
+
+          if (referrerRows.length > 0) {
+            const referrer = referrerRows[0];
+            const [countRows] = await db.query<RowDataPacket[]>(
+              `SELECT COUNT(*) as total FROM registrations WHERE referred_by = ? OR referred_by = ?`,
+              [referrer.referral_code, referrer.pass_code]
+            );
+            const totalReferrals = countRows[0]?.total || 1;
+
+            if (referrer.email && isValidEmail(referrer.email)) {
+              await sendReferralNotificationEmail({
+                to: referrer.email,
+                referrerName: referrer.full_name,
+                referredName: fullName,
+                totalReferrals,
+              });
+            }
+          }
+        } catch (refErr) {
+          console.error('Error handling referral email notification:', refErr);
+        }
+      })();
+    }
 
     return NextResponse.json({
       success: true,
@@ -88,3 +123,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Registration failed' }, { status: 500 });
   }
 }
+

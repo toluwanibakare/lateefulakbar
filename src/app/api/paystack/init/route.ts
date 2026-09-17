@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
 import fs from 'fs';
 import path from 'path';
+import { sendDonationReceiptEmail } from '@/lib/email';
 
 function getEnvKey(keyName: string): string {
   if (process.env[keyName]) return process.env[keyName]!;
@@ -98,6 +99,15 @@ export async function POST(req: Request) {
       [category, category]
     );
 
+    // Send Sadaqah Receipt Email
+    sendDonationReceiptEmail({
+      to: email,
+      donorName: donorName || 'Noble Donor',
+      amount,
+      category: category || 'General Sadaqah',
+      txRef,
+    }).catch((err) => console.error('Error sending donation receipt email:', err));
+
     return NextResponse.json({
       success: true,
       simulated: true,
@@ -110,3 +120,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to process payment request' }, { status: 500 });
   }
 }
+
