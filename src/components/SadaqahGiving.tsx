@@ -22,6 +22,7 @@ const INITIAL: Campaign[] = [
   { id: "mats", title: "Prayer Mats & Rugs", text: "Clean mats for the canopies, laid before dawn.", icon: Layers, image: "/assets/praying_mat.jpeg", target: 500, raised: 310, unit: "mats", unitPrice: 15000 },
   { id: "water", title: "Water & Hydration Points", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/donation-water.jpg", target: 1000, raised: 780, unit: "packs", unitPrice: 5000 },
   { id: "cooling", title: "Provide Cooling Fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 200, raised: 134, unit: "fans", unitPrice: 25000 },
+  { id: "tents", title: "Canopies & Event Tents", text: "Shaded canopies and large tents for assembly rows.", icon: Home, image: "/assets/donation-tents.jpg", target: 50, raised: 18, unit: "tents", unitPrice: 50000 },
   { id: "media", title: "Nadwat TV Live Broadcast", text: "Cameras, drone and HD livestream production.", icon: Video, image: "/assets/donation-media.jpg", target: 50, raised: 22, unit: "units", unitPrice: 100000 },
 ];
 
@@ -51,6 +52,8 @@ export default function SadaqahGiving() {
               ? "/assets/donation-water.jpg"
               : titleLower.includes("fan") || titleLower.includes("cool")
               ? "/assets/donation-cooling.jpg"
+              : titleLower.includes("tent") || titleLower.includes("canopy")
+              ? "/assets/donation-tents.jpg"
               : titleLower.includes("broadcast") || titleLower.includes("media") || titleLower.includes("tv")
               ? "/assets/donation-media.jpg"
               : "/assets/praying_mat.jpeg";
@@ -59,11 +62,11 @@ export default function SadaqahGiving() {
               id: String(dbC.id),
               title: dbC.title,
               text: dbC.description || "Community donation project for Lateeful Akbar 2027",
-              icon: titleLower.includes("fan") || titleLower.includes("cool") ? Wind : titleLower.includes("water") ? Droplets : titleLower.includes("mat") ? Layers : Video,
+              icon: titleLower.includes("tent") || titleLower.includes("canopy") ? Home : titleLower.includes("fan") || titleLower.includes("cool") ? Wind : titleLower.includes("water") ? Droplets : titleLower.includes("mat") ? Layers : Video,
               image: (!dbC.image_url || dbC.image_url.includes("user-donation-media")) ? fallbackImg : dbC.image_url,
               target: dbC.target_qty || 100,
               raised: dbC.current_qty || 0,
-              unit: titleLower.includes("mat") ? "mats" : titleLower.includes("water") ? "packs" : titleLower.includes("fan") ? "fans" : "units",
+              unit: titleLower.includes("tent") || titleLower.includes("canopy") ? "tents" : titleLower.includes("mat") ? "mats" : titleLower.includes("water") ? "packs" : titleLower.includes("fan") ? "fans" : "units",
               unitPrice: Number(dbC.unit_price) || 25000,
             };
           });

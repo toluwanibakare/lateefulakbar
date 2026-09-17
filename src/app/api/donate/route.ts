@@ -20,6 +20,7 @@ export async function GET() {
           ('Prayer Mats & Rugs', 'mats', 500, 310, 15000.00, 'Clean mats for the canopies, laid before dawn.', '/assets/praying_mat.jpeg', 1),
           ('Water & Hydration Points', 'water', 1000, 780, 5000.00, 'Cool packs moved through the rows all morning.', '/assets/donation-water.jpg', 1),
           ('Provide Cooling Fans', 'cooling', 200, 134, 25000.00, 'Industrial fans and shade for the midday heat.', '/assets/donation-cooling.jpg', 1),
+          ('Canopies & Event Tents', 'tents', 50, 18, 50000.00, 'Shaded canopies and large tents for assembly rows.', '/assets/donation-tents.jpg', 1),
           ('Nadwat TV Live Broadcast', 'media', 50, 22, 100000.00, 'Cameras, drone and HD livestream production.', '/assets/donation-media.jpg', 1)
         `);
         const [seeded] = await db.query<RowDataPacket[]>(

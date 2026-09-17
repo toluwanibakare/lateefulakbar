@@ -21,7 +21,7 @@ export const PHOTOS = {
   screenshot: "/assets/event-screenshot.png",
   nadwaLogo: "/assets/nadwa-logo.png",
   nadwaLogoLg: "/assets/nadwa-logo-lg.png",
-  lateefLogo: "/assets/lateef-logo.png",
+  lateefLogo: "/assets/brand/lateefulakbar.PNG",
   drone: "/assets/crowd-11.jpg",
   cannonCrowd: "/assets/crowd-08.jpg",
   sisters: "/assets/crowd-08.jpg",
