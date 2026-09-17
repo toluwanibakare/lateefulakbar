@@ -1,10 +1,5 @@
 import nodemailer from 'nodemailer';
 
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com';
-const SMTP_PORT = Number(process.env.SMTP_PORT) || 587;
-const SMTP_USER = process.env.SMTP_USER || '';
-const SMTP_PASS = process.env.SMTP_PASS || '';
-const FROM_EMAIL = process.env.FROM_EMAIL || '"Lateeful-Ul-Akbar 2027" <info@lateefulakbar.com>';
 const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://lateefulakbar.com';
 
 function getEmailWrapper(title: string, innerHtml: string): string {
@@ -61,15 +56,25 @@ function getEmailWrapper(title: string, innerHtml: string): string {
   `;
 }
 
+function getSmtpConfig() {
+  const user = process.env.SMTP_USER || 'lateefulakbar@gmail.com';
+  const pass = process.env.SMTP_PASS || 'dvyvgkrwxgjliqgp';
+  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const port = Number(process.env.SMTP_PORT) || 587;
+  const from = process.env.FROM_EMAIL || '"Lateeful-Ul-Akbar 2027" <lateefulakbar@gmail.com>';
+  return { user, pass, host, port, from };
+}
+
 async function getTransporter() {
-  if (!SMTP_USER || !SMTP_PASS) return null;
+  const cfg = getSmtpConfig();
+  if (!cfg.user || !cfg.pass) return null;
   return nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: SMTP_PORT === 465,
+    host: cfg.host,
+    port: cfg.port,
+    secure: cfg.port === 465,
     auth: {
-      user: SMTP_USER,
-      pass: SMTP_PASS,
+      user: cfg.user,
+      pass: cfg.pass,
     },
   });
 }
@@ -151,8 +156,9 @@ export async function sendRegistrationEmail({
   `;
 
   try {
+    const cfg = getSmtpConfig();
     await transporter.sendMail({
-      from: FROM_EMAIL,
+      from: cfg.from,
       to,
       subject: `Your Event Pass for Lateeful-Ul-Akbar 2027 [${passCode}]`,
       html: getEmailWrapper('Lateeful-Ul-Akbar 2027 Event Pass', innerHtml),
@@ -201,8 +207,9 @@ export async function sendReferralNotificationEmail({
   `;
 
   try {
+    const cfg = getSmtpConfig();
     await transporter.sendMail({
-      from: FROM_EMAIL,
+      from: cfg.from,
       to,
       subject: `Thank You for Referring ${referredName} to Lateeful-Ul-Akbar 2027!`,
       html: getEmailWrapper('Referral Success - Lateeful-Ul-Akbar 2027', innerHtml),
@@ -279,8 +286,9 @@ export async function sendVendorRegistrationEmail({
   `;
 
   try {
+    const cfg = getSmtpConfig();
     await transporter.sendMail({
-      from: FROM_EMAIL,
+      from: cfg.from,
       to,
       subject: `Vendor Pass Confirmation - ${businessName} [${stallCode}]`,
       html: getEmailWrapper('Vendor Registration - Lateeful-Ul-Akbar 2027', innerHtml),
@@ -325,8 +333,9 @@ export async function sendAdminPasswordChangedEmail({
   `;
 
   try {
+    const cfg = getSmtpConfig();
     await transporter.sendMail({
-      from: FROM_EMAIL,
+      from: cfg.from,
       to,
       subject: `[SECURITY ALERT] Admin Password Changed - Lateeful-Ul-Akbar`,
       html: getEmailWrapper('Admin Security Alert - Lateeful-Ul-Akbar', innerHtml),
@@ -389,8 +398,9 @@ export async function sendDonationReceiptEmail({
   `;
 
   try {
+    const cfg = getSmtpConfig();
     await transporter.sendMail({
-      from: FROM_EMAIL,
+      from: cfg.from,
       to,
       subject: `Donation Receipt - Lateeful-Ul-Akbar 2027 [${txRef}]`,
       html: getEmailWrapper('Sadaqah Contribution Receipt', innerHtml),
