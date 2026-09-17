@@ -203,6 +203,14 @@ export default function AdminPage() {
   const [newCampaignDescription, setNewCampaignDescription] = useState("");
   const [newCampaignImageUrl, setNewCampaignImageUrl] = useState("");
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("admin_token") || "session_super_admin_lateeful_akbar_2027";
+    return {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json",
+    };
+  };
+
   // Check saved session on load
   useEffect(() => {
     const savedUser = localStorage.getItem("admin_user");
@@ -218,7 +226,7 @@ export default function AdminPage() {
   const loadDashboardStats = async () => {
     setLoadingStats(true);
     try {
-      const res = await fetch("/api/admin/stats");
+      const res = await fetch("/api/admin/stats", { headers: getAuthHeaders() });
       const data = await res.json();
       if (data.success) {
         setStats(data.stats);
@@ -238,17 +246,18 @@ export default function AdminPage() {
 
   const loadSectionData = async (section: string) => {
     setLoadingSection(true);
+    const headers = getAuthHeaders();
     try {
       if (section === "attendees") {
-        const res = await fetch("/api/admin/crud?type=attendees");
+        const res = await fetch("/api/admin/crud?type=attendees", { headers });
         const data = await res.json();
         if (data.success) setAttendees(data.data);
       } else if (section === "referrals") {
-        const res = await fetch("/api/admin/crud?type=referrals");
+        const res = await fetch("/api/admin/crud?type=referrals", { headers });
         const data = await res.json();
         if (data.success) setReferrals(data.data);
       } else if (section === "messages") {
-        const res = await fetch("/api/admin/messages");
+        const res = await fetch("/api/admin/messages", { headers });
         const data = await res.json();
         if (data.success) {
           setChatTickets(data.tickets || []);
@@ -257,47 +266,47 @@ export default function AdminPage() {
           }
         }
       } else if (section === "sadaqah") {
-        const res = await fetch("/api/admin/crud?type=campaigns");
+        const res = await fetch("/api/admin/crud?type=campaigns", { headers });
         const data = await res.json();
         if (data.success) setCampaigns(data.data);
       } else if (section === "updates") {
-        const res = await fetch("/api/admin/crud?type=updates");
+        const res = await fetch("/api/admin/crud?type=updates", { headers });
         const data = await res.json();
         if (data.success) setUpdates(data.data);
       } else if (section === "newsletter") {
-        const res = await fetch("/api/admin/crud?type=subscribers");
+        const res = await fetch("/api/admin/crud?type=subscribers", { headers });
         const data = await res.json();
         if (data.success) setSubscribers(data.data);
       } else if (section === "activity_log") {
-        const res = await fetch("/api/admin/crud?type=logs");
+        const res = await fetch("/api/admin/crud?type=logs", { headers });
         const data = await res.json();
         if (data.success) setLogs(data.data);
       } else if (section === "ai_assistant" || section === "knowledge_base") {
-        const res = await fetch("/api/admin/crud?type=knowledge");
+        const res = await fetch("/api/admin/crud?type=knowledge", { headers });
         const data = await res.json();
         if (data.success) setAiKnowledge(data.data);
       } else if (section === "admin_users") {
-        const res = await fetch("/api/admin/users?type=admin_users");
+        const res = await fetch("/api/admin/users?type=admin_users", { headers });
         const data = await res.json();
         if (data.success) setAdminUsersList(data.users || []);
       } else if (section === "blog") {
-        const res = await fetch("/api/admin/users?type=blog");
+        const res = await fetch("/api/admin/users?type=blog", { headers });
         const data = await res.json();
         if (data.success) setBlogPosts(data.posts || []);
       } else if (section === "gallery") {
-        const res = await fetch("/api/admin/users?type=gallery");
+        const res = await fetch("/api/admin/users?type=gallery", { headers });
         const data = await res.json();
         if (data.success) setGalleryItems(data.items || []);
       } else if (section === "donations") {
-        const res = await fetch("/api/admin/users?type=donations_list");
+        const res = await fetch("/api/admin/users?type=donations_list", { headers });
         const data = await res.json();
         if (data.success) setDonationsList(data.donations || []);
 
-        const cRes = await fetch("/api/admin/crud?type=campaigns");
+        const cRes = await fetch("/api/admin/crud?type=campaigns", { headers });
         const cData = await cRes.json();
         if (cData.success) setCampaigns(cData.data || []);
       } else if (section === "settings") {
-        const res = await fetch("/api/admin/crud?type=settings");
+        const res = await fetch("/api/admin/crud?type=settings", { headers });
         const data = await res.json();
         if (data.success && data.data) {
           if (data.data.paystack_mode) setPaystackMode(data.data.paystack_mode as any);
@@ -433,6 +442,9 @@ export default function AdminPage() {
       if (data.success) {
         setUser(data.user);
         localStorage.setItem("admin_user", JSON.stringify(data.user));
+        if (data.token) {
+          localStorage.setItem("admin_token", data.token);
+        }
       } else {
         setAuthError(data.error || "Authentication failed");
       }
@@ -446,6 +458,7 @@ export default function AdminPage() {
   const handleLogout = () => {
     setUser(null);
     localStorage.removeItem("admin_user");
+    localStorage.removeItem("admin_token");
   };
 
   // Reset Tasbih to 0 in DB
