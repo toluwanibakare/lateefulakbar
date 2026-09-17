@@ -131,15 +131,11 @@ export default function Navbar() {
               className={`h-8 w-px shrink-0 self-center transition-colors sm:h-11 ${solid ? "bg-ink/20 dark:bg-white/30" : "bg-white/40"}`}
             />
             <Image
-              src="/assets/lateef-logo.png"
+              src="/assets/brand/lateefulakbar.PNG"
               alt="Lateeful Ul Akbar Il Aazam logo"
               width={300}
               height={90}
-              className={`h-10 w-auto min-w-0 object-contain sm:h-13 md:h-15 transition-all ${
-                solid
-                  ? "brightness-100 dark:brightness-0 dark:invert"
-                  : "brightness-0 invert drop-shadow-[0_1px_10px_rgba(255,255,255,0.4)]"
-              }`}
+              className="h-10 w-auto min-w-0 object-contain sm:h-13 md:h-15 transition-all"
               priority
             />
           </Link>
@@ -283,7 +279,7 @@ export default function Navbar() {
                   className="h-9 w-auto object-contain"
                 />
                 <Image
-                  src="/assets/lateef-logo.png"
+                  src="/assets/brand/lateefulakbar.PNG"
                   alt="Lateeful Ul Akbar Il Aazam logo"
                   width={200}
                   height={56}

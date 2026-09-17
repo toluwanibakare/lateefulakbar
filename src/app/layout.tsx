@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
     description:
-      "The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
+      "The Grand Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
     images: [
       {
         url: "/og-image.png",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lateeful-Ul-Akbar Li-A’azam 2027 - Nadwat Global Assembly",
     description:
-      "The Grandeur Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
+      "The Grand Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, seeking with one voice. 24 January 2027 at Tafawa Balewa Square, Lagos.",
     images: ["/og-image.png"],
   },
 };
