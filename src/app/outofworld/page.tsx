@@ -1155,6 +1155,9 @@ export default function AdminPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
           {/* SECTION: ATTENDEES MANAGEMENT */}
           {activeSection === "attendees" && (
             <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">

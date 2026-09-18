@@ -65,7 +65,7 @@ function getSmtpConfig() {
   return { user, pass, host, port, from };
 }
 
-async function getTransporter() {
+export async function getTransporter() {
   const cfg = getSmtpConfig();
   if (!cfg.user || !cfg.pass) return null;
   return nodemailer.createTransport({

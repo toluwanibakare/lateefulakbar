@@ -54,6 +54,20 @@ export function verifyAdminToken(authHeader: string | null, cookieToken?: string
   return validTokens.includes(token) || token.startsWith('session_custom_');
 }
 
+export function isValidEmail(email: string): boolean {
+  if (!email || typeof email !== 'string' || email.length > 254) return false;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+}
+
+export function sanitizeString(input: unknown, maxLength: number = 1000): string {
+  if (typeof input !== 'string') return '';
+  return input
+    .trim()
+    .slice(0, maxLength)
+    .replace(/[<>]/g, ''); // Escaping dangerous HTML tags
+}
+
 export function isValidPassword(password: string): { valid: boolean; reason?: string } {
   if (!password || typeof password !== 'string') return { valid: false, reason: 'Password is required' };
   if (password.length < 8) return { valid: false, reason: 'Password must be at least 8 characters long' };
