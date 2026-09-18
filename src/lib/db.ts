@@ -59,7 +59,28 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
-    // 1b. Vendors table for vendor stall applications
+    // 1a. Migrate older `registrations` tables that were created before
+    // referral_code / referred_by / status columns existed.
+    // CREATE TABLE IF NOT EXISTS won't alter an existing table, so an old
+    // table causes "Unknown column 'referral_code'" -> 500 on /api/register.
+    // Add any missing columns idempotently.
+    const [regCols] = await p.query(
+      `SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = ? AND TABLE_NAME = 'registrations'`,
+      [DB_NAME]
+    );
+    const existingRegCols = new Set(
+      (regCols as Array<{ COLUMN_NAME: string }>).map((c) => c.COLUMN_NAME)
+    );
+    const regMigrations: Array<{ name: string; ddl: string }> = [
+      { name: 'referral_code', ddl: `ALTER TABLE registrations ADD COLUMN referral_code VARCHAR(50) UNIQUE` },
+      { name: 'referred_by', ddl: `ALTER TABLE registrations ADD COLUMN referred_by VARCHAR(50)` },
+      { name: 'status', ddl: `ALTER TABLE registrations ADD COLUMN status VARCHAR(50) DEFAULT 'active'` },
+    ];
+    for (const m of regMigrations) {
+      if (!existingRegCols.has(m.name)) {
+        await p.query(m.ddl);
+      }
+    }
     await p.query(`
       CREATE TABLE IF NOT EXISTS vendors (
         id INT AUTO_INCREMENT PRIMARY KEY,

@@ -152,7 +152,7 @@ export default function Hero() {
           className="font-display mt-3 max-w-full font-light tracking-tight leading-none"
         >
           <span className="block text-[clamp(1.25rem,5vw,4.5rem)] font-light leading-tight text-white drop-shadow-[0_4px_12px_rgba(0,0,0,0.95)] break-words">
-            Lateef ul-il-Akbar-Il-A’azam
+            LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027
           </span>
           <span className="font-display mt-3 block text-[clamp(0.9rem,2.8vw,2rem)] font-light text-emerald-300 tracking-normal drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
             Yaa Lateef, The Most Kind

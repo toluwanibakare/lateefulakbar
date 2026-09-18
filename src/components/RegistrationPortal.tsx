@@ -131,9 +131,12 @@ export default function RegistrationPortal() {
     }
   };
 
+  const [formError, setFormError] = useState<string | null>(null);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+    setFormError(null);
 
     try {
       const res = await fetch('/api/register', {
@@ -148,7 +151,12 @@ export default function RegistrationPortal() {
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data?.error || `Registration failed (HTTP ${res.status})`);
+      }
+
       const passCode = data.passCode || ("LA2027-" + Math.floor(10000 + Math.random() * 90000));
       const refCode = data.referralCode || ("REF-" + Math.random().toString(36).slice(2, 7).toUpperCase());
       const origin = typeof window !== "undefined" ? window.location.origin : "https://lateefulakbar.com";
@@ -158,11 +166,7 @@ export default function RegistrationPortal() {
       setTimeout(() => drawPass(form.fullName, passCode, photo, data.qrCodeDataUrl), 200);
     } catch (err) {
       console.error('Registration API error:', err);
-      const fallbackCode = "LA2027-" + Math.floor(10000 + Math.random() * 90000);
-      const refCode = "REF-" + Math.random().toString(36).slice(2, 7).toUpperCase();
-      const origin = typeof window !== "undefined" ? window.location.origin : "https://lateefulakbar.com";
-      setPass({ id: fallbackCode, ref: refCode, referralLink: `${origin}/register?ref=${refCode}` });
-      setTimeout(() => drawPass(form.fullName, fallbackCode, photo), 200);
+      setFormError(err instanceof Error ? err.message : 'Registration failed. Please check your connection and try again.');
     } finally {
       setSubmitting(false);
     }
@@ -356,6 +360,11 @@ export default function RegistrationPortal() {
                         </label>
                         <p className="mt-2 text-[12px] text-faded">Used only on your pass artwork.</p>
                       </div>
+                      {formError && (
+                        <p role="alert" className="mt-4 border border-red-300 bg-red-50 px-4 py-3 text-[13px] font-medium text-red-700">
+                          {formError}
+                        </p>
+                      )}
                       <div className="mt-8 flex items-center justify-between">
                         <button type="button" onClick={() => setStep(2)} className="inline-flex items-center gap-2 border border-ink/20 px-6 py-3.5 text-sm font-semibold text-ink hover:border-pine hover:text-pine">
                           <ArrowLeft className="h-4 w-4" /> Back

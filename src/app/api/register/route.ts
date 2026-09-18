@@ -120,7 +120,9 @@ export async function POST(req: Request) {
     });
   } catch (error) {
     console.error('Error in registration API:', error);
-    return NextResponse.json({ error: 'Registration failed' }, { status: 500 });
+    const details =
+      error instanceof Error ? error.message : typeof error === 'object' && error !== null && 'code' in error ? String((error as { code: unknown }).code) : 'Unknown error';
+    return NextResponse.json({ error: 'Registration failed', details }, { status: 500 });
   }
 }
 

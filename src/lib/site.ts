@@ -1,6 +1,6 @@
 export const EVENT = {
-  title: "Lateef ul-il-Akbar-Il-A’azam",
-  suffix: "Li-A’azam 2027",
+  title: "LATEEF-UL-IL-AKBAR-LI-A’AZAM",
+  suffix: "2027",
   dateLong: "Sunday, January 24, 2027",
   dateShort: "24 . 01 . 2027",
   venue: "Tafawa Balewa Square - Main Bowl, Lagos",

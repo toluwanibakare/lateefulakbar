@@ -21,7 +21,7 @@ function getEmailWrapper(title: string, innerHtml: string): string {
               <tr>
                 <td style="background: linear-gradient(135deg, #064e3b 0%, #0f766e 100%); padding: 36px 28px; text-align: center; border-bottom: 4px solid #d97706;">
                   <img src="${SITE_URL}/assets/brand/lateefulakbar.PNG" alt="LATEEF Logo" style="height: 64px; max-width: 240px; margin-bottom: 12px; object-fit: contain;" />
-                  <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 0.5px;">Lateeful-Ul-Akbar Li-A’azam 2027</h1>
+                  <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 0.5px;">LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027</h1>
                   <p style="margin: 6px 0 0 0; color: #fef3c7; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px;">Walking in the Footsteps of Light</p>
                 </td>
               </tr>
@@ -36,7 +36,7 @@ function getEmailWrapper(title: string, innerHtml: string): string {
               <!-- FOOTER -->
               <tr>
                 <td style="background-color: #f1f5f9; padding: 24px 28px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 13px; color: #64748b;">
-                  <p style="margin: 0 0 8px 0; font-weight: 600; color: #0f766e;">Lateeful-Ul-Akbar 2027 Organizing Committee</p>
+                  <p style="margin: 0 0 8px 0; font-weight: 600; color: #0f766e;">THE LATEEF-UL-IL-AKBAR-LI-A’AZAM</p>
                   <p style="margin: 0 0 12px 0; line-height: 1.5;">📍 Tafawa Balewa Square (TBS) Main Bowl, Lagos, Nigeria<br>📅 Sunday, January 24, 2027</p>
                   <p style="margin: 0 0 12px 0;">
                     <a href="${SITE_URL}" style="color: #0d9488; text-decoration: none; margin: 0 8px; font-weight: 600;">Visit Website</a> &bull;
@@ -79,14 +79,13 @@ async function getTransporter() {
   });
 }
 
-// 1. Attendee Registration Email
+// 1. Attendee Registration Email (mobile-responsive, white header, no QR)
 export async function sendRegistrationEmail({
   to,
   name,
   ticketType,
   passCode,
   referralCode,
-  qrCodeDataUrl,
 }: {
   to: string;
   name: string;
@@ -101,67 +100,152 @@ export async function sendRegistrationEmail({
     return { success: true, simulated: true };
   }
 
+  const safeName = name || 'Guest';
+  const referralLink = referralCode ? `${SITE_URL}/?ref=${referralCode}` : '';
+  const logoUrl = `${SITE_URL}/assets/brand/lateefulakbar.PNG`;
+
   const innerHtml = `
-    <h2 style="margin: 0 0 16px 0; color: #064e3b; font-size: 20px;">Assalamu Alaikum ${name},</h2>
-    <p style="font-size: 15px; line-height: 1.6; color: #334155;">
-      Alhamdulillah! Your official registration for <strong>Lateeful-Ul-Akbar Li-A’azam 2027</strong> is confirmed. We are thrilled to welcome you to this sacred grand gathering.
+    <!-- Preheader (inbox preview snippet, hidden in body) -->
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
+      Your pass code is ${passCode}. See you at TBS Main Bowl, Lagos on January 24, 2027.
+    </div>
+
+    <!-- HEADER on white -->
+    <div style="text-align:center;padding:8px 0 4px 0;">
+      <img src="${logoUrl}" alt="LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027" width="220" style="width:220px;max-width:70%;height:auto;border:0;outline:none;" />
+      <h1 class="hero-title" style="margin:14px 0 4px 0;color:#064e3b;font-size:24px;font-weight:800;letter-spacing:0.3px;line-height:1.25;">LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027</h1>
+      <p style="margin:0;color:#b45309;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">Walking in the Footsteps of Light</p>
+      <div style="width:64px;height:3px;background-color:#d97706;margin:14px auto 0 auto;border-radius:2px;"></div>
+    </div>
+
+    <h2 style="margin:24px 0 10px 0;color:#0f172a;font-size:19px;font-weight:700;line-height:1.4;">As-Salāmu ‘Alaykum Warahmatullāhi Wabarakātuh ${safeName},</h2>
+    <p style="margin:0 0 20px 0;font-size:15px;line-height:1.7;color:#334155;">
+      Alhamdulillah! Your registration for <strong>Lateeful Akbar 2027 &ndash; The Grand Spiritual Gathering of Sublime Minds</strong> has been completed.
+      Please keep your pass code below safe &mdash; you will present it at the entrance.
     </p>
 
-    <!-- PASS DETAILS BOX -->
-    <div style="background-color: #f0fdf4; border: 2px dashed #059669; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
-      <p style="margin: 0 0 6px 0; font-size: 12px; color: #047857; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Official Pass Code</p>
-      <div style="font-size: 28px; font-weight: 900; color: #064e3b; letter-spacing: 3px; margin-bottom: 12px;">${passCode}</div>
-      <p style="margin: 0; font-size: 14px; color: #475569;">Pass Category: <strong style="color: #0f766e;">${ticketType}</strong></p>
+    <!-- PASS CARD -->
+    <div style="background-color:#ecfdf5;border:1px solid #a7f3d0;border-radius:14px;padding:24px 20px;margin:0 0 20px 0;text-align:center;">
+      <p style="margin:0 0 6px 0;font-size:11px;color:#047857;text-transform:uppercase;letter-spacing:2px;font-weight:700;">Your Official Pass Code</p>
+      <div class="pass-code" style="font-size:30px;font-weight:800;color:#064e3b;letter-spacing:3px;">${passCode}</div>
+      <div style="border-top:1px dashed #6ee7b7;margin:16px 0;"></div>
+      <p style="margin:0 0 6px 0;font-size:14px;color:#475569;">Name: <strong style="color:#0f172a;">${safeName}</strong></p>
+      <p style="margin:0;font-size:14px;color:#475569;">Category: <strong style="color:#0f766e;">${ticketType}</strong></p>
     </div>
 
-    ${qrCodeDataUrl ? `
-      <div style="text-align: center; margin: 28px 0;">
-        <p style="margin: 0 0 10px 0; font-size: 13px; font-weight: 600; color: #64748b;">PRESENT AT ENTRANCE FOR FAST GATE SCANNING</p>
-        <img src="${qrCodeDataUrl}" alt="Event Pass QR Code" style="width: 170px; height: 170px; border: 4px solid #e2e8f0; border-radius: 12px; padding: 4px; background: white;" />
-      </div>
-    ` : ''}
-
-    <!-- ACTION CARDS -->
-    <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 12px; padding: 20px; margin: 24px 0;">
-      <h3 style="margin: 0 0 8px 0; color: #b45309; font-size: 16px; font-weight: 700;">📸 Download Your "I Will Be Attending" Banner</h3>
-      <p style="margin: 0 0 14px 0; font-size: 14px; line-height: 1.5; color: #78350f;">
-        Share your anticipation with brothers and sisters! Create and download your custom <strong>"I Will Be Attending"</strong> image card with your photo directly on our website.
-      </p>
-      <a href="${SITE_URL}/attending" style="display: inline-block; background-color: #d97706; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 14px;">Download Attending Card &rarr;</a>
-    </div>
-
-    <div style="background: #f0f9ff; border: 1px solid #e0f2fe; border-radius: 12px; padding: 20px; margin: 24px 0;">
-      <h3 style="margin: 0 0 8px 0; color: #0369a1; font-size: 16px; font-weight: 700;">🤖 Meet Smart LATEEF AI Assistant</h3>
-      <p style="margin: 0 0 14px 0; font-size: 14px; line-height: 1.5; color: #0c4a6e;">
-        Have questions about venue directions, parking, event schedule, or dhikr procedures? <strong>Smart LATEEF</strong> is available 24/7 on the website to answer all your queries in real time.
-      </p>
-      <a href="${SITE_URL}/chat" style="display: inline-block; background-color: #0284c7; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; font-size: 14px;">Chat With Smart LATEEF &rarr;</a>
+    <!-- EVENT DETAILS -->
+    <div style="background-color:#ffffff;border:1px solid #e2e8f0;border-radius:14px;padding:18px 20px;margin:0 0 20px 0;">
+      <p style="margin:0 0 10px 0;font-size:13px;font-weight:700;color:#0f766e;text-transform:uppercase;letter-spacing:1.5px;">Event Details</p>
+      <p style="margin:0 0 8px 0;font-size:14px;line-height:1.6;color:#334155;">&#128205; Tafawa Balewa Square (TBS) Main Bowl, Lagos, Nigeria</p>
+      <p style="margin:0;font-size:14px;line-height:1.6;color:#334155;">&#128197; Sunday, January 24, 2027</p>
     </div>
 
     ${referralCode ? `
-      <div style="background: #faf5ff; border: 1px solid #f3e8ff; border-radius: 12px; padding: 20px; margin: 24px 0;">
-        <h3 style="margin: 0 0 6px 0; color: #6b21a8; font-size: 15px; font-weight: 700;">🎁 Invite Friends & Earn Referral Rewards</h3>
-        <p style="margin: 0 0 10px 0; font-size: 14px; color: #581c87;">Your unique referral link:</p>
-        <div style="background: #ffffff; border: 1px solid #d8b4fe; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 13px; color: #6b21a8; word-break: break-all;">
-          ${SITE_URL}/?ref=${referralCode}
-        </div>
+    <!-- REFERRAL -->
+    <div style="background-color:#faf5ff;border:1px solid #e9d5ff;border-radius:14px;padding:18px 20px;margin:0 0 20px 0;">
+      <p style="margin:0 0 6px 0;font-size:14px;font-weight:700;color:#6b21a8;">Invite family and friends</p>
+      <p style="margin:0 0 10px 0;font-size:13px;line-height:1.6;color:#581c87;">Share your personal link. Every registration through it counts toward your referrals.</p>
+      <div style="background-color:#ffffff;border:1px solid #d8b4fe;padding:10px 12px;border-radius:8px;font-family:monospace,monospace;font-size:13px;color:#6b21a8;word-break:break-all;">
+        ${referralLink}
       </div>
+      <p style="margin:10px 0 0 0;font-size:12px;color:#7e22ce;">Your code: <strong>${referralCode}</strong></p>
+    </div>
     ` : ''}
 
-    <div style="border-top: 1px solid #e2e8f0; padding-top: 20px; margin-top: 28px;">
-      <p style="margin: 0 0 6px 0; font-weight: 700; font-size: 14px; color: #064e3b;">Event Summary:</p>
-      <p style="margin: 0 0 4px 0; font-size: 14px; color: #475569;">📍 <strong>Venue:</strong> Tafawa Balewa Square (TBS) Main Bowl, Lagos</p>
-      <p style="margin: 0; font-size: 14px; color: #475569;">📅 <strong>Date:</strong> Sunday, January 24, 2027</p>
+    <!-- ACTIONS -->
+    <div style="margin:0 0 8px 0;">
+      <a href="${SITE_URL}/attending" class="btn" style="display:block;text-align:center;background-color:#d97706;color:#ffffff;text-decoration:none;padding:14px 20px;border-radius:10px;font-weight:700;font-size:15px;margin:0 0 10px 0;">Get Your &ldquo;I Will Be Attending&rdquo; Banner</a>
+      <a href="${SITE_URL}/chat" class="btn" style="display:block;text-align:center;background-color:#ffffff;color:#0f766e;text-decoration:none;padding:13px 20px;border-radius:10px;font-weight:700;font-size:15px;border:1.5px solid #0f766e;">Chat with Smart LATEEF Assistant</a>
     </div>
+
+    <p style="margin:18px 0 0 0;font-size:13px;line-height:1.6;color:#64748b;">
+      Questions about venue, parking, or the program? Simply reply to this email and our team will assist you.
+    </p>
+
+    <style>
+      @media only screen and (max-width: 600px) {
+        .hero-title { font-size: 21px !important; }
+        .pass-code { font-size: 26px !important; letter-spacing: 2px !important; }
+      }
+    </style>
   `;
+
+  const textVersion = [
+    `As-Salāmu ‘Alaykum Warahmatullāhi Wabarakātuh ${safeName},`,
+    ``,
+    `Alhamdulillah! Your registration for Lateeful Akbar 2027 – The Grand Spiritual Gathering of Sublime Minds has been completed.`,
+    ``,
+    `Your official pass code: ${passCode}`,
+    `Name: ${safeName}`,
+    `Category: ${ticketType}`,
+    ``,
+    `Venue: Tafawa Balewa Square (TBS) Main Bowl, Lagos, Nigeria`,
+    `Date: Sunday, January 24, 2027`,
+    ...(referralCode
+      ? [``, `Invite family and friends with your personal link:`, referralLink, `Your code: ${referralCode}`]
+      : []),
+    ``,
+    `Get your "I Will Be Attending" banner: ${SITE_URL}/attending`,
+    `Chat with Smart LATEEF: ${SITE_URL}/chat`,
+    ``,
+    `Questions? Simply reply to this email.`,
+    ``,
+    `THE LATEEF-UL-IL-AKBAR-LI-A’AZAM`,
+  ].join('\n');
+
+  const html = `<!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="x-apple-disable-message-reformatting">
+      <title>Registration Successful – Lateeful Akbar 2027</title>
+    </head>
+    <body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;color:#1e293b;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#f1f5f9;">
+        <tr>
+          <td align="center" style="padding:24px 12px;">
+            <table border="0" cellpadding="0" cellspacing="0" width="600" style="width:600px;max-width:600px;background-color:#ffffff;border:1px solid #e2e8f0;border-radius:16px;">
+              <tr>
+                <td class="content-pad" style="padding:28px 28px 8px 28px;">${innerHtml}</td>
+              </tr>
+              <tr>
+                <td style="background-color:#f8fafc;padding:20px 28px;text-align:center;border-top:1px solid #e2e8f0;font-size:12px;color:#64748b;border-radius:0 0 16px 16px;">
+                  <p style="margin:0 0 6px 0;font-weight:700;color:#0f766e;">THE LATEEF-UL-IL-AKBAR-LI-A’AZAM</p>
+                  <p style="margin:0 0 10px 0;line-height:1.5;">Tafawa Balewa Square (TBS) Main Bowl, Lagos, Nigeria</p>
+                  <p style="margin:0 0 10px 0;">
+                    <a href="${SITE_URL}" style="color:#0d9488;text-decoration:none;font-weight:600;">Website</a>
+                    &nbsp;&bull;&nbsp;
+                    <a href="${SITE_URL}/sadaqah" style="color:#0d9488;text-decoration:none;font-weight:600;">Support</a>
+                    &nbsp;&bull;&nbsp;
+                    <a href="${SITE_URL}/chat" style="color:#0d9488;text-decoration:none;font-weight:600;">Smart LATEEF</a>
+                  </p>
+                  <p style="margin:0;font-size:11px;color:#94a3b8;line-height:1.5;">
+                    You received this email because you registered for Lateeful Akbar 2027.<br>
+                    <a href="mailto:lateefulakbar@gmail.com?subject=Unsubscribe" style="color:#94a3b8;text-decoration:underline;">Unsubscribe</a>
+                  </p>
+                </td>
+              </tr>
+            </table>
+            <p style="margin:14px 0 0 0;font-size:11px;color:#94a3b8;">&copy; 2027 THE LATEEF-UL-IL-AKBAR-LI-A’AZAM. All rights reserved.</p>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>`;
 
   try {
     const cfg = getSmtpConfig();
     await transporter.sendMail({
       from: cfg.from,
       to,
-      subject: `Your Event Pass for Lateeful-Ul-Akbar 2027 [${passCode}]`,
-      html: getEmailWrapper('Lateeful-Ul-Akbar 2027 Event Pass', innerHtml),
+      replyTo: cfg.user,
+      subject: `Registration Successful – Lateeful Akbar 2027`,
+      text: textVersion,
+      html,
+      headers: {
+        'List-Unsubscribe': '<mailto:lateefulakbar@gmail.com?subject=Unsubscribe>',
+      },
     });
     return { success: true };
   } catch (err) {
