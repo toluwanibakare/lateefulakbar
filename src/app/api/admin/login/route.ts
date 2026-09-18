@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
 import { checkRateLimit, sanitizeString, isValidEmail, isDeviceLocked, recordFailedLogin, resetFailedLogin } from '@/lib/security';
 import { sendAdminPasswordChangedEmail, getTransporter } from '@/lib/email';
+import { logAdminActivity } from '@/app/api/admin/crud/route';
 
 const SUPER_ADMIN_PASSWORD = process.env.SUPER_ADMIN_PASSWORD || 'Master@123';
 const CONTENT_ADMIN_PASSWORD = process.env.CONTENT_ADMIN_PASSWORD || 'Content@123';
