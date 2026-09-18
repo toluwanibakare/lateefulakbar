@@ -820,7 +820,6 @@ export default function AdminPage() {
       items: [
         { id: "newsletter", label: "Email & Newsletter Hub", icon: Mail },
         { id: "blog", label: "Blog Manager", icon: FileText },
-        { id: "gallery", label: "Gallery Manager", icon: ImageIcon },
       ],
     },
     {
@@ -1155,6 +1154,80 @@ export default function AdminPage() {
                     ))}
                   </div>
                 </div>
+              </div>
+          {/* SECTION: ATTENDEES MANAGEMENT */}
+          {activeSection === "attendees" && (
+            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-ink/10 pb-5">
+                <div>
+                  <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                    <Users className="h-5 w-5 text-vivid" /> Registered Attendees Directory ({attendees.length})
+                  </h2>
+                  <p className="text-xs text-faded mt-0.5">Manage attendee passes, contact info, and pass verification codes</p>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-faded" />
+                    <input
+                      type="text"
+                      placeholder="Search name, email, pass..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-cream border border-ink/15 rounded-xl pl-9 pr-4 py-2 text-xs text-ink focus:outline-none focus:border-vivid"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4">Attendee Name</th>
+                      <th className="py-3 px-4">Email</th>
+                      <th className="py-3 px-4">Phone Number</th>
+                      <th className="py-3 px-4">Pass Category</th>
+                      <th className="py-3 px-4">Pass Code</th>
+                      <th className="py-3 px-4">Date Registered</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink/10">
+                    {attendees
+                      .filter((a) => {
+                        if (!searchQuery) return true;
+                        const q = searchQuery.toLowerCase();
+                        return (
+                          a.full_name?.toLowerCase().includes(q) ||
+                          a.email?.toLowerCase().includes(q) ||
+                          a.pass_code?.toLowerCase().includes(q)
+                        );
+                      })
+                      .map((att) => (
+                        <tr key={att.id} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-4 font-bold text-pine">{att.full_name}</td>
+                          <td className="py-3.5 px-4 text-faded">{att.email}</td>
+                          <td className="py-3.5 px-4 font-mono text-ink">{att.phone || "-"}</td>
+                          <td className="py-3.5 px-4">
+                            <span className="px-2.5 py-1 rounded bg-mist text-pine font-semibold text-[10px] border border-sage">
+                              {att.ticket_type || "Standard Guest"}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-vivid">{att.pass_code}</td>
+                          <td className="py-3.5 px-4 text-faded">
+                            {new Date(att.created_at).toLocaleDateString()}
+                          </td>
+                        </tr>
+                      ))}
+                    {attendees.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="py-8 text-center text-faded">
+                          No registered attendees found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}

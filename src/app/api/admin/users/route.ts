@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
-import { sanitizeString, isValidEmail } from '@/lib/security';
+import { sanitizeString, isValidEmail, isValidPassword } from '@/lib/security';
 import { logAdminActivity } from '@/app/api/admin/crud/route';
 import { sendAdminPasswordChangedEmail } from '@/lib/email';
 
@@ -109,6 +109,11 @@ export async function POST(req: Request) {
       const { email, currentPassword, newPassword } = payload;
       const cleanEmail = sanitizeString(email, 100).toLowerCase();
       const cleanNewPassword = sanitizeString(newPassword, 100);
+
+      const passCheck = isValidPassword(cleanNewPassword);
+      if (!passCheck.valid) {
+        return NextResponse.json({ success: false, error: passCheck.reason }, { status: 400 });
+      }
 
       if (!cleanEmail || !cleanNewPassword) {
         return NextResponse.json({ success: false, error: 'Invalid password details' }, { status: 400 });

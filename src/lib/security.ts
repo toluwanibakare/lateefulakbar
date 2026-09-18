@@ -54,17 +54,44 @@ export function verifyAdminToken(authHeader: string | null, cookieToken?: string
   return validTokens.includes(token) || token.startsWith('session_custom_');
 }
 
-// 3. Input Validation & Sanitization Helpers
-export function isValidEmail(email: string): boolean {
-  if (!email || typeof email !== 'string' || email.length > 254) return false;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email.trim());
+export function isValidPassword(password: string): { valid: boolean; reason?: string } {
+  if (!password || typeof password !== 'string') return { valid: false, reason: 'Password is required' };
+  if (password.length < 8) return { valid: false, reason: 'Password must be at least 8 characters long' };
+  if (!/[A-Z]/.test(password)) return { valid: false, reason: 'Password must contain at least one uppercase letter (A-Z)' };
+  if (!/[a-z]/.test(password)) return { valid: false, reason: 'Password must contain at least one lowercase letter (a-z)' };
+  if (!/[0-9]/.test(password)) return { valid: false, reason: 'Password must contain at least one number (0-9)' };
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) return { valid: false, reason: 'Password must contain at least one special character (!@#$%^&*)' };
+  return { valid: true };
 }
 
-export function sanitizeString(input: unknown, maxLength: number = 1000): string {
-  if (typeof input !== 'string') return '';
-  return input
-    .trim()
-    .slice(0, maxLength)
-    .replace(/[<>]/g, ''); // Escaping dangerous HTML tags
+// 4. Failed Login Attempts & Device Lockout Tracker (3 attempts limit)
+const failedAttemptsMap = new Map<string, { count: number; lockedUntil?: number }>();
+
+export function recordFailedLogin(key: string): { count: number; locked: boolean } {
+  const current = failedAttemptsMap.get(key) || { count: 0 };
+  const now = Date.now();
+
+  if (current.lockedUntil && now < current.lockedUntil) {
+    return { count: current.count, locked: true };
+  }
+
+  const newCount = current.count + 1;
+  if (newCount >= 3) {
+    // Lock out device for 24 hours
+    failedAttemptsMap.set(key, { count: newCount, lockedUntil: now + 24 * 60 * 60 * 1000 });
+    return { count: newCount, locked: true };
+  }
+
+  failedAttemptsMap.set(key, { count: newCount });
+  return { count: newCount, locked: false };
+}
+
+export function isDeviceLocked(key: string): boolean {
+  const current = failedAttemptsMap.get(key);
+  if (!current || !current.lockedUntil) return false;
+  return Date.now() < current.lockedUntil;
+}
+
+export function resetFailedLogin(key: string): void {
+  failedAttemptsMap.delete(key);
 }

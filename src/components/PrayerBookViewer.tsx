@@ -306,10 +306,10 @@ export default function PrayerBookViewer() {
                   </div>
                 </div>
 
-                {/* PDF Content Area */}
+                {/* PDF Content Area with Mobile Touch Scroll Support */}
                 <div
                   onContextMenu={(e) => e.preventDefault()}
-                  className="relative flex-1 w-full h-full min-h-0 bg-slate-900 select-none overflow-hidden min-w-0"
+                  className="relative flex-1 w-full h-full min-h-[480px] xs:min-h-[550px] sm:min-h-[620px] bg-slate-900 select-none overflow-y-auto overscroll-contain touch-pan-y min-w-0"
                 >
                   <AnimatePresence>
                     {isPageLoading && (
@@ -349,30 +349,21 @@ export default function PrayerBookViewer() {
                     )}
                   </AnimatePresence>
 
-                  <iframe
-                    key={`main-pdf-page-${currentPage}`}
-                    ref={mainIframeRef}
-                    src={pdfSrc}
-                    onLoad={() => setIsPageLoading(false)}
-                    className="w-full h-full border-0 select-none"
-                    title="Asalatu Nadwat PDF Page Viewer"
-                  />
                   <object
-                    data={pdfSrc}
+                    key={`main-pdf-object-${currentPage}`}
+                    data={`${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
                     type="application/pdf"
-                    className="w-full h-full border-0 hidden"
+                    className="w-full h-full min-h-[480px] xs:min-h-[550px] sm:min-h-[620px] border-0 block"
+                    onLoad={() => setIsPageLoading(false)}
                   >
-                    <div className="p-6 text-center text-white flex flex-col items-center justify-center h-full space-y-3">
-                      <p>Asalatu Nadwat PDF Prayer Book</p>
-                      <a
-                        href={BASE_PDF_PATH}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="px-4 py-2 bg-vivid text-white rounded-lg text-xs font-semibold"
-                      >
-                        Open PDF Document
-                      </a>
-                    </div>
+                    <iframe
+                      key={`main-pdf-page-${currentPage}`}
+                      ref={mainIframeRef}
+                      src={`${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                      onLoad={() => setIsPageLoading(false)}
+                      className="w-full h-full min-h-[480px] border-0 select-none block"
+                      title="Asalatu Nadwat PDF Page Viewer"
+                    />
                   </object>
                 </div>
 

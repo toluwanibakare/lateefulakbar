@@ -1,29 +1,61 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
-import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
-import { logAdminActivity } from '@/app/api/admin/crud/route';
+import { checkRateLimit, sanitizeString, isValidEmail, isDeviceLocked, recordFailedLogin, resetFailedLogin } from '@/lib/security';
+import { sendAdminPasswordChangedEmail, getTransporter } from '@/lib/email';
 
 const SUPER_ADMIN_PASSWORD = process.env.SUPER_ADMIN_PASSWORD || 'Master@123';
 const CONTENT_ADMIN_PASSWORD = process.env.CONTENT_ADMIN_PASSWORD || 'Content@123';
 const EVENT_ADMIN_PASSWORD = process.env.EVENT_ADMIN_PASSWORD || 'Event@123';
 const FINANCE_ADMIN_PASSWORD = process.env.FINANCE_ADMIN_PASSWORD || 'Finance@123';
 
+async function sendFailedLoginAlert(adminEmail: string, ip: string, attempts: number) {
+  try {
+    const transporter = await getTransporter();
+    if (transporter) {
+      await transporter.sendMail({
+        from: '"Lateeful-Ul-Akbar Security" <lateefulakbar@gmail.com>',
+        to: adminEmail || 'lateefulakbar@gmail.com',
+        subject: `[SECURITY LOCKOUT ALERT] 3 Failed Admin Login Attempts`,
+        html: `
+          <div style="font-family: sans-serif; padding: 20px; color: #1e293b;">
+            <h2 style="color: #991b1b;">Security Lockout Alert</h2>
+            <p>Attention Admin,</p>
+            <p>An unauthorized login attempt was blocked after <strong>3 failed attempts</strong> on account <strong>${adminEmail}</strong>.</p>
+            <p><strong>Device IP:</strong> ${ip}</p>
+            <p><strong>Time:</strong> ${new Date().toUTCString()}</p>
+            <p style="color: #ef4444; font-weight: bold;">This device has been locked out from attempting to log in again.</p>
+          </div>
+        `,
+      });
+    }
+  } catch (err) {
+    console.error('Error sending failed login security email:', err);
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const ip = req.headers.get('x-forwarded-for') || 'ip_unknown';
-    const rateCheck = checkRateLimit(`login_${ip}`, 5, 60 * 1000);
-
-    if (!rateCheck.success) {
-      return NextResponse.json(
-        { success: false, error: 'Too many failed login attempts. Please wait 1 minute.' },
-        { status: 429 }
-      );
-    }
-
     const body = await req.json();
     const email = sanitizeString(body.email, 100).toLowerCase();
     const password = sanitizeString(body.password, 100);
+
+    const lockoutKey = `lockout_${email}_${ip}`;
+    if (isDeviceLocked(lockoutKey)) {
+      return NextResponse.json(
+        { success: false, error: 'Device locked. 3 failed login attempts exceeded. Access blocked on this device.' },
+        { status: 403 }
+      );
+    }
+
+    const rateCheck = checkRateLimit(`login_${ip}`, 5, 60 * 1000);
+    if (!rateCheck.success) {
+      return NextResponse.json(
+        { success: false, error: 'Too many login attempts. Please wait 1 minute.' },
+        { status: 429 }
+      );
+    }
 
     if (!email || !password || !isValidEmail(email)) {
       return NextResponse.json(
@@ -34,6 +66,7 @@ export async function POST(req: Request) {
 
     // Master Super Admin
     if (email === 'admin@lateefulakbar.com' && password === SUPER_ADMIN_PASSWORD) {
+      resetFailedLogin(lockoutKey);
       await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'User Login', 'Authenticated as Super Admin');
       const token = process.env.SUPER_ADMIN_TOKEN || 'session_super_admin_lateeful_akbar_2027';
       const response = NextResponse.json({
@@ -42,7 +75,7 @@ export async function POST(req: Request) {
           name: 'Super Admin',
           email: 'admin@lateefulakbar.com',
           role: 'Super Admin',
-          permissions: ['dashboard', 'messages', 'live_event', 'updates', 'attendees', 'referrals', 'newsletter', 'blog', 'gallery', 'sadaqah', 'donations', 'ai_assistant', 'settings', 'admin_users', 'activity_log'],
+          permissions: ['dashboard', 'messages', 'live_event', 'updates', 'attendees', 'referrals', 'newsletter', 'blog', 'sadaqah', 'donations', 'ai_assistant', 'settings', 'admin_users', 'activity_log'],
         },
         token,
       });
@@ -58,6 +91,7 @@ export async function POST(req: Request) {
 
     // Preset Role Accounts
     if (email === 'content@lateefulakbar.com' && password === CONTENT_ADMIN_PASSWORD) {
+      resetFailedLogin(lockoutKey);
       await logAdminActivity('content@lateefulakbar.com', 'Content Manager', 'User Login', 'Authenticated as Content Admin');
       return NextResponse.json({
         success: true,
@@ -65,13 +99,14 @@ export async function POST(req: Request) {
           name: 'Content Manager',
           email: 'content@lateefulakbar.com',
           role: 'Content Admin',
-          permissions: ['dashboard', 'newsletter', 'blog', 'gallery'],
+          permissions: ['dashboard', 'newsletter', 'blog'],
         },
         token: process.env.CONTENT_ADMIN_TOKEN || 'session_content_admin_lateeful_akbar_2027',
       });
     }
 
     if (email === 'event@lateefulakbar.com' && password === EVENT_ADMIN_PASSWORD) {
+      resetFailedLogin(lockoutKey);
       await logAdminActivity('event@lateefulakbar.com', 'Event Coordinator', 'User Login', 'Authenticated as Event Admin');
       return NextResponse.json({
         success: true,
@@ -86,6 +121,7 @@ export async function POST(req: Request) {
     }
 
     if (email === 'finance@lateefulakbar.com' && password === FINANCE_ADMIN_PASSWORD) {
+      resetFailedLogin(lockoutKey);
       await logAdminActivity('finance@lateefulakbar.com', 'Finance Controller', 'User Login', 'Authenticated as Finance Admin');
       return NextResponse.json({
         success: true,
@@ -107,6 +143,7 @@ export async function POST(req: Request) {
     );
 
     if (rows.length > 0) {
+      resetFailedLogin(lockoutKey);
       const u = rows[0];
       let perms: string[] = [];
       try {
@@ -129,8 +166,18 @@ export async function POST(req: Request) {
       });
     }
 
+    // Record Failed Attempt
+    const failRecord = recordFailedLogin(lockoutKey);
+    if (failRecord.locked) {
+      await sendFailedLoginAlert(email, ip, failRecord.count);
+      return NextResponse.json(
+        { success: false, error: 'Device locked! 3 failed login attempts reached. Security notification sent to admin.' },
+        { status: 403 }
+      );
+    }
+
     return NextResponse.json(
-      { success: false, error: 'Invalid email or password' },
+      { success: false, error: `Invalid email or password. (${3 - failRecord.count} attempts remaining before lockout)` },
       { status: 401 }
     );
   } catch (error) {
