@@ -105,6 +105,42 @@ export async function GET(req: Request) {
       console.warn('Stats warning (tasbih):', e);
     }
 
+    // 9. Real Registration Growth Trend (Last 7 Days)
+    let registrationTrend: any[] = [];
+    try {
+      const [trendRows] = await db.query<RowDataPacket[]>(
+        `SELECT DATE_FORMAT(created_at, '%a') as day,
+                DATE(created_at) as date_val,
+                COUNT(*) as count
+         FROM registrations
+         WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 6 DAY)
+         GROUP BY DATE(created_at), DATE_FORMAT(created_at, '%a')
+         ORDER BY DATE(created_at) ASC`
+      );
+      registrationTrend = trendRows;
+    } catch (e) {
+      console.warn('Stats warning (registrationTrend):', e);
+    }
+
+    // 10. Real Donation Category Split (Live Mode Only)
+    let donationCategorySplit: any[] = [];
+    try {
+      const [splitRows] = await db.query<RowDataPacket[]>(
+        `SELECT category as name, SUM(amount) as value
+         FROM donations
+         WHERE status = 'completed' AND mode = 'live'
+         GROUP BY category`
+      );
+      const COLOR_PALETTE = ['#01923c', '#0b3d2e', '#9a7b2e', '#34d399', '#d97706', '#0284c7'];
+      donationCategorySplit = splitRows.map((r, idx) => ({
+        name: (r.name || 'General').charAt(0).toUpperCase() + (r.name || 'General').slice(1),
+        value: Number(r.value || 0),
+        color: COLOR_PALETTE[idx % COLOR_PALETTE.length],
+      }));
+    } catch (e) {
+      console.warn('Stats warning (donationCategorySplit):', e);
+    }
+
     return NextResponse.json({
       success: true,
       stats: {
@@ -118,6 +154,8 @@ export async function GET(req: Request) {
         recentRegistrations: recentRegs,
         recentDonations: recentDonations,
         recentLogs: recentLogs,
+        registrationTrend,
+        donationCategorySplit,
       },
     });
   } catch (error) {

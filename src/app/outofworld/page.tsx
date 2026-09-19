@@ -1292,77 +1292,88 @@ export default function AdminPage() {
               </div>
 
               {/* Charts */}
-              <div className="grid gap-8 lg:grid-cols-12">
-                <div className="lg:col-span-8 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm">
-                  <div className="flex items-center justify-between mb-6">
-                    <div>
-                      <h3 className="text-base font-bold text-pine">Attendee Registration Growth</h3>
-                      <p className="text-xs text-faded">Daily registration volume towards Nadwat 2027</p>
-                    </div>
-                    <span className="px-3 py-1 bg-mist text-pine text-xs font-semibold rounded-full border border-sage">
-                      Real-Time Sync
-                    </span>
-                  </div>
+              {(() => {
+                const regData = stats?.registrationTrend && stats.registrationTrend.length > 0
+                  ? stats.registrationTrend
+                  : REGISTRATION_TREND;
+                const pieData = stats?.donationCategorySplit && stats.donationCategorySplit.length > 0
+                  ? stats.donationCategorySplit
+                  : DONATION_PIE_DATA;
 
-                  <div className="h-64 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={REGISTRATION_TREND} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                        <defs>
-                          <linearGradient id="colorReg" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#01923c" stopOpacity={0.4} />
-                            <stop offset="95%" stopColor="#01923c" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef4ec" />
-                        <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#4c6a5e' }} axisLine={false} tickLine={false} />
-                        <YAxis tick={{ fontSize: 11, fill: '#4c6a5e' }} axisLine={false} tickLine={false} />
-                        <Tooltip
-                          contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
-                        />
-                        <Area type="monotone" dataKey="count" stroke="#01923c" strokeWidth={3} fillOpacity={1} fill="url(#colorReg)" />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-
-                <div className="lg:col-span-4 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                  <div>
-                    <h3 className="text-base font-bold text-pine">Donation Category Split</h3>
-                    <p className="text-xs text-faded">Donations by community project</p>
-                  </div>
-
-                  <div className="h-48 w-full my-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={DONATION_PIE_DATA}
-                          innerRadius={50}
-                          outerRadius={75}
-                          paddingAngle={5}
-                          dataKey="value"
-                        >
-                          {DONATION_PIE_DATA.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          formatter={(value: any) => `₦${Number(value).toLocaleString()}`}
-                          contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
-                        />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    {DONATION_PIE_DATA.map((d) => (
-                      <div key={d.name} className="flex items-center gap-2">
-                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: d.color }} />
-                        <span className="text-ink font-semibold truncate">{d.name}</span>
+                return (
+                  <div className="grid gap-8 lg:grid-cols-12">
+                    <div className="lg:col-span-8 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <h3 className="text-base font-bold text-pine">Attendee Registration Growth</h3>
+                          <p className="text-xs text-faded">Daily registration volume towards Nadwat 2027</p>
+                        </div>
+                        <span className="px-3 py-1 bg-mist text-pine text-xs font-semibold rounded-full border border-sage">
+                          Real-Time Sync
+                        </span>
                       </div>
-                    ))}
+
+                      <div className="h-64 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={regData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                            <defs>
+                              <linearGradient id="colorReg" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#01923c" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#01923c" stopOpacity={0} />
+                              </linearGradient>
+                            </defs>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#eef4ec" />
+                            <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#4c6a5e' }} axisLine={false} tickLine={false} />
+                            <YAxis tick={{ fontSize: 11, fill: '#4c6a5e' }} axisLine={false} tickLine={false} />
+                            <Tooltip
+                              contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', border: 'none', color: '#fff', fontSize: '12px' }}
+                            />
+                            <Area type="monotone" dataKey="count" stroke="#01923c" strokeWidth={3} fillOpacity={1} fill="url(#colorReg)" />
+                          </AreaChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+
+                    <div className="lg:col-span-4 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                      <div>
+                        <h3 className="text-base font-bold text-pine">Donation Category Split</h3>
+                        <p className="text-xs text-faded">Live mode donations by project</p>
+                      </div>
+
+                      <div className="h-48 w-full my-4">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={pieData}
+                              innerRadius={50}
+                              outerRadius={75}
+                              paddingAngle={5}
+                              dataKey="value"
+                            >
+                              {pieData.map((entry: any, index: number) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              formatter={(value: any) => `₦${Number(value).toLocaleString()}`}
+                              contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        {pieData.map((d: any) => (
+                          <div key={d.name} className="flex items-center gap-2">
+                            <span className="h-2.5 w-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: d.color }} />
+                            <span className="text-ink font-semibold truncate">{d.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                );
+              })()}
             </div>
           )}
 
