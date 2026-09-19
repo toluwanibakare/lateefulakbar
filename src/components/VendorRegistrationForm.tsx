@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, CreditCard, Download, Layers, Lock, ShieldCheck, Store, Zap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CreditCard, Download, ShieldCheck, Loader2 } from "lucide-react";
 import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal, TiltCard } from "./ui";
 
@@ -655,9 +655,20 @@ export default function VendorRegistrationForm() {
 
                         <button
                           type="submit"
-                          className="inline-flex items-center gap-2 bg-vivid px-8 py-4 text-sm font-bold uppercase tracking-wider text-white rounded-lg hover:bg-vivid-deep transition-all shadow-lg"
+                          disabled={submitting}
+                          className="inline-flex items-center gap-2 bg-vivid px-8 py-4 text-sm font-bold uppercase tracking-wider text-white rounded-lg hover:bg-vivid-deep transition-all shadow-lg disabled:opacity-50"
                         >
-                          <CreditCard className="h-4 w-4" /> Pay Online & Get Approval
+                          {submitting ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin text-white" />
+                              <span>Processing Vendor Stalls...</span>
+                            </>
+                          ) : (
+                            <>
+                              <CreditCard className="h-4 w-4" />
+                              <span>Pay Online & Get Approval</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>

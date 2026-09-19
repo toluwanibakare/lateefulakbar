@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Camera, Check, Download, FileText, Lock, Radio, ShieldCheck, Tv, Video } from "lucide-react";
+import { ArrowLeft, ArrowRight, Camera, Check, Download, FileText, Loader2, Lock, Radio, ShieldCheck, Tv, Video } from "lucide-react";
 import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal } from "./ui";
 
@@ -498,10 +498,17 @@ export default function MediaAccreditationForm() {
 
                         <button
                           type="submit"
-                          disabled={!allAgreed}
+                          disabled={submitting || !allAgreed}
                           className="inline-flex items-center gap-2 bg-vivid px-8 py-4 text-sm font-bold uppercase tracking-wider text-white rounded-lg hover:bg-vivid-deep disabled:opacity-40 shadow-lg"
                         >
-                          [ SUBMIT FOR ACCREDITATION ]
+                          {submitting ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin text-white" />
+                              <span>Submitting Application...</span>
+                            </>
+                          ) : (
+                            <span>[ SUBMIT FOR ACCREDITATION ]</span>
+                          )}
                         </button>
                       </div>
                     </div>

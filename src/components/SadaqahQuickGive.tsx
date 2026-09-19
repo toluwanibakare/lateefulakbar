@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { BadgeCheck, HeartHandshake, Lock, ShieldCheck } from "lucide-react";
+import { BadgeCheck, HeartHandshake, Lock, ShieldCheck, Loader2 } from "lucide-react";
 import { Eyebrow, Reveal } from "./ui";
 
 const PRESETS = [1000, 2500, 5000, 10000, 25000, 50000];
@@ -284,10 +284,17 @@ export default function SadaqahQuickGive() {
 
                   <button
                     type="submit"
-                    disabled={effective < 100 || !name || !email}
-                    className="mt-6 w-full bg-vivid py-4 text-sm font-semibold text-white transition-colors hover:bg-vivid-deep disabled:cursor-not-allowed disabled:opacity-40"
+                    disabled={submitting || effective < 100 || !name || !email}
+                    className="mt-6 w-full bg-vivid py-4 text-sm font-semibold text-white transition-colors hover:bg-vivid-deep disabled:cursor-not-allowed disabled:opacity-40 flex items-center justify-center gap-2 shadow-md"
                   >
-                    Give Sadaqah — ₦{fmt(effective)}
+                    {submitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin text-white" />
+                        <span>Processing Payment...</span>
+                      </>
+                    ) : (
+                      `Give Sadaqah — ₦${fmt(effective)}`
+                    )}
                   </button>
                   <p className="mt-3 text-center text-[12px] text-faded">
                     Card · Bank transfer — receipt by email.

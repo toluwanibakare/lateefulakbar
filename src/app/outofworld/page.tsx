@@ -53,7 +53,8 @@ import {
   Edit,
   ShieldAlert,
   Home,
-  Globe
+  Globe,
+  Loader2
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -974,9 +975,16 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={authLoading}
-              className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md disabled:opacity-50 mt-2"
+              className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-md disabled:opacity-50 mt-2 flex items-center justify-center gap-2"
             >
-              {authLoading ? "Authenticating..." : "Sign In to Admin Console"}
+              {authLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <span>Authenticating Admin...</span>
+                </>
+              ) : (
+                "Sign In to Admin Console"
+              )}
             </button>
           </form>
         </div>

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Check, Download, Share2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Download, Share2, Loader2 } from "lucide-react";
 import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal } from "./ui";
 
@@ -370,7 +370,17 @@ export default function RegistrationPortal() {
                           <ArrowLeft className="h-4 w-4" /> Back
                         </button>
                         <button type="submit" disabled={submitting} className="inline-flex items-center gap-2 bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep disabled:opacity-50">
-                          <Check className="h-4 w-4" /> {submitting ? "Generating pass..." : "Generate my pass"}
+                          {submitting ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin text-white" />
+                              <span>Generating pass...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Check className="h-4 w-4" />
+                              <span>Generate my pass</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     </div>

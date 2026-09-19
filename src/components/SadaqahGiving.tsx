@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Droplets, Layers, Video, Wifi, Wind, Home, ShieldCheck, X } from "lucide-react";
+import { Droplets, Layers, Video, Wifi, Wind, Home, ShieldCheck, X, Loader2 } from "lucide-react";
 import { Eyebrow, FadeIn, StaggerContainer, StaggerItem, TiltCard } from "./ui";
 
 type Campaign = {
@@ -349,9 +349,16 @@ export default function SadaqahGiving() {
                       <button
                         onClick={pay}
                         disabled={submitting || !totalPay}
-                        className="w-full bg-vivid py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-vivid-deep disabled:opacity-40"
+                        className="w-full bg-vivid py-3.5 text-xs font-bold uppercase tracking-wider text-white hover:bg-vivid-deep disabled:opacity-40 flex items-center justify-center gap-2 transition-all shadow-md"
                       >
-                        {submitting ? "Processing..." : `Complete ₦${fmt(totalPay)} Donation`}
+                        {submitting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin text-white" />
+                            <span>Processing Payment...</span>
+                          </>
+                        ) : (
+                          `Complete ₦${fmt(totalPay)} Donation`
+                        )}
                       </button>
                     </div>
                   </div>
