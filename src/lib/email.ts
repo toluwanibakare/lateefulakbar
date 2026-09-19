@@ -41,7 +41,7 @@ function getEmailWrapper(title: string, innerHtml: string): string {
                   <p style="margin: 0 0 12px 0;">
                     <a href="${SITE_URL}" style="color: #0d9488; text-decoration: none; margin: 0 8px; font-weight: 600;">Visit Website</a> &bull;
                     <a href="${SITE_URL}/sadaqah" style="color: #0d9488; text-decoration: none; margin: 0 8px; font-weight: 600;">Support Event</a> &bull;
-                    <a href="${SITE_URL}/chat" style="color: #0d9488; text-decoration: none; margin: 0 8px; font-weight: 600;">Chat Smart LATEEF</a>
+                    <a href="${SITE_URL}/?chat=true" style="color: #0d9488; text-decoration: none; margin: 0 8px; font-weight: 600;">Chat Smart LATEEF</a>
                   </p>
                   <p style="margin: 12px 0 0 0; font-size: 11px; color: #94a3b8;">You received this email because of your registration or interaction with Lateeful-Ul-Akbar 2027.</p>
                 </td>
@@ -155,7 +155,7 @@ export async function sendRegistrationEmail({
     <!-- ACTIONS -->
     <div style="margin:0 0 8px 0;">
       <a href="${SITE_URL}/register" class="btn" style="display:block;text-align:center;background-color:#d97706;color:#ffffff;text-decoration:none;padding:14px 20px;border-radius:10px;font-weight:700;font-size:15px;margin:0 0 10px 0;">Download Pass / View Event Ticket</a>
-      <a href="${SITE_URL}/chat" class="btn" style="display:block;text-align:center;background-color:#ffffff;color:#0f766e;text-decoration:none;padding:13px 20px;border-radius:10px;font-weight:700;font-size:15px;border:1.5px solid #0f766e;">Chat with Smart LATEEF Assistant</a>
+      <a href="${SITE_URL}/?chat=true" class="btn" style="display:block;text-align:center;background-color:#ffffff;color:#0f766e;text-decoration:none;padding:13px 20px;border-radius:10px;font-weight:700;font-size:15px;border:1.5px solid #0f766e;">Chat with Smart LATEEF Assistant</a>
       <a href="${SITE_URL}/about" class="btn" style="display:block;text-align:center;background-color:#f1f5f9;color:#334155;text-decoration:none;padding:11px 20px;border-radius:10px;font-weight:600;font-size:14px;margin-top:10px;">About Event & Venue Details</a>
     </div>
 
@@ -187,7 +187,7 @@ export async function sendRegistrationEmail({
       : []),
     ``,
     `Download your "I Will Be Joining" pass: ${SITE_URL}/register`,
-    `Chat with Smart LATEEF: ${SITE_URL}/chat`,
+    `Chat with Smart LATEEF: ${SITE_URL}/?chat=true`,
     ``,
     `Questions? Simply reply to this email.`,
     ``,
@@ -219,7 +219,7 @@ export async function sendRegistrationEmail({
                     &nbsp;&bull;&nbsp;
                     <a href="${SITE_URL}/sadaqah" style="color:#0d9488;text-decoration:none;font-weight:600;">Support</a>
                     &nbsp;&bull;&nbsp;
-                    <a href="${SITE_URL}/chat" style="color:#0d9488;text-decoration:none;font-weight:600;">Smart LATEEF</a>
+                    <a href="${SITE_URL}/?chat=true" style="color:#0d9488;text-decoration:none;font-weight:600;">Smart LATEEF</a>
                   </p>
                   <p style="margin:0;font-size:11px;color:#94a3b8;line-height:1.5;">
                     You received this email because you registered for Lateeful Akbar 2027.<br>

@@ -186,6 +186,14 @@ export default function AiAssistant() {
       const savedEmail = localStorage.getItem("noor_visitor_email");
       if (savedName) setVisitorName(savedName);
       if (savedEmail) setVisitorEmail(savedEmail);
+
+      // Auto-open AI chat modal if ?chat=true or ?smartlateef=true is present in URL
+      if (typeof window !== "undefined") {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("chat") === "true" || urlParams.get("smartlateef") === "true") {
+          setOpen(true);
+        }
+      }
     } catch (err) {
       console.error("Error loading chat history:", err);
     }
