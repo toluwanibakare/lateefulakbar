@@ -533,4 +533,80 @@ export async function sendBroadcastEmail({
   }
 }
 
+// 7. Admin Account Created Welcome Email
+export async function sendAdminWelcomeEmail({
+  to,
+  name,
+  role,
+  password,
+  permissions,
+}: {
+  to: string;
+  name: string;
+  role: string;
+  password: string;
+  permissions: string[];
+}) {
+  const transporter = await getTransporter();
+  if (!transporter) {
+    console.log(`[EMAIL SIMULATION] Admin welcome email sent to ${to}`);
+    return { success: true, simulated: true };
+  }
+
+  const loginUrl = `${SITE_URL}/outofworld`;
+
+  const innerHtml = `
+    <h2 style="margin: 0 0 16px 0; color: #064e3b; font-size: 20px;">Assalamu Alaikum ${name},</h2>
+    <p style="font-size: 15px; line-height: 1.6; color: #334155;">
+      You have been granted administrator access to the <strong>Lateeful-Ul-Akbar Li-A’azam 2027</strong> management console.
+    </p>
+
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px; margin: 24px 0;">
+      <h3 style="margin: 0 0 14px 0; color: #064e3b; font-size: 16px; border-bottom: 1px solid #dcfce7; padding-bottom: 8px;">Your Admin Credentials</h3>
+      
+      <table border="0" cellpadding="6" cellspacing="0" width="100%" style="font-size: 14px; color: #334155;">
+        <tr>
+          <td width="35%" style="font-weight: 600; color: #047857;">Admin Portal URL:</td>
+          <td width="65%"><a href="${loginUrl}" style="color: #0d9488; font-weight: bold; text-decoration: underline;">${loginUrl}</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Login Email:</td>
+          <td style="font-family: monospace; font-weight: bold;">${to}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Temporary Password:</td>
+          <td style="font-family: monospace; font-weight: bold; color: #d97706; background-color: #fef3c7; padding: 4px 8px; border-radius: 4px; display: inline-block;">${password}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Assigned Role:</td>
+          <td><span style="font-weight: bold; color: #064e3b;">${role}</span></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Module Access:</td>
+          <td style="font-size: 13px; color: #475569;">${permissions && permissions.length > 0 ? permissions.join(', ') : 'All Modules'}</td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+      To log in, visit the admin portal at <a href="${loginUrl}" style="color: #0d9488; font-weight: 600;">${loginUrl}</a> and sign in with your email and password. For security reasons, please change your password upon your first login under <strong>Settings</strong>.
+    </p>
+  `;
+
+  try {
+    const cfg = getSmtpConfig();
+    await transporter.sendMail({
+      from: cfg.from,
+      to,
+      subject: `Admin Account Created - Lateeful-Ul-Akbar Management Console`,
+      html: getEmailWrapper('Admin Account Details', innerHtml),
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('Error sending admin welcome email:', err);
+    return { success: false, error: err };
+  }
+}
+
+
 

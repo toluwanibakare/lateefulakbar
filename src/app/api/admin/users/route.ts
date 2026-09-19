@@ -82,6 +82,20 @@ export async function POST(req: Request) {
       );
       await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Created Admin User', `Name: ${cleanName}, Role: ${cleanRole}, Email: ${cleanEmail}`);
 
+      // Send Welcome Credentials Email to the newly created admin
+      try {
+        const { sendAdminWelcomeEmail } = await import('@/lib/email');
+        await sendAdminWelcomeEmail({
+          to: cleanEmail,
+          name: cleanName,
+          role: cleanRole,
+          password: cleanPassword,
+          permissions: Array.isArray(permissions) ? permissions : [],
+        });
+      } catch (err) {
+        console.error('Error sending admin welcome email:', err);
+      }
+
       return NextResponse.json({ success: true });
     }
 

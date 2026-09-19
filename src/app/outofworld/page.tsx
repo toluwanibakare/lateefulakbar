@@ -1421,6 +1421,54 @@ export default function AdminPage() {
             </div>
           )}
 
+          {/* SECTION: REFERRALS LEADERBOARD */}
+          {activeSection === "referrals" && (
+            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-ink/10 pb-5">
+                <div>
+                  <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                    <Share2 className="h-5 w-5 text-vivid" /> Community Referral Leaderboard ({referrals.length})
+                  </h2>
+                  <p className="text-xs text-faded mt-0.5">Top community ambassadors who invited attendees using their referral codes</p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4">Ambassador Name</th>
+                      <th className="py-3 px-4">Email</th>
+                      <th className="py-3 px-4">Referral / Pass Code</th>
+                      <th className="py-3 px-4 text-right">Total Referrals</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink/10">
+                    {referrals.map((ref, idx) => (
+                      <tr key={idx} className="hover:bg-cream/60">
+                        <td className="py-3.5 px-4 font-bold text-pine">{ref.full_name}</td>
+                        <td className="py-3.5 px-4 text-faded">{ref.email}</td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-vivid">{ref.referral_code || ref.pass_code}</td>
+                        <td className="py-3.5 px-4 text-right">
+                          <span className="px-3 py-1 bg-vivid text-white font-mono font-bold text-xs rounded-full">
+                            {ref.total_referrals} guests
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {referrals.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="py-8 text-center text-faded">
+                          No referrals recorded yet. Ambassadors will appear here when guests use their pass codes to register!
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* SECTION: ADMIN USERS & RIGHTS MANAGEMENT */}
           {activeSection === "admin_users" && (
             <div className="grid gap-8 lg:grid-cols-12">
@@ -2642,7 +2690,13 @@ export default function AdminPage() {
                       <p className="text-xs text-faded">Compose your message with rich text and media.</p>
                     </div>
                     <span className="px-3 py-1 bg-mist text-vivid font-bold text-xs rounded-full border border-sage">
-                      {subscribers.length || 15} Recipients Target
+                      {newsletterTarget === 'single'
+                        ? '1 Single Recipient'
+                        : newsletterTarget === 'attendees'
+                        ? `${attendees.length} Attendees Target`
+                        : newsletterTarget === 'subscribers'
+                        ? `${subscribers.length} Newsletter Subscribers Target`
+                        : `${Array.from(new Set([...attendees.map(a => a.email), ...subscribers.map(s => s.email)].filter(Boolean))).length} Total Recipients Target`}
                     </span>
                   </div>
 
