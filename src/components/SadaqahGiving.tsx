@@ -123,25 +123,22 @@ export default function SadaqahGiving() {
             amount: Math.round(totalPay * 100),
             currency: "NGN",
             ref: "DON-" + Date.now(),
-            onClose: () => {
+            onClose: function () {
               setSubmitting(false);
             },
-            callback: async (response: any) => {
-              try {
-                await fetch('/api/donate', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    donorName: name || 'Anonymous',
-                    email,
-                    amount: totalPay,
-                    category: open.title,
-                    txRef: response.reference || response.trxref,
-                  }),
-                });
-              } catch (err) {
-                console.error('Error logging completed donation:', err);
-              }
+            callback: function (response: any) {
+              fetch('/api/donate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  donorName: name || 'Anonymous',
+                  email,
+                  amount: totalPay,
+                  category: open.title,
+                  txRef: response.reference || response.trxref,
+                }),
+              }).catch((err) => console.error('Error logging completed donation:', err));
+
               setDone(true);
               setCampaigns((list) =>
                 list.map((c) => (c.id === open.id ? { ...c, raised: c.raised + (open.unitPrice ? qty : 1) } : c))

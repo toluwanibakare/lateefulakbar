@@ -91,25 +91,22 @@ export default function SadaqahQuickGive() {
             amount: Math.round(effective * 100),
             currency: "NGN",
             ref: "SAD-" + Date.now(),
-            onClose: () => {
+            onClose: function () {
               setSubmitting(false);
             },
-            callback: async (response: any) => {
-              try {
-                await fetch('/api/donate', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    donorName: name || 'Anonymous',
-                    email,
-                    amount: effective,
-                    category: 'General Sadaqah',
-                    txRef: response.reference || response.trxref,
-                  }),
-                });
-              } catch (err) {
-                console.error('Error logging completed sadaqah:', err);
-              }
+            callback: function (response: any) {
+              fetch('/api/donate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  donorName: name || 'Anonymous',
+                  email,
+                  amount: effective,
+                  category: 'General Sadaqah',
+                  txRef: response.reference || response.trxref,
+                }),
+              }).catch((err) => console.error('Error logging completed sadaqah:', err));
+
               setDone(true);
               setSubmitting(false);
             },
