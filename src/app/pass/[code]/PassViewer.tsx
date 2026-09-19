@@ -191,21 +191,12 @@ export default function PassViewer({ passCode }: { passCode: string }) {
                     <canvas ref={canvasRef} className="w-full h-auto bg-white" />
                   </div>
 
-                  <div className="mt-6 border-t border-ink/10 pt-4 text-center">
-                    <p className="text-xs text-faded font-medium">Add or change photo on your flyer artwork:</p>
-                    <label className="mt-3 inline-flex cursor-pointer items-center gap-2 border border-pine px-5 py-2.5 text-xs font-semibold text-pine hover:bg-vivid hover:text-white rounded-lg transition-colors">
-                      <UserCheck className="h-4 w-4" />
-                      <span>{photo ? "Change Photo on Flyer" : "Upload Your Photo"}</span>
-                      <input type="file" accept="image/*" onChange={onPhotoUpload} className="hidden" />
-                    </label>
-                  </div>
-
                   <div className="mt-6">
                     <button
                       onClick={download}
-                      className="flex w-full items-center justify-center gap-2 bg-vivid py-4 text-sm font-bold text-white shadow-md hover:bg-vivid-deep rounded-xl transition-all"
+                      className="flex w-full items-center justify-center gap-2 bg-vivid py-4 text-base font-bold text-white shadow-lg hover:bg-vivid-deep rounded-xl transition-all"
                     >
-                      <Download className="h-5 w-5" /> Download Printable Pass Artwork
+                      <Download className="h-5 w-5" /> Download Pass Artwork
                     </button>
                   </div>
                 </div>
