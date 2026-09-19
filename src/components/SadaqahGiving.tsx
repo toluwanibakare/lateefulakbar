@@ -104,7 +104,7 @@ export default function SadaqahGiving() {
         window.location.href = data.authorizationUrl;
       } else {
         // Use Paystack Inline Popup client side
-        const paystackKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e';
+        const paystackKey = data.publicKey || process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || 'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e';
         const loadScript = () =>
           new Promise((resolve) => {
             if ((window as any).PaystackPop) return resolve(true);
@@ -126,7 +126,22 @@ export default function SadaqahGiving() {
             onClose: () => {
               setSubmitting(false);
             },
-            callback: (response: any) => {
+            callback: async (response: any) => {
+              try {
+                await fetch('/api/donate', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    donorName: name || 'Anonymous',
+                    email,
+                    amount: totalPay,
+                    category: open.title,
+                    txRef: response.reference || response.trxref,
+                  }),
+                });
+              } catch (err) {
+                console.error('Error logging completed donation:', err);
+              }
               setDone(true);
               setCampaigns((list) =>
                 list.map((c) => (c.id === open.id ? { ...c, raised: c.raised + (open.unitPrice ? qty : 1) } : c))
@@ -138,14 +153,7 @@ export default function SadaqahGiving() {
           return;
         }
 
-        if (data.success) {
-          setDone(true);
-          setCampaigns((list) =>
-            list.map((c) => (c.id === open.id ? { ...c, raised: c.raised + (open.unitPrice ? qty : 1) } : c))
-          );
-        } else {
-          alert(data.error || 'Failed to process donation');
-        }
+        alert(data.error || 'Failed to initialize Paystack gateway');
       }
     } catch (err) {
       console.error('Failed to log donation:', err);

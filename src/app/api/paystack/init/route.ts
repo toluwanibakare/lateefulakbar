@@ -42,15 +42,21 @@ export async function POST(req: Request) {
       console.warn('Could not load app_settings table:', err);
     }
 
+    const mode = (dbSettings['paystack_mode'] || process.env.PAYSTACK_MODE || 'test').trim();
+
     const secretKey = (
-      getEnvKey('PAYSTACK_SECRET_KEY') ||
       dbSettings['paystack_secret_key'] ||
-      getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY') ||
+      getEnvKey('PAYSTACK_SECRET_KEY') ||
       dbSettings['paystack_public_key'] ||
+      getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY') ||
       'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e'
     ).trim();
 
-    const mode = 'test';
+    const publicKey = (
+      dbSettings['paystack_public_key'] ||
+      getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY') ||
+      'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e'
+    ).trim();
 
     // If Paystack Key is configured (sk_ or pk_), make real call to Paystack API
     if (secretKey && (secretKey.startsWith('sk_') || secretKey.startsWith('pk_'))) {
@@ -69,7 +75,7 @@ export async function POST(req: Request) {
               category: category || 'General Sadaqah',
               mode,
             },
-            callback_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/sadaqah?status=success`,
+            callback_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://lateefulakbar.com'}/sadaqah?status=success`,
           }),
         });
 
@@ -79,40 +85,20 @@ export async function POST(req: Request) {
             success: true,
             authorizationUrl: data.data.authorization_url,
             reference: data.data.reference,
+            publicKey,
             mode,
           });
+        } else {
+          console.warn('Paystack initialize error response:', data);
         }
       } catch (paystackFetchError) {
-        console.warn('Paystack API network error, using local fallback:', paystackFetchError);
+        console.warn('Paystack API network error:', paystackFetchError);
       }
     }
 
-    // Fallback if keys are not set up: Simulate Instant Payment and log to DB
-    const txRef = `SIM-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    await db.query(
-      `INSERT INTO donations (donor_name, email, amount, category, tx_ref, status) VALUES (?, ?, ?, ?, ?, 'completed')`,
-      [donorName || 'Anonymous', email, amount, category || 'General Sadaqah', txRef]
-    );
-
-    await db.query(
-      `UPDATE sadaqah_campaigns SET current_qty = current_qty + 1 WHERE category = ? OR title = ?`,
-      [category, category]
-    );
-
-    // Send Sadaqah Receipt Email
-    sendDonationReceiptEmail({
-      to: email,
-      donorName: donorName || 'Noble Donor',
-      amount,
-      category: category || 'General Sadaqah',
-      txRef,
-    }).catch((err) => console.error('Error sending donation receipt email:', err));
-
     return NextResponse.json({
       success: true,
-      simulated: true,
-      message: 'Donation logged directly to database (Paystack test fallback)',
-      txRef,
+      publicKey,
       mode,
     });
   } catch (error) {

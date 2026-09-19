@@ -96,6 +96,18 @@ export async function POST(req: Request) {
       [category, category]
     );
 
+    // Send Sadaqah Receipt Email on actual completion
+    if (email) {
+      const { sendDonationReceiptEmail } = await import('@/lib/email');
+      sendDonationReceiptEmail({
+        to: email,
+        donorName: donorName || 'Noble Donor',
+        amount,
+        category: category || 'General Sadaqah',
+        txRef: ref,
+      }).catch((err) => console.error('Error sending donation receipt email:', err));
+    }
+
     return NextResponse.json({
       success: true,
       message: 'Donation recorded successfully',
