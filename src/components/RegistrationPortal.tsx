@@ -68,15 +68,16 @@ export default function RegistrationPortal() {
     bgImg.src = "/I_will_be_attending.png";
 
     const finishDrawing = (userImg: HTMLImageElement | null) => {
-      // 1. Draw the template flyer background
-      ctx.drawImage(bgImg, 0, 0, templateWidth, templateHeight);
+      // Clear canvas
+      ctx.clearRect(0, 0, templateWidth, templateHeight);
 
-      // 2. Draw user photo placed precisely within the circle overlay
-      // Circle center: (400, 430), Radius: 199
-      const cx = 400;
-      const cy = 430;
-      const radius = 199;
+      // Circle center and radius for the "I will be Joining" template circle frame
+      // Center: (405, 422), Radius: 195
+      const cx = 405;
+      const cy = 422;
+      const radius = 195;
 
+      // 1. Draw user photo first (clipped to circle)
       if (userImg) {
         ctx.save();
         ctx.beginPath();
@@ -94,6 +95,9 @@ export default function RegistrationPortal() {
         ctx.drawImage(userImg, x, y, w, h);
         ctx.restore();
       }
+
+      // 2. Draw the template flyer background on top
+      ctx.drawImage(bgImg, 0, 0, templateWidth, templateHeight);
     };
 
     let loadedUserImg: HTMLImageElement | null = null;

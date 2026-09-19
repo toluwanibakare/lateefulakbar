@@ -186,7 +186,7 @@ export async function sendRegistrationEmail({
       ? [``, `Invite family and friends with your personal link:`, referralLink, `Your code: ${referralCode}`]
       : []),
     ``,
-    `Get your "I Will Be Attending" banner: ${SITE_URL}/attending`,
+    `Download your "I Will Be Joining" pass: ${SITE_URL}/register`,
     `Chat with Smart LATEEF: ${SITE_URL}/chat`,
     ``,
     `Questions? Simply reply to this email.`,
