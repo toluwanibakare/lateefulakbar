@@ -261,6 +261,156 @@ export default function AdminPage() {
     setShowAddCampaignForm(true);
   };
 
+  // Blog CMS & Editing State
+  const [showAddBlogForm, setShowAddBlogForm] = useState(false);
+  const [editingBlogPost, setEditingBlogPost] = useState<any | null>(null);
+  const [newBlogTitle, setNewBlogTitle] = useState("");
+  const [newBlogCategory, setNewBlogCategory] = useState("Field Notes");
+  const [newBlogExcerpt, setNewBlogExcerpt] = useState("");
+  const [newBlogContent, setNewBlogContent] = useState("");
+  const [newBlogImage, setNewBlogImage] = useState("");
+  const [newBlogReadTime, setNewBlogReadTime] = useState("5 min");
+
+  // Gallery Media State
+  const [showAddGalleryForm, setShowAddGalleryForm] = useState(false);
+  const [editingGalleryItem, setEditingGalleryItem] = useState<any | null>(null);
+  const [newGalleryTitle, setNewGalleryTitle] = useState("");
+  const [newGalleryCategory, setNewGalleryCategory] = useState("Gathering");
+  const [newGalleryUrl, setNewGalleryUrl] = useState("");
+
+  const handleSaveBlogPost = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBlogTitle || !newBlogExcerpt) return;
+    try {
+      const isEditing = Boolean(editingBlogPost?.id);
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action: "save_blog_post",
+          payload: {
+            id: editingBlogPost?.id,
+            title: newBlogTitle,
+            category: newBlogCategory,
+            excerpt: newBlogExcerpt,
+            content: newBlogContent,
+            image: newBlogImage,
+            read_time: newBlogReadTime,
+            author: user?.name || "Nadwat Media",
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewBlogTitle("");
+        setNewBlogExcerpt("");
+        setNewBlogContent("");
+        setNewBlogImage("");
+        setEditingBlogPost(null);
+        setShowAddBlogForm(false);
+        alert(isEditing ? "Blog article updated!" : "New blog article created and published!");
+        loadSectionData("blog");
+      } else {
+        alert(data.error || "Failed to save blog post");
+      }
+    } catch (e) {
+      alert("Error saving blog post");
+    }
+  };
+
+  const startEditBlogPost = (post: any) => {
+    setEditingBlogPost(post);
+    setNewBlogTitle(post.title || "");
+    setNewBlogCategory(post.category || "Field Notes");
+    setNewBlogExcerpt(post.excerpt || "");
+    setNewBlogContent(post.content || "");
+    setNewBlogImage(post.image || "");
+    setNewBlogReadTime(post.read_time || post.read || "5 min");
+    setShowAddBlogForm(true);
+  };
+
+  const handleDeleteBlogPost = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this blog post?")) return;
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action: "delete_blog_post",
+          payload: { id },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadSectionData("blog");
+      }
+    } catch (e) {
+      alert("Error deleting blog post");
+    }
+  };
+
+  const handleSaveGalleryItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newGalleryTitle || !newGalleryUrl) return;
+    try {
+      const isEditing = Boolean(editingGalleryItem?.id);
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action: "save_gallery_item",
+          payload: {
+            id: editingGalleryItem?.id,
+            title: newGalleryTitle,
+            category: newGalleryCategory,
+            url: newGalleryUrl,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewGalleryTitle("");
+        setNewGalleryUrl("");
+        setEditingGalleryItem(null);
+        setShowAddGalleryForm(false);
+        alert(isEditing ? "Gallery item updated!" : "Gallery media uploaded successfully!");
+        loadSectionData("gallery");
+      } else {
+        alert(data.error || "Failed to save gallery media");
+      }
+    } catch (e) {
+      alert("Error saving gallery media");
+    }
+  };
+
+  const startEditGalleryItem = (item: any) => {
+    setEditingGalleryItem(item);
+    setNewGalleryTitle(item.title || "");
+    setNewGalleryCategory(item.category || "Gathering");
+    setNewGalleryUrl(item.url || "");
+    setShowAddGalleryForm(true);
+  };
+
+  const handleDeleteGalleryItem = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this gallery item?")) return;
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action: "delete_gallery_item",
+          payload: { id },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadSectionData("gallery");
+      }
+    } catch (e) {
+      alert("Error deleting gallery item");
+    }
+  };
+
   const handleDeleteCampaign = async (id: number) => {
     if (!confirm("Are you sure you want to delete this campaign?")) return;
     try {
@@ -631,7 +781,42 @@ export default function AdminPage() {
       return;
     }
 
-    alert(`Dispatching Newsletter broadcast to ${newsletterTarget === 'single' ? newsletterSingleEmail : 'all community members'}!`);
+    if (newsletterTarget === "single" && !newsletterSingleEmail) {
+      alert("Please enter recipient email address for single member target.");
+      return;
+    }
+
+    const confirmMsg = newsletterTarget === "single"
+      ? `Send broadcast email to ${newsletterSingleEmail}?`
+      : `Send broadcast email to target audience (${newsletterTarget})?`;
+
+    if (!confirm(confirmMsg)) return;
+
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action: "send_broadcast",
+          payload: {
+            subject: newsletterSubject,
+            body: newsletterBody,
+            target: newsletterTarget,
+            singleEmail: newsletterSingleEmail,
+          },
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Newsletter broadcast dispatched successfully! ${data.sentCount} sent out of ${data.totalRecipients} recipient(s).`);
+        setNewsletterSubject("");
+        setNewsletterBody("");
+      } else {
+        alert(data.error || "Failed to send newsletter broadcast.");
+      }
+    } catch (e) {
+      alert("Error dispatching newsletter broadcast.");
+    }
   };
 
   const handleSaveNewsletterTemplate = () => {
@@ -820,6 +1005,7 @@ export default function AdminPage() {
       items: [
         { id: "newsletter", label: "Email & Newsletter Hub", icon: Mail },
         { id: "blog", label: "Blog Manager", icon: FileText },
+        { id: "gallery", label: "Gallery Manager", icon: ImageIcon },
       ],
     },
     {
@@ -1559,84 +1745,377 @@ export default function AdminPage() {
 
           {/* SECTION: BLOG MANAGER */}
           {activeSection === "blog" && (
-            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-base font-bold text-pine">Blog CMS & Article Stats</h2>
-                  <p className="text-xs text-faded">Manage published articles, views, and likes</p>
-                </div>
-                <button
-                  onClick={() => alert("Article editor opened!")}
-                  className="px-4 py-2 bg-vivid text-white text-xs font-bold rounded-xl shadow-md"
-                >
-                  Create Article
-                </button>
-              </div>
+            <div className="space-y-6">
+              <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-5">
+                  <div>
+                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-vivid" /> Blog CMS & Article Manager ({blogPosts.length})
+                    </h2>
+                    <p className="text-xs text-faded mt-0.5">Publish new articles, edit content, view performance stats, and grab article slugs</p>
+                  </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
-                      <th className="py-3 px-4">Article Slug</th>
-                      <th className="py-3 px-4">Views</th>
-                      <th className="py-3 px-4">Likes</th>
-                      <th className="py-3 px-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-ink/10">
-                    {blogPosts.map((post) => (
-                      <tr key={post.slug} className="hover:bg-cream/60">
-                        <td className="py-3.5 px-4 font-bold text-pine font-mono">{post.slug}</td>
-                        <td className="py-3.5 px-4 text-ink font-semibold">{post.views || 0}</td>
-                        <td className="py-3.5 px-4 text-vivid font-bold">{post.likes || 0}</td>
-                        <td className="py-3.5 px-4 text-right">
-                          <Link href={`/blog/${post.slug}`} target="_blank" className="text-vivid hover:underline font-semibold">
-                            View Article
-                          </Link>
-                        </td>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (showAddBlogForm && editingBlogPost) {
+                        setEditingBlogPost(null);
+                        setNewBlogTitle("");
+                        setNewBlogExcerpt("");
+                        setNewBlogContent("");
+                        setNewBlogImage("");
+                      } else {
+                        setShowAddBlogForm((prev) => !prev);
+                      }
+                    }}
+                    className="px-4 py-2.5 bg-vivid hover:bg-vivid-deep text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Plus className={`h-4 w-4 transition-transform duration-300 ${showAddBlogForm ? "rotate-45" : ""}`} />
+                    {showAddBlogForm ? (editingBlogPost ? "Cancel Edit" : "Close Form") : "Create New Article"}
+                  </button>
+                </div>
+
+                {/* Collapsible Article Create/Edit Form */}
+                {showAddBlogForm && (
+                  <form onSubmit={handleSaveBlogPost} className="p-6 rounded-2xl bg-cream border border-ink/15 space-y-5 shadow-inner">
+                    <div>
+                      <h3 className="text-sm font-bold text-pine flex items-center gap-2">
+                        <FileText className="h-4 w-4 text-vivid" /> {editingBlogPost ? `Edit Article: ${editingBlogPost.title}` : "Write New Blog Article"}
+                      </h3>
+                      <p className="text-xs text-faded">Publish an article to the public blog. Content paragraphs are separated by empty lines.</p>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Article Title
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Reflections on Yaa Lateef"
+                          value={newBlogTitle}
+                          onChange={(e) => setNewBlogTitle(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-semibold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Category Badge
+                        </label>
+                        <select
+                          value={newBlogCategory}
+                          onChange={(e) => setNewBlogCategory(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                        >
+                          <option value="Field Notes">Field Notes</option>
+                          <option value="Meaning">Meaning</option>
+                          <option value="Guide">Guide</option>
+                          <option value="Announcements">Announcements</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Cover Image URL
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="/assets/crowd-67.jpg"
+                          value={newBlogImage}
+                          onChange={(e) => setNewBlogImage(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Estimated Read Time
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. 5 min"
+                          value={newBlogReadTime}
+                          onChange={(e) => setNewBlogReadTime(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Short Excerpt / Summary
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Brief 1-2 sentence preview for cards..."
+                        value={newBlogExcerpt}
+                        onChange={(e) => setNewBlogExcerpt(e.target.value)}
+                        className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Full Article Content (Paragraphs separated by double line break)
+                      </label>
+                      <textarea
+                        rows={6}
+                        placeholder="Write full article content..."
+                        value={newBlogContent}
+                        onChange={(e) => setNewBlogContent(e.target.value)}
+                        className="w-full bg-white border border-ink/15 rounded-xl p-4 text-xs text-ink leading-relaxed"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingBlogPost(null);
+                          setShowAddBlogForm(false);
+                        }}
+                        className="px-5 py-2.5 bg-mist text-pine text-xs font-bold rounded-xl border border-ink/10 hover:bg-sage"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-6 py-2.5 bg-vivid hover:bg-vivid-deep text-white text-xs font-bold rounded-xl shadow-md"
+                      >
+                        {editingBlogPost ? "Update Article" : "Publish Article"}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                        <th className="py-3 px-4">Title & Slug</th>
+                        <th className="py-3 px-4">Category</th>
+                        <th className="py-3 px-4">Views</th>
+                        <th className="py-3 px-4">Likes</th>
+                        <th className="py-3 px-4 text-right">Actions</th>
                       </tr>
-                    ))}
-                    {blogPosts.length === 0 && (
-                      <tr>
-                        <td colSpan={4} className="py-8 text-center text-faded">
-                          No blog stats recorded yet.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-ink/10">
+                      {blogPosts.map((post) => (
+                        <tr key={post.slug || post.id} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-4 font-bold text-pine">
+                            <div>{post.title}</div>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="font-mono text-[10px] text-faded bg-mist px-2 py-0.5 rounded border border-ink/10">
+                                /blog/{post.slug}
+                              </span>
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(post.slug);
+                                  alert(`Copied slug "${post.slug}" to clipboard!`);
+                                }}
+                                className="text-[10px] text-vivid font-bold hover:underline"
+                              >
+                                Copy Slug
+                              </button>
+                            </div>
+                          </td>
+                          <td className="py-3.5 px-4">
+                            <span className="px-2.5 py-1 rounded bg-mist text-pine font-semibold text-[10px] border border-sage">
+                              {post.category || "Field Notes"}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-ink font-semibold">{post.views || 0}</td>
+                          <td className="py-3.5 px-4 text-vivid font-bold">{post.likes || 0}</td>
+                          <td className="py-3.5 px-4 text-right space-x-3">
+                            <button
+                              onClick={() => startEditBlogPost(post)}
+                              className="text-pine hover:text-vivid font-bold"
+                            >
+                              Edit
+                            </button>
+                            <Link href={`/blog/${post.slug}`} target="_blank" className="text-vivid hover:underline font-semibold">
+                              View
+                            </Link>
+                            <button
+                              onClick={() => handleDeleteBlogPost(post.id)}
+                              className="text-rose-600 hover:text-rose-800 font-bold"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {blogPosts.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-faded">
+                            No blog posts published yet.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
 
           {/* SECTION: GALLERY MANAGER */}
           {activeSection === "gallery" && (
-            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
-              <div className="flex justify-between items-center">
-                <div>
-                  <h2 className="text-base font-bold text-pine">Gallery & Media Manager</h2>
-                  <p className="text-xs text-faded">Organize event photography, videos, and drone media</p>
-                </div>
-                <button
-                  onClick={() => alert("Upload media dialog opened!")}
-                  className="px-4 py-2 bg-vivid text-white text-xs font-bold rounded-xl shadow-md"
-                >
-                  Upload Media
-                </button>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {galleryItems.map((item) => (
-                  <div key={item.id} className="border border-ink/15 rounded-2xl overflow-hidden bg-cream p-3 space-y-2">
-                    <div className="aspect-video relative rounded-xl overflow-hidden bg-mist">
-                      <Image src={item.url} alt={item.title} fill className="object-cover" />
-                    </div>
-                    <div className="font-bold text-xs text-ink">{item.title}</div>
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-mist text-pine border border-sage uppercase inline-block">
-                      {item.category}
-                    </span>
+            <div className="space-y-6">
+              <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-5">
+                  <div>
+                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                      <ImageIcon className="h-5 w-5 text-vivid" /> Gallery & Media Manager ({galleryItems.length})
+                    </h2>
+                    <p className="text-xs text-faded mt-0.5">Upload, organize, and copy image URL paths for use across blogs, campaigns, and pages</p>
                   </div>
-                ))}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (showAddGalleryForm && editingGalleryItem) {
+                        setEditingGalleryItem(null);
+                        setNewGalleryTitle("");
+                        setNewGalleryUrl("");
+                      } else {
+                        setShowAddGalleryForm((prev) => !prev);
+                      }
+                    }}
+                    className="px-4 py-2.5 bg-vivid hover:bg-vivid-deep text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Plus className={`h-4 w-4 transition-transform duration-300 ${showAddGalleryForm ? "rotate-45" : ""}`} />
+                    {showAddGalleryForm ? (editingGalleryItem ? "Cancel Edit" : "Close Form") : "Upload / Add Media"}
+                  </button>
+                </div>
+
+                {/* Collapsible Gallery Add/Edit Form */}
+                {showAddGalleryForm && (
+                  <form onSubmit={handleSaveGalleryItem} className="p-6 rounded-2xl bg-cream border border-ink/15 space-y-5 shadow-inner">
+                    <div>
+                      <h3 className="text-sm font-bold text-pine flex items-center gap-2">
+                        <ImageIcon className="h-4 w-4 text-vivid" /> {editingGalleryItem ? `Edit Media: ${editingGalleryItem.title}` : "Add Media Asset to Gallery"}
+                      </h3>
+                      <p className="text-xs text-faded">Add event photography, drone shots, or atmosphere images</p>
+                    </div>
+
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Media Caption / Title
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Congregation at Tafawa Balewa Square"
+                          value={newGalleryTitle}
+                          onChange={(e) => setNewGalleryTitle(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-semibold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Gallery Filter Category
+                        </label>
+                        <select
+                          value={newGalleryCategory}
+                          onChange={(e) => setNewGalleryCategory(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                        >
+                          <option value="Gathering">Gathering</option>
+                          <option value="People">People</option>
+                          <option value="Atmosphere">Atmosphere</option>
+                          <option value="Drone">Drone</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Image File Path or URL
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="/assets/gallery/gathering/crowd-08.jpg"
+                        value={newGalleryUrl}
+                        onChange={(e) => setNewGalleryUrl(e.target.value)}
+                        className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingGalleryItem(null);
+                          setShowAddGalleryForm(false);
+                        }}
+                        className="px-5 py-2.5 bg-mist text-pine text-xs font-bold rounded-xl border border-ink/10 hover:bg-sage"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-6 py-2.5 bg-vivid hover:bg-vivid-deep text-white text-xs font-bold rounded-xl shadow-md"
+                      >
+                        {editingGalleryItem ? "Update Media" : "Save Media Asset"}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {galleryItems.map((item) => (
+                    <div key={item.id} className="border border-ink/15 rounded-2xl overflow-hidden bg-cream p-3.5 space-y-3 shadow-sm">
+                      <div className="aspect-video relative rounded-xl overflow-hidden bg-mist">
+                        <Image src={item.url} alt={item.title} fill className="object-cover" />
+                      </div>
+                      <div>
+                        <div className="font-bold text-xs text-ink truncate">{item.title}</div>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-mist text-pine border border-sage uppercase inline-block">
+                            {item.category}
+                          </span>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(item.url);
+                              alert(`Copied image URL "${item.url}" to clipboard!`);
+                            }}
+                            className="text-[10px] text-vivid font-bold hover:underline"
+                          >
+                            Copy Image URL
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-2 border-t border-ink/10 text-xs">
+                        <button
+                          onClick={() => startEditGalleryItem(item)}
+                          className="text-pine hover:text-vivid font-bold"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteGalleryItem(item.id)}
+                          className="text-rose-600 hover:text-rose-800 font-bold"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {galleryItems.length === 0 && (
+                    <div className="col-span-full py-12 text-center text-faded text-xs">
+                      No gallery media items stored in database yet.
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -2173,18 +2652,7 @@ export default function AdminPage() {
                         <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
                           Send To
                         </label>
-                        <div className="flex gap-3">
-                          <button
-                            type="button"
-                            onClick={() => setNewsletterTarget("single")}
-                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
-                              newsletterTarget === "single"
-                                ? "bg-vivid text-white shadow-sm"
-                                : "bg-cream text-faded border border-ink/15"
-                            }`}
-                          >
-                            Single Member
-                          </button>
+                        <div className="flex flex-wrap gap-3">
                           <button
                             type="button"
                             onClick={() => setNewsletterTarget("all")}
@@ -2194,7 +2662,40 @@ export default function AdminPage() {
                                 : "bg-cream text-faded border border-ink/15"
                             }`}
                           >
-                            Entire Category (All Members)
+                            All Members (Attendees + Subscribers)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setNewsletterTarget("attendees")}
+                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                              newsletterTarget === "attendees"
+                                ? "bg-vivid text-white shadow-sm"
+                                : "bg-cream text-faded border border-ink/15"
+                            }`}
+                          >
+                            Registered Attendees Only
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setNewsletterTarget("subscribers")}
+                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                              newsletterTarget === "subscribers"
+                                ? "bg-vivid text-white shadow-sm"
+                                : "bg-cream text-faded border border-ink/15"
+                            }`}
+                          >
+                            Newsletter Subscribers Only
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setNewsletterTarget("single")}
+                            className={`px-4 py-2 text-xs font-bold rounded-xl transition-all ${
+                              newsletterTarget === "single"
+                                ? "bg-vivid text-white shadow-sm"
+                                : "bg-cream text-faded border border-ink/15"
+                            }`}
+                          >
+                            Single Recipient
                           </button>
                         </div>
                       </div>

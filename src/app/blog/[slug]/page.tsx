@@ -5,6 +5,10 @@ import PageHeader from "@/components/PageHeader";
 import BlogEngagement from "@/components/BlogEngagement";
 import { BLOG_POSTS } from "@/lib/site";
 import { Reveal } from "@/components/ui";
+import { getDb } from "@/lib/db";
+import { RowDataPacket } from "mysql2";
+
+export const dynamic = 'force-dynamic';
 
 const BODIES: Record<string, string[]> = {
   "sea-of-white": [
@@ -24,25 +28,42 @@ const BODIES: Record<string, string[]> = {
   ],
 };
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((p) => ({ slug: p.slug }));
-}
-
 export default async function BlogArticle({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = BLOG_POSTS.find((p) => p.slug === slug);
-  if (!post) notFound();
-  const body = BODIES[post.slug] ?? [post.excerpt];
-  const others = BLOG_POSTS.filter((p) => p.slug !== post.slug);
+  
+  let post: any = null;
+  let body: string[] = [];
+
+  try {
+    const db = await getDb();
+    const [rows] = await db.query<RowDataPacket[]>(
+      'SELECT * FROM blog_posts WHERE slug = ? AND is_published = 1',
+      [slug]
+    );
+    if (rows.length > 0) {
+      post = rows[0];
+      body = post.content ? post.content.split('\n\n') : [post.excerpt];
+    }
+  } catch (e) {
+    console.error("Error fetching blog post from DB:", e);
+  }
+
+  if (!post) {
+    post = BLOG_POSTS.find((p) => p.slug === slug);
+    if (!post) notFound();
+    body = BODIES[post.slug] ?? [post.excerpt];
+  }
+
+  const others = BLOG_POSTS.filter((p) => p.slug !== slug);
 
   return (
     <>
       <PageHeader
-        eyebrow={`${post.category} — ${post.date} — ${post.read}`}
+        eyebrow={`${post.category || "Field Notes"} — ${post.read_time || post.read || "5 min"}`}
         title={<>{post.title}</>}
         intro={post.excerpt}
         image={post.image}

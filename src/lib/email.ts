@@ -496,3 +496,41 @@ export async function sendDonationReceiptEmail({
   }
 }
 
+// 6. General Broadcast Email helper
+export async function sendBroadcastEmail({
+  to,
+  subject,
+  bodyHtml,
+}: {
+  to: string;
+  subject: string;
+  bodyHtml: string;
+}) {
+  const transporter = await getTransporter();
+  if (!transporter) {
+    console.log(`[EMAIL SIMULATION] Broadcast email to ${to}: Subject=${subject}`);
+    return { success: true, simulated: true };
+  }
+
+  const innerHtml = `
+    <div style="font-size: 15px; line-height: 1.7; color: #334155;">
+      ${bodyHtml}
+    </div>
+  `;
+
+  try {
+    const cfg = getSmtpConfig();
+    await transporter.sendMail({
+      from: cfg.from,
+      to,
+      subject,
+      html: getEmailWrapper(subject, innerHtml),
+    });
+    return { success: true };
+  } catch (err) {
+    console.error(`Error sending broadcast email to ${to}:`, err);
+    return { success: false, error: err };
+  }
+}
+
+

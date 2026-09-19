@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Expand, ExternalLink, X } from "lucide-react";
 import { GALLERY, type GalleryItem } from "@/lib/site";
@@ -12,8 +12,26 @@ const FILTERS = ["All", "Gathering", "People", "Atmosphere", "Drone"] as const;
 export default function Gallery() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
   const [active, setActive] = useState<GalleryItem | null>(null);
+  const [galleryList, setGalleryList] = useState<GalleryItem[]>(GALLERY);
 
-  const items = GALLERY.filter((g) => filter === "All" || g.category === filter);
+  useEffect(() => {
+    fetch('/api/gallery')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.items && data.items.length > 0) {
+          const mapped = data.items.map((item: any) => ({
+            src: item.url,
+            label: item.title,
+            category: item.category,
+            span: item.span,
+          }));
+          setGalleryList(mapped);
+        }
+      })
+      .catch((err) => console.error("Error fetching dynamic gallery items:", err));
+  }, []);
+
+  const items = galleryList.filter((g) => filter === "All" || g.category === filter);
 
   return (
     <section id="gallery" className="bg-white">

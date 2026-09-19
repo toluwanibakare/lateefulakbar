@@ -234,6 +234,65 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
+    // 13. Dynamic Blog Posts table
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS blog_posts (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        slug VARCHAR(255) UNIQUE NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        excerpt TEXT NOT NULL,
+        content TEXT NOT NULL,
+        image VARCHAR(500) NOT NULL,
+        read_time VARCHAR(50) DEFAULT '5 min',
+        author VARCHAR(100) DEFAULT 'Nadwat Media',
+        is_published TINYINT(1) DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // Seed initial blog posts if empty
+    const [existingBlogs] = await p.query<mysql.RowDataPacket[]>('SELECT COUNT(*) as count FROM blog_posts');
+    if (existingBlogs[0]?.count === 0) {
+      await p.query(`
+        INSERT INTO blog_posts (slug, title, category, excerpt, content, image, read_time, author) VALUES
+        ('sea-of-white', 'What a sea of white does to a city', 'Field Notes', 'TBS holds noise well. On the day, it held silence better - 40,000 people breathing the same dhikr.', 'National Mosque Auditorium holds noise well — it was built for gatherings and crowds. On the day of the seating, it held silence better. Thousands of people in white, breathing the same dhikr, and the loudest thing for long stretches was water being passed hand to hand.\n\nStewards will tell you the order is the worship. Sections settle by canopy, shoes aligned, mats edge to edge. From the venue floor the auditorium stops looking like a crowd and starts looking like cloth — one fabric, briefly unseamed by the service lanes.\n\nIf you come for the first time, come early. Watch the venue fill. That slow whitening of the stands is the closest thing Abuja has to dawn arriving twice.', '/assets/crowd-67.jpg', '6 min', 'Nadwat Editorial'),
+        ('ya-lateef', 'Yaa Lateef: the Name we gather under', 'Meaning', 'Subtlety, kindness, the grace that arrives before you ask. A short reading for first-time guests.', 'Al-Lateef — the Most Gentle, the Most Subtle. The kindness that arrives before you ask, the opening that appears inside difficulty without breaking anything. Scholars linger on this Name because it answers the quiet fear: that our affairs are too tangled for mercy to find.\n\nAt the gathering the Name is recited long and low, led from the stage and answered by the whole hall. There is no hurry in it. Guests are asked to bring one private need and hold it lightly through the recitation — the asking is the worship.\n\nCome with ablution, come in white, come having forgiven one person. That is the whole preparation the convener asks of first-time guests.', '/assets/crowd-18.jpg', '4 min', 'Scholar Reflections'),
+        ('tbs-logistics', 'Coming to the Square: gates, seating, water', 'Guide', 'Where the brothers sit, where the sisters sit, where the water and fans are - a plain-language walkthrough.', 'Brothers sit in the ordered section on one side, sisters under the main hall section on the other — stewarded by section, first come first served. Elders and guests with medical needs are seated nearest the service lanes; tell a steward at the gate and you will be walked there.\n\nWater moves through the rows all morning, funded by sadaqah. Fans hold the midday heat inside the hall. All vehicles use designated parking areas outside the main auditorium.\n\nGates open at 08:00 with accreditation and QR scanning. The opening and Bismillah follow at 09:30, the long Yaa Lateef seating at 10:30, reflections at midday, and the grand du‘ā — the day''s peak — at 14:00. Dispersal is orderly, section by section.', '/assets/crowd-11.jpg', '8 min', 'Event Logistics')
+      `);
+    }
+
+    // 14. Gallery & Media Items table
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS gallery_media (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        url VARCHAR(500) NOT NULL,
+        span VARCHAR(50) DEFAULT 'normal',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // Seed initial gallery media items if empty
+    const [existingGallery] = await p.query<mysql.RowDataPacket[]>('SELECT COUNT(*) as count FROM gallery_media');
+    if (existingGallery[0]?.count === 0) {
+      await p.query(`
+        INSERT INTO gallery_media (title, category, url) VALUES
+        ('The sisters'' canopy - thousands in white', 'Gathering', '/assets/gallery/gathering/crowd-08.jpg'),
+        ('The stands fill at TBS', 'Gathering', '/assets/gallery/gathering/crowd-49.jpg'),
+        ('A sea that stretches on', 'Gathering', '/assets/gallery/gathering/crowd-67.jpg'),
+        ('Arrival tide at the gates', 'Gathering', '/assets/gallery/gathering/crowd-80.jpg'),
+        ('The convener at dhikr', 'People', '/assets/gallery/people/crowd-15.jpg'),
+        ('Brothers in quiet reflection', 'People', '/assets/gallery/people/crowd-30.jpg'),
+        ('Scholars on stage', 'People', '/assets/gallery/people/crowd-63.jpg'),
+        ('Hands raised in du''a', 'Atmosphere', '/assets/gallery/atmosphere/crowd-18.jpg'),
+        ('Midday recitation at TBS', 'Atmosphere', '/assets/gallery/atmosphere/crowd-48.jpg'),
+        ('Aerial panorama of Tafawa Balewa Square', 'Drone', '/assets/gallery/drone/crowd-12.jpg')
+      `);
+    }
+
   } catch (err) {
     console.error('Error initializing MySQL database schema:', err);
   }

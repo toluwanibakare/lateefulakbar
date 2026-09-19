@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
@@ -7,7 +8,23 @@ import { BLOG_POSTS } from "@/lib/site";
 import { Eyebrow, Reveal } from "./ui";
 
 export default function Blog() {
-  const [lead, ...rest] = BLOG_POSTS;
+  const [posts, setPosts] = useState<any[]>(BLOG_POSTS);
+
+  useEffect(() => {
+    fetch('/api/blog')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.posts && data.posts.length > 0) {
+          setPosts(data.posts);
+        }
+      })
+      .catch((err) => console.error("Error loading dynamic blog posts:", err));
+  }, []);
+
+  const [lead, ...rest] = posts;
+
+  if (!lead) return null;
+
   return (
     <section id="blog" className="border-t border-ink/10 bg-white">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
@@ -31,10 +48,10 @@ export default function Blog() {
           <Reveal>
             <Link href={`/blog/${lead.slug}`} className="group block cursor-pointer">
               <div className="relative aspect-[16/10] overflow-hidden bg-mist">
-                <Image src={lead.image} alt={lead.title} fill sizes="(max-width: 1024px) 100vw, 50vw" className="img-true object-cover transition-transform duration-700 group-hover:scale-[1.04]" loading="lazy" />
+                <Image src={lead.image || "/assets/crowd-67.jpg"} alt={lead.title} fill sizes="(max-width: 1024px) 100vw, 50vw" className="img-true object-cover transition-transform duration-700 group-hover:scale-[1.04]" loading="lazy" />
               </div>
               <p className="mt-5 text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">
-                {lead.category} - {lead.date} - {lead.read}
+                {lead.category || "Article"} - {lead.read || lead.read_time || "5 min"}
               </p>
               <h3 className="font-display mt-2 max-w-lg text-3xl leading-tight tracking-tight text-ink group-hover:text-fern sm:text-4xl">
                 {lead.title}
@@ -51,11 +68,11 @@ export default function Blog() {
               <Reveal key={p.slug} delay={i * 0.06}>
                 <Link href={`/blog/${p.slug}`} className="group grid cursor-pointer gap-5 py-6 sm:grid-cols-[180px_1fr] sm:items-center">
                   <div className="relative aspect-[16/10] overflow-hidden bg-mist sm:aspect-[4/3]">
-                    <Image src={p.image} alt={p.title} fill sizes="240px" className="img-true object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
+                    <Image src={p.image || "/assets/crowd-11.jpg"} alt={p.title} fill sizes="240px" className="img-true object-cover transition-transform duration-700 group-hover:scale-[1.05]" loading="lazy" />
                   </div>
                   <div>
                     <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">
-                      {p.category} - {p.date} - {p.read}
+                      {p.category || "Article"} - {p.read || p.read_time || "5 min"}
                     </p>
                     <h3 className="font-display mt-1.5 text-2xl leading-snug tracking-tight text-ink group-hover:text-fern">
                       {p.title}

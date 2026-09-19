@@ -29,45 +29,25 @@ export async function GET(req: Request) {
 
     if (type === 'blog') {
       const [rows] = await db.query<RowDataPacket[]>(
-        'SELECT * FROM blog_stats ORDER BY slug ASC'
+        `SELECT b.*, COALESCE(s.likes, 0) as likes, COALESCE(s.views, 0) as views
+         FROM blog_posts b
+         LEFT JOIN blog_stats s ON s.slug = b.slug
+         ORDER BY b.id DESC`
       );
       return NextResponse.json({ success: true, posts: rows });
     }
 
     if (type === 'gallery') {
-      return NextResponse.json({
-        success: true,
-        items: [
-          { id: 1, title: 'Main Bowl Dhikr Sitting', category: '2025 Event', url: '/assets/crowd-11.jpg' },
-          { id: 2, title: 'Opening Du’a Gathering', category: '2024 Event', url: '/assets/crowd-2.jpg' },
-          { id: 3, title: 'TBS Canopy Canopy Sections', category: 'Highlights', url: '/assets/tbs-canopy.jpg' },
-        ],
-      });
+      const [rows] = await db.query<RowDataPacket[]>(
+        'SELECT * FROM gallery_media ORDER BY id DESC'
+      );
+      return NextResponse.json({ success: true, items: rows });
     }
 
     if (type === 'donations_list') {
-      let [rows] = await db.query<RowDataPacket[]>(
+      const [rows] = await db.query<RowDataPacket[]>(
         'SELECT * FROM donations ORDER BY id DESC'
       );
-
-      if (rows.length === 0) {
-        try {
-          await db.query(`
-            INSERT INTO donations (donor_name, email, amount, category, tx_ref, status) VALUES
-            ('Alhaji Ibrahim Danjuma', 'ibrahim.d@example.com', 250000, 'Nadwat TV Live Broadcast', 'TX-1001', 'completed'),
-            ('Hajiya Fatima Bello', 'fatima.bello@example.com', 50000, 'Provide Cooling Fans', 'TX-1002', 'completed'),
-            ('Anonymous Donor', 'anonymous@lateefulakbar.com', 15000, 'Prayer Mats & Rugs', 'TX-1003', 'completed'),
-            ('Dr. Sulaimon Adebayo', 'sulaimon.ade@example.com', 100000, 'Water & Hydration Points', 'TX-1004', 'completed'),
-            ('Khadijah Opeyemi', 'khadijah.op@example.com', 10000, 'General Sadaqah', 'TX-1005', 'completed')
-          `);
-          [rows] = await db.query<RowDataPacket[]>(
-            'SELECT * FROM donations ORDER BY id DESC'
-          );
-        } catch (e) {
-          console.error('Error auto-seeding donations:', e);
-        }
-      }
-
       return NextResponse.json({ success: true, donations: rows });
     }
 
@@ -140,9 +120,134 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: true });
     }
 
+    if (action === 'save_blog_post') {
+      const { id, title, category, excerpt, content, image, read_time, author } = payload;
+      const cleanTitle = sanitizeString(title, 255);
+      const cleanCategory = sanitizeString(category, 100) || 'Field Notes';
+      const cleanExcerpt = sanitizeString(excerpt, 1000);
+      const cleanContent = sanitizeString(content, 10000);
+      const cleanImage = sanitizeString(image, 500) || '/assets/crowd-11.jpg';
+      const cleanReadTime = sanitizeString(read_time, 50) || '5 min';
+      const cleanAuthor = sanitizeString(author, 100) || 'Nadwat Media';
+
+      let slug = sanitizeString(title, 255).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      if (!slug) slug = `post-${Date.now()}`;
+
+      if (id) {
+        await db.query(
+          'UPDATE blog_posts SET title = ?, category = ?, excerpt = ?, content = ?, image = ?, read_time = ?, author = ? WHERE id = ?',
+          [cleanTitle, cleanCategory, cleanExcerpt, cleanContent, cleanImage, cleanReadTime, cleanAuthor, Number(id)]
+        );
+        await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Updated Blog Post', `Title: ${cleanTitle}`);
+      } else {
+        await db.query(
+          'INSERT INTO blog_posts (slug, title, category, excerpt, content, image, read_time, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+          [slug, cleanTitle, cleanCategory, cleanExcerpt, cleanContent, cleanImage, cleanReadTime, cleanAuthor]
+        );
+        await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Created Blog Post', `Title: ${cleanTitle}`);
+      }
+      return NextResponse.json({ success: true, slug });
+    }
+
+    if (action === 'delete_blog_post') {
+      const { id } = payload;
+      await db.query('DELETE FROM blog_posts WHERE id = ?', [Number(id)]);
+      await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Deleted Blog Post', `ID: ${id}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'save_gallery_item') {
+      const { id, title, category, url } = payload;
+      const cleanTitle = sanitizeString(title, 255);
+      const cleanCategory = sanitizeString(category, 100) || 'Gathering';
+      const cleanUrl = sanitizeString(url, 500);
+
+      if (id) {
+        await db.query(
+          'UPDATE gallery_media SET title = ?, category = ?, url = ? WHERE id = ?',
+          [cleanTitle, cleanCategory, cleanUrl, Number(id)]
+        );
+        await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Updated Gallery Item', `Title: ${cleanTitle}`);
+      } else {
+        await db.query(
+          'INSERT INTO gallery_media (title, category, url) VALUES (?, ?, ?)',
+          [cleanTitle, cleanCategory, cleanUrl]
+        );
+        await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Uploaded Gallery Item', `Title: ${cleanTitle}`);
+      }
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'delete_gallery_item') {
+      const { id } = payload;
+      await db.query('DELETE FROM gallery_media WHERE id = ?', [Number(id)]);
+      await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Deleted Gallery Item', `ID: ${id}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'send_broadcast') {
+      const { subject, body, target, singleEmail } = payload;
+      const cleanSubject = sanitizeString(subject, 255);
+      const cleanBody = sanitizeString(body, 10000);
+      const cleanTarget = sanitizeString(target, 50) || 'all';
+      const cleanSingle = sanitizeString(singleEmail, 255);
+
+      if (!cleanSubject || !cleanBody) {
+        return NextResponse.json({ success: false, error: 'Subject and body are required' }, { status: 400 });
+      }
+
+      let recipients: string[] = [];
+
+      if (cleanTarget === 'single' && cleanSingle) {
+        recipients = [cleanSingle];
+      } else if (cleanTarget === 'attendees') {
+        const [rows] = await db.query<RowDataPacket[]>('SELECT email FROM registrations WHERE email IS NOT NULL AND email != ""');
+        recipients = rows.map((r) => r.email);
+      } else if (cleanTarget === 'subscribers') {
+        const [rows] = await db.query<RowDataPacket[]>('SELECT email FROM newsletter_subscribers WHERE email IS NOT NULL AND email != ""');
+        recipients = rows.map((r) => r.email);
+      } else {
+        // 'all' target -> combined unique emails from both attendees and newsletter subscribers
+        const [regRows] = await db.query<RowDataPacket[]>('SELECT email FROM registrations WHERE email IS NOT NULL AND email != ""');
+        const [subRows] = await db.query<RowDataPacket[]>('SELECT email FROM newsletter_subscribers WHERE email IS NOT NULL AND email != ""');
+        const set = new Set<string>();
+        regRows.forEach((r) => set.add(r.email));
+        subRows.forEach((r) => set.add(r.email));
+        recipients = Array.from(set);
+      }
+
+      if (recipients.length === 0) {
+        return NextResponse.json({ success: false, error: 'No recipient email addresses found for target' }, { status: 400 });
+      }
+
+      const { sendBroadcastEmail } = await import('@/lib/email');
+      let sentCount = 0;
+      let failCount = 0;
+
+      for (const email of recipients) {
+        const res = await sendBroadcastEmail({
+          to: email,
+          subject: cleanSubject,
+          bodyHtml: cleanBody.replace(/\n/g, '<br/>'),
+        });
+        if (res.success) sentCount++;
+        else failCount++;
+      }
+
+      await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'Sent Email Broadcast', `Subject: ${cleanSubject}, Recipient Count: ${recipients.length}`);
+
+      return NextResponse.json({
+        success: true,
+        sentCount,
+        failCount,
+        totalRecipients: recipients.length,
+      });
+    }
+
     return NextResponse.json({ success: false, error: 'Unknown action' }, { status: 400 });
   } catch (error) {
     console.error('Error in Admin Users API POST:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });
   }
 }
+
