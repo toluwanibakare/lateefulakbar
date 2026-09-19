@@ -72,9 +72,9 @@ export default function RegistrationPortal() {
       ctx.drawImage(bgImg, 0, 0, templateWidth, templateHeight);
 
       // 2. Draw user photo placed precisely within the circle overlay
-      // Circle center: (405, 422), Radius: 195
+      // Circle center: (405, 475), Radius: 195
       const cx = 405;
-      const cy = 422;
+      const cy = 475;
       const radius = 195;
 
       if (userImg) {
