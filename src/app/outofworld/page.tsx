@@ -1154,7 +1154,7 @@ export default function AdminPage() {
               {activeSection.replace("_", " ")}
             </h1>
             <p className="text-xs text-faded">
-              Lateeful-Ul-Akbar 2027 &bull; Central Control Console
+              LATEEF-UL-IL-AKBAR 2027 &bull; Central Control Console
             </p>
           </div>
 
