@@ -101,7 +101,7 @@ export async function sendRegistrationEmail({
   }
 
   const safeName = name || 'Guest';
-  const referralLink = referralCode ? `${SITE_URL}/?ref=${referralCode}` : '';
+  const referralLink = referralCode ? `${SITE_URL}/register?ref=${referralCode}` : '';
   const logoUrl = `${SITE_URL}/assets/brand/lateefulakbar.PNG`;
 
   const innerHtml = `

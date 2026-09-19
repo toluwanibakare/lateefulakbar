@@ -44,10 +44,10 @@ export async function GET(req: Request) {
       console.warn('Stats warning (referrals):', e);
     }
 
-    // 3. Donations total
+    // 3. Donations total (LIVE MODE ONLY for Dashboard)
     try {
       const [donRows] = await db.query<RowDataPacket[]>(
-        'SELECT SUM(amount) as total_amount, COUNT(DISTINCT email) as total_donors FROM donations WHERE status = "completed"'
+        'SELECT SUM(amount) as total_amount, COUNT(DISTINCT email) as total_donors FROM donations WHERE status = "completed" AND mode = "live"'
       );
       totalDonations = Number(donRows[0]?.total_amount || 0);
       totalDonors = Number(donRows[0]?.total_donors || 0);

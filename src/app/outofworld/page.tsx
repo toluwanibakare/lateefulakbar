@@ -145,6 +145,7 @@ export default function AdminPage() {
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [galleryItems, setGalleryItems] = useState<any[]>([]);
   const [donationsList, setDonationsList] = useState<any[]>([]);
+  const [donationFilter, setDonationFilter] = useState<'all' | 'live' | 'test'>('all');
   const [adminUsersList, setAdminUsersList] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -2459,79 +2460,153 @@ export default function AdminPage() {
           )}
 
           {/* SECTION: SADAQAH PAYMENTS LOG PAGE */}
-          {activeSection === "donations" && (
-            <div className="space-y-6">
-              {/* Overview Metrics Cards */}
-              <div className="grid gap-5 sm:grid-cols-3">
-                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
-                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Raised</span>
-                  <div className="text-2xl font-extrabold text-pine mt-1">
-                    ₦{donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0).toLocaleString()}
+          {activeSection === "donations" && (() => {
+            const filteredDonations = donationsList.filter((d) => {
+              if (donationFilter === "live") return d.mode === "live";
+              if (donationFilter === "test") return d.mode === "test" || !d.mode;
+              return true;
+            });
+            const totalRaised = filteredDonations.reduce((acc, curr) => acc + Number(curr.amount || 0), 0);
+            const avgContrib = filteredDonations.length > 0 ? Math.round(totalRaised / filteredDonations.length) : 0;
+
+            return (
+              <div className="space-y-6">
+                {/* Overview Metrics Cards */}
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 shadow-sm">
+                    <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">🟢 Live Total Raised</span>
+                    <div className="text-xl font-extrabold text-emerald-950 mt-1">
+                      ₦{donationsList.filter(d => d.mode === 'live').reduce((acc, curr) => acc + Number(curr.amount || 0), 0).toLocaleString()}
+                    </div>
+                    <span className="text-[10px] text-emerald-700 font-medium">
+                      {donationsList.filter(d => d.mode === 'live').length} live transactions
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 shadow-sm">
+                    <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider">🧪 Test Total Raised</span>
+                    <div className="text-xl font-extrabold text-amber-950 mt-1">
+                      ₦{donationsList.filter(d => d.mode === 'test' || !d.mode).reduce((acc, curr) => acc + Number(curr.amount || 0), 0).toLocaleString()}
+                    </div>
+                    <span className="text-[10px] text-amber-700 font-medium">
+                      {donationsList.filter(d => d.mode === 'test' || !d.mode).length} test transactions
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                    <span className="text-[11px] font-bold text-faded uppercase tracking-wider">Filtered Total ({donationFilter.toUpperCase()})</span>
+                    <div className="text-xl font-extrabold text-pine mt-1">
+                      ₦{totalRaised.toLocaleString()}
+                    </div>
+                    <span className="text-[10px] text-faded font-medium">
+                      {filteredDonations.length} records shown
+                    </span>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-white border border-ink/15 shadow-sm">
+                    <span className="text-[11px] font-bold text-faded uppercase tracking-wider">Avg Contribution</span>
+                    <div className="text-xl font-extrabold text-gilt mt-1">
+                      ₦{avgContrib.toLocaleString()}
+                    </div>
+                    <span className="text-[10px] text-faded font-medium">per transaction</span>
                   </div>
                 </div>
-                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
-                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Total Donors</span>
-                  <div className="text-2xl font-extrabold text-vivid mt-1">
-                    {donationsList.length} donors
+
+                {/* Transactions Log Section */}
+                <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                      <h2 className="text-base font-bold text-pine">Completed Sadaqah Payments Log</h2>
+                      <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions from site visitors</p>
+                    </div>
+
+                    {/* Filter Tabs */}
+                    <div className="flex items-center gap-1.5 bg-cream p-1 rounded-xl border border-ink/10 text-xs font-bold">
+                      <button
+                        type="button"
+                        onClick={() => setDonationFilter('all')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          donationFilter === 'all'
+                            ? 'bg-pine text-white shadow-xs'
+                            : 'text-faded hover:text-ink'
+                        }`}
+                      >
+                        ALL ({donationsList.length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDonationFilter('live')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          donationFilter === 'live'
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'text-faded hover:text-ink'
+                        }`}
+                      >
+                        🟢 LIVE ({donationsList.filter(d => d.mode === 'live').length})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDonationFilter('test')}
+                        className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                          donationFilter === 'test'
+                            ? 'bg-amber-600 text-white shadow-xs'
+                            : 'text-faded hover:text-ink'
+                        }`}
+                      >
+                        🧪 TEST ({donationsList.filter(d => d.mode === 'test' || !d.mode).length})
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div className="p-5 rounded-2xl bg-white border border-ink/15 shadow-sm">
-                  <span className="text-xs font-semibold text-faded uppercase tracking-wider">Avg Contribution</span>
-                  <div className="text-2xl font-extrabold text-gilt mt-1">
-                    ₦{donationsList.length > 0
-                      ? Math.round(donationsList.reduce((acc, curr) => acc + Number(curr.amount || 0), 0) / donationsList.length).toLocaleString()
-                      : 0}
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                          <th className="py-3 px-4">Donor Name</th>
+                          <th className="py-3 px-4">Email</th>
+                          <th className="py-3 px-4">Item / Category</th>
+                          <th className="py-3 px-4">Amount</th>
+                          <th className="py-3 px-4">Mode</th>
+                          <th className="py-3 px-4">Date</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-ink/10">
+                        {filteredDonations.map((d) => (
+                          <tr key={d.id} className="hover:bg-cream/60">
+                            <td className="py-3.5 px-4 font-bold text-ink">{d.donor_name}</td>
+                            <td className="py-3.5 px-4 text-faded">{d.email}</td>
+                            <td className="py-3.5 px-4 font-semibold text-pine">{d.category}</td>
+                            <td className="py-3.5 px-4 font-extrabold text-vivid">
+                              ₦{Number(d.amount).toLocaleString()}
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                                d.mode === 'live'
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                  : 'bg-amber-100 text-amber-800 border border-amber-300'
+                              }`}>
+                                {d.mode === 'live' ? 'LIVE' : 'TEST'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-faded">
+                              {new Date(d.created_at).toLocaleDateString()}
+                            </td>
+                          </tr>
+                        ))}
+                        {filteredDonations.length === 0 && (
+                          <tr>
+                            <td colSpan={6} className="py-8 text-center text-faded">
+                              No donation payment records found for {donationFilter.toUpperCase()} filter.
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
-
-              {/* Transactions Log Section */}
-              <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h2 className="text-base font-bold text-pine">Completed Sadaqah Payments Log</h2>
-                    <p className="text-xs text-faded">Real-time listing of completed Sadaqah contributions from live site visitors</p>
-                  </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
-                        <th className="py-3 px-4">Donor Name</th>
-                        <th className="py-3 px-4">Email</th>
-                        <th className="py-3 px-4">Item / Category</th>
-                        <th className="py-3 px-4">Amount</th>
-                        <th className="py-3 px-4">Date</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-ink/10">
-                      {donationsList.map((d) => (
-                        <tr key={d.id} className="hover:bg-cream/60">
-                          <td className="py-3.5 px-4 font-bold text-ink">{d.donor_name}</td>
-                          <td className="py-3.5 px-4 text-faded">{d.email}</td>
-                          <td className="py-3.5 px-4 font-semibold text-pine">{d.category}</td>
-                          <td className="py-3.5 px-4 font-extrabold text-vivid">
-                            ₦{Number(d.amount).toLocaleString()}
-                          </td>
-                          <td className="py-3.5 px-4 text-faded">
-                            {new Date(d.created_at).toLocaleDateString()}
-                          </td>
-                        </tr>
-                      ))}
-                      {donationsList.length === 0 && (
-                        <tr>
-                          <td colSpan={5} className="py-8 text-center text-faded">
-                            No donation payment records in database yet.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
 
           {/* SECTION: LIVE CHAT SUPPORT PAGE */}
