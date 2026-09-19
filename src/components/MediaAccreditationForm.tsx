@@ -40,6 +40,7 @@ const COMPLIANCE_ITEMS = [
 export default function MediaAccreditationForm() {
   const [step, setStep] = useState(1);
   const [logoFile, setLogoFile] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<{ id: string; ref: string } | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -137,15 +138,27 @@ export default function MediaAccreditationForm() {
     ctx.fillText("Issued by Nadwat Media & Communications Bureau", 400, 775);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!allAgreed) return;
-
-    const id = "PRESS-" + Math.floor(10000 + Math.random() * 90000);
-    const ref = "MEDIA-" + Math.random().toString(36).slice(2, 7).toUpperCase();
-
-    setSubmitted({ id, ref });
-    setTimeout(() => drawMediaPass(form.fullName, form.orgName, id, form.mediaType), 200);
+    setSubmitting(true);
+    try {
+      const response = await fetch('/api/media-accreditation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      const data = await response.json();
+      if (data.success) {
+        setSubmitted({ id: data.data.id, ref: data.data.accreditationNumber });
+        setTimeout(() => drawMediaPass(form.fullName, form.orgName, data.data.id, form.mediaType), 200);
+      } else {
+        alert(data.error || 'Failed to submit accreditation request.');
+      }
+    } catch (err) {
+      alert('An unexpected error occurred. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const downloadPass = () => {
