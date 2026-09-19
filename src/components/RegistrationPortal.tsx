@@ -58,9 +58,9 @@ export default function RegistrationPortal() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Use dimensions of template or standard high-res scale (800x1131)
-    const templateWidth = 800;
-    const templateHeight = 1131;
+    // Use exact dimensions of template flyer (810x1080)
+    const templateWidth = 810;
+    const templateHeight = 1080;
     canvas.width = templateWidth;
     canvas.height = templateHeight;
 
@@ -71,11 +71,11 @@ export default function RegistrationPortal() {
       // 1. Draw the template flyer background first
       ctx.drawImage(bgImg, 0, 0, templateWidth, templateHeight);
 
-      // 2. Draw user photo placed precisely within the circle overlay
-      // Circle center: (405, 418), Radius: 185
+      // 2. Draw user photo placed precisely within the white circle frame
+      // Circle center: (405, 415), Radius: 208
       const cx = 405;
-      const cy = 418;
-      const radius = 185;
+      const cy = 415;
+      const radius = 208;
 
       if (userImg) {
         ctx.save();
