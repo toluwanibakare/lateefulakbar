@@ -141,6 +141,13 @@ export default function AdminPage() {
   const [updates, setUpdates] = useState<any[]>([]);
   const [subscribers, setSubscribers] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
+  const [scheduleList, setScheduleList] = useState<any[]>([]);
+  const [editingScheduleItem, setEditingScheduleItem] = useState<any | null>(null);
+  const [showAddScheduleForm, setShowAddScheduleForm] = useState(false);
+  const [newScheduleTime, setNewScheduleTime] = useState("");
+  const [newScheduleTitle, setNewScheduleTitle] = useState("");
+  const [newScheduleNote, setNewScheduleNote] = useState("");
+  const [newScheduleOrder, setNewScheduleOrder] = useState(0);
   const [aiKnowledge, setAiKnowledge] = useState<any[]>([]);
   const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [galleryItems, setGalleryItems] = useState<any[]>([]);
@@ -437,6 +444,79 @@ export default function AdminPage() {
     }
   };
 
+  const handleCreateOrUpdateScheduleItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newScheduleTitle || !newScheduleTime) return;
+    try {
+      const isEditing = Boolean(editingScheduleItem?.id);
+      const action = isEditing ? "update_schedule_item" : "create_schedule_item";
+      const payload = {
+        ...(isEditing ? { id: editingScheduleItem.id } : {}),
+        timeSlot: newScheduleTime,
+        title: newScheduleTitle,
+        note: newScheduleNote,
+        itemOrder: newScheduleOrder,
+      };
+
+      const res = await fetch("/api/admin/crud", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action,
+          payload,
+          adminEmail: user?.email,
+          adminName: user?.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewScheduleTime("");
+        setNewScheduleTitle("");
+        setNewScheduleNote("");
+        setNewScheduleOrder(0);
+        setEditingScheduleItem(null);
+        setShowAddScheduleForm(false);
+        alert(isEditing ? "Schedule item updated successfully!" : "Schedule item added!");
+        loadSectionData("schedule");
+      } else {
+        alert(data.error || "Failed to save schedule item");
+      }
+    } catch (e) {
+      alert("Error saving schedule item");
+    }
+  };
+
+  const startEditScheduleItem = (item: any) => {
+    setEditingScheduleItem(item);
+    setNewScheduleTime(item.time_slot || item.time || "");
+    setNewScheduleTitle(item.title || "");
+    setNewScheduleNote(item.note || "");
+    setNewScheduleOrder(item.item_order || 0);
+    setShowAddScheduleForm(true);
+  };
+
+  const handleDeleteScheduleItem = async (id: number) => {
+    if (!confirm("Are you sure you want to delete this schedule item?")) return;
+    try {
+      const res = await fetch("/api/admin/crud", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          action: "delete_schedule_item",
+          payload: { id },
+          adminEmail: user?.email,
+          adminName: user?.name,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        loadSectionData("schedule");
+      }
+    } catch (e) {
+      alert("Error deleting schedule item");
+    }
+  };
+
   const getAuthHeaders = () => {
     const token = localStorage.getItem("admin_token") || "session_super_admin_lateeful_akbar_2027";
     return {
@@ -507,6 +587,10 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/crud?type=updates", { headers });
         const data = await res.json();
         if (data.success) setUpdates(data.data);
+      } else if (section === "schedule") {
+        const res = await fetch("/api/admin/crud?type=schedule", { headers });
+        const data = await res.json();
+        if (data.success) setScheduleList(data.data);
       } else if (section === "newsletter") {
         const res = await fetch("/api/admin/crud?type=subscribers", { headers });
         const data = await res.json();
@@ -1012,6 +1096,7 @@ export default function AdminPage() {
       group: "EVENT",
       items: [
         { id: "live_event", label: "Live Event Stream", icon: Radio },
+        { id: "schedule", label: "Order of the Day", icon: Clock },
         { id: "updates", label: "Event Updates", icon: Bell },
       ],
     },
@@ -1499,6 +1584,170 @@ export default function AdminPage() {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: ORDER OF THE DAY SCHEDULE MANAGER */}
+          {activeSection === "schedule" && (
+            <div className="space-y-6">
+              <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+                <div className="flex flex-wrap items-center justify-between gap-4 border-b border-ink/10 pb-5">
+                  <div>
+                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                      <Clock className="h-5 w-5 text-vivid" /> Order of the Day Schedule ({scheduleList.length})
+                    </h2>
+                    <p className="text-xs text-faded mt-0.5">Manage proposed event durations, activities, and spiritual program items displayed on the public website</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (showAddScheduleForm && editingScheduleItem) {
+                        setEditingScheduleItem(null);
+                        setNewScheduleTime("");
+                        setNewScheduleTitle("");
+                        setNewScheduleNote("");
+                        setNewScheduleOrder(0);
+                      } else {
+                        setShowAddScheduleForm((prev) => !prev);
+                      }
+                    }}
+                    className="px-4 py-2.5 bg-vivid hover:bg-vivid-deep text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 transition-all cursor-pointer"
+                  >
+                    <Plus className={`h-4 w-4 transition-transform duration-300 ${showAddScheduleForm ? "rotate-45" : ""}`} />
+                    {showAddScheduleForm ? (editingScheduleItem ? "Cancel Edit" : "Close Form") : "Add Schedule Item"}
+                  </button>
+                </div>
+
+                {/* Collapsible Add/Edit Form */}
+                {showAddScheduleForm && (
+                  <form onSubmit={handleCreateOrUpdateScheduleItem} className="p-6 rounded-2xl bg-cream border border-ink/15 space-y-4 shadow-inner">
+                    <h3 className="text-sm font-bold text-pine">
+                      {editingScheduleItem ? "Edit Schedule Item" : "Create New Program Item"}
+                    </h3>
+
+                    <div className="grid gap-4 sm:grid-cols-12">
+                      <div className="sm:col-span-3">
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-1.5">
+                          Time Slot / Duration *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. 08:00 AM or 45 mins"
+                          value={newScheduleTime}
+                          onChange={(e) => setNewScheduleTime(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-semibold"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-7">
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-1.5">
+                          Activity / Program Title *
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          placeholder="e.g. Special Yā Lateef Dhikr"
+                          value={newScheduleTitle}
+                          onChange={(e) => setNewScheduleTitle(e.target.value)}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-bold"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-1.5">
+                          Order Pos.
+                        </label>
+                        <input
+                          type="number"
+                          value={newScheduleOrder}
+                          onChange={(e) => setNewScheduleOrder(Number(e.target.value))}
+                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-1.5">
+                        Description / Note
+                      </label>
+                      <textarea
+                        rows={2}
+                        placeholder="e.g. Guided supplications for family, health, business, career, marriage..."
+                        value={newScheduleNote}
+                        onChange={(e) => setNewScheduleNote(e.target.value)}
+                        className="w-full bg-white border border-ink/15 rounded-xl p-3 text-xs text-ink"
+                      />
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditingScheduleItem(null);
+                          setShowAddScheduleForm(false);
+                        }}
+                        className="px-4 py-2 rounded-xl border border-ink/15 text-xs font-semibold text-faded hover:bg-white"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="px-6 py-2 bg-vivid hover:bg-vivid-deep text-white text-xs font-bold rounded-xl shadow-md"
+                      >
+                        {editingScheduleItem ? "Save Schedule Changes" : "Publish Schedule Item"}
+                      </button>
+                    </div>
+                  </form>
+                )}
+
+                {/* Schedule Table */}
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                        <th className="py-3 px-3">Order</th>
+                        <th className="py-3 px-3">Time / Duration</th>
+                        <th className="py-3 px-3">Program Activity</th>
+                        <th className="py-3 px-3">Note / Details</th>
+                        <th className="py-3 px-3 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-ink/10">
+                      {scheduleList.map((item, idx) => (
+                        <tr key={item.id || idx} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-3 font-mono text-faded font-bold">#{item.item_order || idx + 1}</td>
+                          <td className="py-3.5 px-3 font-mono font-bold text-fern whitespace-nowrap">{item.time_slot || item.time}</td>
+                          <td className="py-3.5 px-3 font-bold text-ink">{item.title}</td>
+                          <td className="py-3.5 px-3 text-faded max-w-md">{item.note}</td>
+                          <td className="py-3.5 px-3 text-right space-x-2 whitespace-nowrap">
+                            <button
+                              onClick={() => startEditScheduleItem(item)}
+                              className="px-2.5 py-1 bg-mist text-pine border border-sage rounded-lg font-semibold text-[11px] hover:bg-pine hover:text-white"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteScheduleItem(item.id)}
+                              className="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg font-semibold text-[11px] hover:bg-rose-600 hover:text-white"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {scheduleList.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="py-8 text-center text-faded">
+                            No schedule items recorded yet. Click &quot;Add Schedule Item&quot; to create one.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}

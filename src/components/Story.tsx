@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, BookOpen, Heart, Volume2, Users } from "lucide-react";
 import { EVENT, PHOTOS } from "@/lib/site";
@@ -95,19 +95,35 @@ const EXPECT = [
   },
 ];
 
-const ORDER = [
-  { time: "08:00", title: "Gates & Settling", note: "Accreditation, seating by canopy, quiet recitation." },
-  { time: "09:30", title: "Opening & Bismillah", note: "Welcome from Nadwat, intentions set together." },
-  { time: "10:30", title: "Yaa Lateef — First Sitting", note: "The long collective dhikr. Water moves through rows." },
-  { time: "12:30", title: "Reflection & Scholars", note: "Reminders from the convener and guest scholars." },
-  { time: "14:00", title: "The Grand Du‘ā", note: "Tens of thousands asking as one. The day’s peak." },
-  { time: "15:00", title: "Closing & Dispersal", note: "Orderly exit by section, lost-and-found at the gates." },
+const DEFAULT_ORDER = [
+  { time: "08:00 AM", title: "Daily Fortification", note: "Opening fortification, accreditation, seating by canopy, and quiet preparation." },
+  { time: "09:30 AM", title: "Welcome & Introduction", note: "Opening address from Nadwat Global Assembly, setting intentions together." },
+  { time: "10:15 AM", title: "Thanksgiving", note: "Reflecting on blessings and giving gratitude for answered prayers." },
+  { time: "10:45 AM", title: "Islamic Lecture / Spiritual Exhortation", note: "Inspiring talk and spiritual guidance by guest scholars and the convener." },
+  { time: "11:30 AM", title: "Collective Dhikr & Istighfār", note: "Seeking forgiveness and chanting remembrance in unison." },
+  { time: "12:15 PM", title: "Salawāt upon Prophet Muhammad ﷺ", note: "Sending blessings upon the Holy Prophet with deep devotion." },
+  { time: "01:00 PM", title: "Special Yā Lateef Dhikr", note: "The grand collective Yā Lateef tasbīh recitation across the venue." },
+  { time: "02:00 PM", title: "Guided Duʿā & Supplications", note: "Focused prayers for family, health, business, career, marriage, education, protection, prosperity and life concerns." },
+  { time: "03:00 PM", title: "Special Prayer for the Ummah", note: "Unifying prayers for peace, security, and relief for Muslims worldwide." },
+  { time: "03:30 PM", title: "Closing Duʿā & Remarks", note: "Final blessings, closing announcements, and orderly dispersal." },
 ];
 
 export default function Story() {
   const fullRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: fullRef, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
+  const [schedule, setSchedule] = useState(DEFAULT_ORDER);
+
+  useEffect(() => {
+    fetch('/api/schedule')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.schedule) && data.schedule.length > 0) {
+          setSchedule(data.schedule);
+        }
+      })
+      .catch((err) => console.error('Error loading schedule:', err));
+  }, []);
 
   return (
     <>
@@ -470,15 +486,15 @@ export default function Story() {
           <div className="lg:col-span-7">
             <StaggerContainer staggerDelay={0.06}>
               <ol>
-                {ORDER.map((o) => (
-                  <StaggerItem key={o.time}>
+                {schedule.map((o, idx) => (
+                  <StaggerItem key={o.id || o.time || idx}>
                     <li className="group flex gap-6 border-t border-ink/12 py-6 last:border-b">
-                      <span className="w-14 shrink-0 pt-1 font-mono text-sm text-fern font-bold">{o.time}</span>
+                      <span className="w-20 shrink-0 pt-1 font-mono text-xs sm:text-sm text-fern font-bold">{o.time}</span>
                       <div>
-                        <h3 className="font-display text-2xl tracking-tight text-ink transition-colors group-hover:text-fern">
+                        <h3 className="font-display text-xl sm:text-2xl tracking-tight text-ink transition-colors group-hover:text-fern">
                           {o.title}
                         </h3>
-                        <p className="mt-1 max-w-lg text-sm leading-relaxed text-faded">{o.note}</p>
+                        {o.note && <p className="mt-1 max-w-lg text-sm leading-relaxed text-faded">{o.note}</p>}
                       </div>
                     </li>
                   </StaggerItem>

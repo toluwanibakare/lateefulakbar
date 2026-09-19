@@ -109,6 +109,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: true, data: rows });
     }
 
+    if (type === 'schedule') {
+      const [rows] = await db.query<RowDataPacket[]>(
+        'SELECT * FROM event_schedule ORDER BY item_order ASC, id ASC'
+      );
+      return NextResponse.json({ success: true, data: rows });
+    }
+
     if (type === 'settings') {
       const [rows] = await db.query<RowDataPacket[]>(
         'SELECT * FROM app_settings'
@@ -274,6 +281,43 @@ export async function POST(req: Request) {
         );
       }
       await logAdminActivity(adminEmail, adminName, 'Updated Paystack Payment Gateway Settings', `Mode: ${mode}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'create_schedule_item') {
+      const timeSlot = sanitizeString(payload.timeSlot || payload.time, 50);
+      const title = sanitizeString(payload.title, 255);
+      const note = sanitizeString(payload.note, 2000);
+      const itemOrder = Number(payload.itemOrder) || 0;
+
+      await db.query(
+        'INSERT INTO event_schedule (time_slot, title, note, item_order) VALUES (?, ?, ?, ?)',
+        [timeSlot, title, note, itemOrder]
+      );
+      await logAdminActivity(adminEmail, adminName, 'Created Schedule Item', `Title: ${title}, Time: ${timeSlot}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'update_schedule_item') {
+      const id = Number(payload.id);
+      const timeSlot = sanitizeString(payload.timeSlot || payload.time, 50);
+      const title = sanitizeString(payload.title, 255);
+      const note = sanitizeString(payload.note, 2000);
+      const itemOrder = Number(payload.itemOrder) || 0;
+      const isActive = payload.is_active !== undefined ? (payload.is_active ? 1 : 0) : 1;
+
+      await db.query(
+        'UPDATE event_schedule SET time_slot = ?, title = ?, note = ?, item_order = ?, is_active = ? WHERE id = ?',
+        [timeSlot, title, note, itemOrder, isActive, id]
+      );
+      await logAdminActivity(adminEmail, adminName, 'Updated Schedule Item', `ID: ${id}, Title: ${title}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'delete_schedule_item') {
+      const id = Number(payload.id);
+      await db.query('DELETE FROM event_schedule WHERE id = ?', [id]);
+      await logAdminActivity(adminEmail, adminName, 'Deleted Schedule Item', `ID: ${id}`);
       return NextResponse.json({ success: true });
     }
 

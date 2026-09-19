@@ -234,6 +234,37 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
+    // 12b. Event Schedule table for admin management
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS event_schedule (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        time_slot VARCHAR(50) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        note TEXT,
+        item_order INT DEFAULT 0,
+        is_active TINYINT(1) DEFAULT 1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // Seed default schedule items if empty
+    const [existingSched] = await p.query<mysql.RowDataPacket[]>('SELECT COUNT(*) as count FROM event_schedule');
+    if (existingSched[0]?.count === 0) {
+      await p.query(`
+        INSERT INTO event_schedule (time_slot, title, note, item_order) VALUES
+        ('08:00 AM', 'Daily Fortification', 'Opening fortification, accreditation, seating by canopy, and quiet preparation.', 1),
+        ('09:30 AM', 'Welcome & Introduction', 'Opening address from Nadwat Global Assembly, setting intentions together.', 2),
+        ('10:15 AM', 'Thanksgiving', 'Reflecting on blessings and giving gratitude for answered prayers.', 3),
+        ('10:45 AM', 'Islamic Lecture / Spiritual Exhortation', 'Inspiring talk and spiritual guidance by guest scholars and the convener.', 4),
+        ('11:30 AM', 'Collective Dhikr & Istighfār', 'Seeking forgiveness and chanting remembrance in unison.', 5),
+        ('12:15 PM', 'Salawāt upon Prophet Muhammad ﷺ', 'Sending blessings upon the Holy Prophet with deep devotion.', 6),
+        ('01:00 PM', 'Special Yā Lateef Dhikr', 'The grand collective Yā Lateef tasbīh recitation across the venue.', 7),
+        ('02:00 PM', 'Guided Duʿā & Supplications', 'Focused prayers for family, health, business, career, marriage, education, protection, prosperity and life concerns.', 8),
+        ('03:00 PM', 'Special Prayer for the Ummah', 'Unifying prayers for peace, security, and relief for Muslims worldwide.', 9),
+        ('03:30 PM', 'Closing Duʿā & Remarks', 'Final blessings, closing announcements, and orderly dispersal.', 10)
+      `);
+    }
+
     // 13. Dynamic Blog Posts table
     await p.query(`
       CREATE TABLE IF NOT EXISTS blog_posts (
