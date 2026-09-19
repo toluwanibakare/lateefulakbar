@@ -19,10 +19,10 @@ function getEmailWrapper(title: string, innerHtml: string): string {
               
               <!-- HEADER -->
               <tr>
-                <td style="background: linear-gradient(135deg, #064e3b 0%, #0f766e 100%); padding: 36px 28px; text-align: center; border-bottom: 4px solid #d97706;">
-                  <img src="${SITE_URL}/assets/brand/lateefulakbar.PNG" alt="LATEEF Logo" style="height: 64px; max-width: 240px; margin-bottom: 12px; object-fit: contain;" />
-                  <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: 0.5px;">LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027</h1>
-                  <p style="margin: 6px 0 0 0; color: #fef3c7; font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1.5px;">Walking in the Footsteps of Light</p>
+                <td style="background-color: #ffffff; padding: 28px 24px 20px 24px; text-align: center; border-bottom: 4px solid #0f766e;">
+                  <img src="${SITE_URL}/assets/brand/lateefulakbar.PNG" alt="LATEEF Logo" style="height: 64px; max-width: 240px; margin-bottom: 8px; object-fit: contain;" />
+                  <h1 style="margin: 8px 0 0 0; color: #064e3b; font-size: 22px; font-weight: 800; letter-spacing: 0.5px;">LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027</h1>
+                  <p style="margin: 4px 0 0 0; color: #b45309; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Walking in the Footsteps of Light</p>
                 </td>
               </tr>
 
@@ -154,8 +154,9 @@ export async function sendRegistrationEmail({
 
     <!-- ACTIONS -->
     <div style="margin:0 0 8px 0;">
-      <a href="${SITE_URL}/attending" class="btn" style="display:block;text-align:center;background-color:#d97706;color:#ffffff;text-decoration:none;padding:14px 20px;border-radius:10px;font-weight:700;font-size:15px;margin:0 0 10px 0;">Get Your &ldquo;I Will Be Attending&rdquo; Banner</a>
+      <a href="${SITE_URL}/register" class="btn" style="display:block;text-align:center;background-color:#d97706;color:#ffffff;text-decoration:none;padding:14px 20px;border-radius:10px;font-weight:700;font-size:15px;margin:0 0 10px 0;">Download Pass / View Event Ticket</a>
       <a href="${SITE_URL}/chat" class="btn" style="display:block;text-align:center;background-color:#ffffff;color:#0f766e;text-decoration:none;padding:13px 20px;border-radius:10px;font-weight:700;font-size:15px;border:1.5px solid #0f766e;">Chat with Smart LATEEF Assistant</a>
+      <a href="${SITE_URL}/about" class="btn" style="display:block;text-align:center;background-color:#f1f5f9;color:#334155;text-decoration:none;padding:11px 20px;border-radius:10px;font-weight:600;font-size:14px;margin-top:10px;">About Event & Venue Details</a>
     </div>
 
     <p style="margin:18px 0 0 0;font-size:13px;line-height:1.6;color:#64748b;">
@@ -452,33 +453,41 @@ export async function sendDonationReceiptEmail({
   }
 
   const innerHtml = `
-    <h2 style="margin: 0 0 16px 0; color: #064e3b; font-size: 20px;">Jazakallahu Khair ${donorName},</h2>
-    <p style="font-size: 15px; line-height: 1.6; color: #334155;">
-      May Allah bless you for your generous contribution towards <strong>Lateeful-Ul-Akbar Li-A’azam 2027</strong>. Your Sadaqah helps support the organization and comfort of thousands of attendees.
+    <h2 style="margin: 0 0 16px 0; color: #064e3b; font-size: 19px; line-height: 1.4;">As-Salāmu ‘Alaykum Warahmatullāhi Wabarakātuh ${donorName},</h2>
+    <p style="font-size: 15px; line-height: 1.7; color: #334155; margin: 0 0 16px 0;">
+      <strong>Jazākumullāhu Khayran!</strong> We have successfully received your generous Sadaqah contribution towards <strong>Lateeful-Ul-Akbar Li-A’azam 2027</strong>.
     </p>
 
-    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 24px; margin: 24px 0;">
-      <h3 style="margin: 0 0 14px 0; color: #064e3b; font-size: 16px; border-bottom: 1px solid #dcfce7; padding-bottom: 8px;">Official Contribution Receipt</h3>
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 22px; margin: 20px 0;">
+      <h3 style="margin: 0 0 14px 0; color: #064e3b; font-size: 15px; border-bottom: 1px solid #dcfce7; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Official Sadaqah Receipt</h3>
       
       <table border="0" cellpadding="6" cellspacing="0" width="100%" style="font-size: 14px; color: #334155;">
         <tr>
           <td width="40%" style="font-weight: 600; color: #047857;">Transaction Ref:</td>
-          <td width="60%" style="font-family: monospace; font-size: 13px;">${txRef}</td>
+          <td width="60%" style="font-family: monospace; font-size: 13px; font-weight: 700; color: #0f172a;">${txRef}</td>
         </tr>
         <tr>
-          <td style="font-weight: 600; color: #047857;">Contribution Area:</td>
-          <td>${category}</td>
+          <td style="font-weight: 600; color: #047857;">Sadaqah Project:</td>
+          <td style="font-weight: 600; color: #0f766e;">${category}</td>
         </tr>
         <tr>
-          <td style="font-weight: 600; color: #047857;">Amount Donated:</td>
-          <td style="font-weight: 800; color: #064e3b; font-size: 20px;">₦${amount.toLocaleString()}</td>
+          <td style="font-weight: 600; color: #047857;">Amount Contributed:</td>
+          <td style="font-weight: 800; color: #064e3b; font-size: 22px;">₦${amount.toLocaleString()}</td>
         </tr>
       </table>
     </div>
 
-    <p style="font-size: 14px; line-height: 1.6; color: #475569;">
-      "The example of those who spend their wealth in the way of Allah is like a seed of grain which grows seven spikes; in each spike is a hundred grains." (Qur'an 2:261)
+    <p style="font-size: 15px; line-height: 1.7; color: #334155; margin: 0 0 16px 0;">
+      May Allah accept your Sadaqah, multiply your reward, increase you in halal <em>rizq</em> and <em>barakah</em>, and make your contribution a source of continuous goodness. Āmīn.
     </p>
+
+    <p style="font-size: 14px; line-height: 1.6; color: #475569; margin: 0 0 20px 0;">
+      Thank you for supporting this noble gathering.
+    </p>
+
+    <div style="margin: 20px 0 0 0;">
+      <a href="${SITE_URL}/sadaqah" style="display: inline-block; background-color: #0f766e; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 14px;">View Live Sadaqah Projects &rarr;</a>
+    </div>
   `;
 
   try {
