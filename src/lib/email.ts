@@ -154,7 +154,7 @@ export async function sendRegistrationEmail({
 
     <!-- ACTIONS -->
     <div style="margin:0 0 8px 0;">
-      <a href="${SITE_URL}/register?code=${passCode}" class="btn" style="display:block;text-align:center;background-color:#d97706;color:#ffffff;text-decoration:none;padding:14px 20px;border-radius:10px;font-weight:700;font-size:15px;margin:0 0 10px 0;">Download Pass / View Event Ticket</a>
+      <a href="${SITE_URL}/pass/${passCode}" class="btn" style="display:block;text-align:center;background-color:#d97706;color:#ffffff;text-decoration:none;padding:14px 20px;border-radius:10px;font-weight:700;font-size:15px;margin:0 0 10px 0;">Download Pass / View Event Ticket</a>
       <a href="${SITE_URL}/?chat=true" class="btn" style="display:block;text-align:center;background-color:#ffffff;color:#0f766e;text-decoration:none;padding:13px 20px;border-radius:10px;font-weight:700;font-size:15px;border:1.5px solid #0f766e;">Chat with Smart LATEEF Assistant</a>
       <a href="${SITE_URL}/about" class="btn" style="display:block;text-align:center;background-color:#f1f5f9;color:#334155;text-decoration:none;padding:11px 20px;border-radius:10px;font-weight:600;font-size:14px;margin-top:10px;">About Event & Venue Details</a>
     </div>
@@ -186,7 +186,7 @@ export async function sendRegistrationEmail({
       ? [``, `Invite family and friends with your personal link:`, referralLink, `Your code: ${referralCode}`]
       : []),
     ``,
-    `Download your "I Will Be Joining" pass: ${SITE_URL}/register?code=${passCode}`,
+    `Download your "I Will Be Joining" pass: ${SITE_URL}/pass/${passCode}`,
     `Chat with Smart LATEEF: ${SITE_URL}/?chat=true`,
     ``,
     `Questions? Simply reply to this email.`,
