@@ -1355,8 +1355,9 @@ export default function AdminPage() {
                               ))}
                             </Pie>
                             <Tooltip
-                              formatter={(value: any) => `₦${Number(value).toLocaleString()}`}
-                              contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
+                              formatter={(value: any, name: any) => [`₦${Number(value).toLocaleString()}`, name]}
+                              contentStyle={{ backgroundColor: '#0b3d2e', borderRadius: '12px', border: '1px solid #14532d', color: '#ffffff', fontSize: '12px' }}
+                              itemStyle={{ color: '#ffffff', fontWeight: 600 }}
                             />
                           </PieChart>
                         </ResponsiveContainer>
