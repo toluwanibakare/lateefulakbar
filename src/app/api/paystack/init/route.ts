@@ -45,18 +45,16 @@ export async function POST(req: Request) {
     const mode = (dbSettings['paystack_mode'] || process.env.PAYSTACK_MODE || 'test').trim();
 
     const secretKey = (
-      dbSettings['paystack_secret_key'] ||
-      getEnvKey('PAYSTACK_SECRET_KEY') ||
-      dbSettings['paystack_public_key'] ||
-      getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY') ||
-      'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e'
-    ).trim();
+      mode === 'live'
+        ? (dbSettings['paystack_live_secret_key'] || dbSettings['paystack_secret_key'] || getEnvKey('PAYSTACK_SECRET_KEY'))
+        : (dbSettings['paystack_test_secret_key'] || dbSettings['paystack_secret_key'] || getEnvKey('PAYSTACK_SECRET_KEY'))
+    ) || 'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e';
 
     const publicKey = (
-      dbSettings['paystack_public_key'] ||
-      getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY') ||
-      'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e'
-    ).trim();
+      mode === 'live'
+        ? (dbSettings['paystack_live_public_key'] || dbSettings['paystack_public_key'] || getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY'))
+        : (dbSettings['paystack_test_public_key'] || dbSettings['paystack_public_key'] || getEnvKey('NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY'))
+    ) || 'pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e';
 
     // If Paystack Key is configured (sk_ or pk_), make real call to Paystack API
     if (secretKey && (secretKey.startsWith('sk_') || secretKey.startsWith('pk_'))) {

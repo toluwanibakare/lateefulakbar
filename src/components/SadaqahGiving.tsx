@@ -122,7 +122,6 @@ export default function SadaqahGiving() {
             email: email || 'donor@example.com',
             amount: Math.round(totalPay * 100),
             currency: "NGN",
-            ref: "DON-" + Date.now(),
             onClose: function () {
               setSubmitting(false);
             },

@@ -90,7 +90,6 @@ export default function SadaqahQuickGive() {
             email,
             amount: Math.round(effective * 100),
             currency: "NGN",
-            ref: "SAD-" + Date.now(),
             onClose: function () {
               setSubmitting(false);
             },

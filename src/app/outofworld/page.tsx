@@ -190,8 +190,10 @@ export default function AdminPage() {
 
   // Paystack Gateway Configuration State
   const [paystackMode, setPaystackMode] = useState<"test" | "live">("test");
-  const [paystackPublicKey, setPaystackPublicKey] = useState("");
-  const [paystackSecretKey, setPaystackSecretKey] = useState("");
+  const [paystackTestPublicKey, setPaystackTestPublicKey] = useState("");
+  const [paystackTestSecretKey, setPaystackTestSecretKey] = useState("");
+  const [paystackLivePublicKey, setPaystackLivePublicKey] = useState("");
+  const [paystackLiveSecretKey, setPaystackLiveSecretKey] = useState("");
   const [paystackSaveStatus, setPaystackSaveStatus] = useState("");
 
   // Campaign Form & Editing State
@@ -540,8 +542,13 @@ export default function AdminPage() {
         const data = await res.json();
         if (data.success && data.data) {
           if (data.data.paystack_mode) setPaystackMode(data.data.paystack_mode as any);
-          if (data.data.paystack_public_key) setPaystackPublicKey(data.data.paystack_public_key);
-          if (data.data.paystack_secret_key) setPaystackSecretKey(data.data.paystack_secret_key);
+          if (data.data.paystack_test_public_key) setPaystackTestPublicKey(data.data.paystack_test_public_key);
+          if (data.data.paystack_test_secret_key) setPaystackTestSecretKey(data.data.paystack_test_secret_key);
+          if (data.data.paystack_live_public_key) setPaystackLivePublicKey(data.data.paystack_live_public_key);
+          if (data.data.paystack_live_secret_key) setPaystackLiveSecretKey(data.data.paystack_live_secret_key);
+          // Legacy fallbacks
+          if (data.data.paystack_public_key && !data.data.paystack_test_public_key) setPaystackTestPublicKey(data.data.paystack_public_key);
+          if (data.data.paystack_secret_key && !data.data.paystack_test_secret_key) setPaystackTestSecretKey(data.data.paystack_secret_key);
         }
       }
     } catch (e) {
@@ -559,7 +566,13 @@ export default function AdminPage() {
         headers: getAuthHeaders(),
         body: JSON.stringify({
           action: "save_paystack_settings",
-          payload: { mode: paystackMode, publicKey: paystackPublicKey, secretKey: paystackSecretKey },
+          payload: {
+            mode: paystackMode,
+            testPublicKey: paystackTestPublicKey,
+            testSecretKey: paystackTestSecretKey,
+            livePublicKey: paystackLivePublicKey,
+            liveSecretKey: paystackLiveSecretKey,
+          },
           adminEmail: user?.email,
           adminName: user?.name,
         }),
@@ -1701,17 +1714,21 @@ export default function AdminPage() {
                     <p className="text-xs text-faded">Switch environment & manage Paystack API keys</p>
                   </div>
                   <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
-                    paystackSecretKey.startsWith("sk_")
-                      ? paystackMode === "live"
+                    paystackMode === "live"
+                      ? paystackLiveSecretKey
                         ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
                         : "bg-amber-100 text-amber-800 border border-amber-300"
-                      : "bg-slate-100 text-slate-700 border border-slate-300"
+                      : paystackTestSecretKey
+                        ? "bg-amber-100 text-amber-800 border border-amber-300"
+                        : "bg-slate-100 text-slate-700 border border-slate-300"
                   }`}>
-                    {paystackSecretKey.startsWith("sk_")
-                      ? paystackMode === "live"
+                    {paystackMode === "live"
+                      ? paystackLiveSecretKey
                         ? "Connected (Live Production)"
-                        : "Connected (Test Mode)"
-                      : "Not Configured (Fallback Mode)"}
+                        : "Live Key Required"
+                      : paystackTestSecretKey
+                        ? "Connected (Test Mode)"
+                        : "Test Key Required"}
                   </span>
                 </div>
 
@@ -1724,7 +1741,7 @@ export default function AdminPage() {
                 <form onSubmit={handleSavePaystackSettings} className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                      Paystack Environment Mode
+                      Active Environment Mode
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                       <button
@@ -1752,31 +1769,63 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                      Paystack Public Key ({paystackMode.toUpperCase()})
-                    </label>
-                    <input
-                      type="text"
-                      value={paystackPublicKey}
-                      onChange={(e) => setPaystackPublicKey(e.target.value)}
-                      placeholder={paystackMode === "live" ? "pk_live_xxxxxxxx..." : "pk_test_xxxxxxxx..."}
-                      className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
-                    />
-                  </div>
+                  {paystackMode === "live" ? (
+                    <>
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Live Public Key
+                        </label>
+                        <input
+                          type="text"
+                          value={paystackLivePublicKey}
+                          onChange={(e) => setPaystackLivePublicKey(e.target.value)}
+                          placeholder="Enter your Paystack Live Public Key"
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                      Paystack Secret Key ({paystackMode.toUpperCase()})
-                    </label>
-                    <input
-                      type="password"
-                      value={paystackSecretKey}
-                      onChange={(e) => setPaystackSecretKey(e.target.value)}
-                      placeholder={paystackMode === "live" ? "sk_live_xxxxxxxx..." : "sk_test_xxxxxxxx..."}
-                      className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Live Secret Key
+                        </label>
+                        <input
+                          type="password"
+                          value={paystackLiveSecretKey}
+                          onChange={(e) => setPaystackLiveSecretKey(e.target.value)}
+                          placeholder="Enter your Paystack Live Secret Key"
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Test Public Key
+                        </label>
+                        <input
+                          type="text"
+                          value={paystackTestPublicKey}
+                          onChange={(e) => setPaystackTestPublicKey(e.target.value)}
+                          placeholder="Enter your Paystack Test Public Key"
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                          Test Secret Key
+                        </label>
+                        <input
+                          type="password"
+                          value={paystackTestSecretKey}
+                          onChange={(e) => setPaystackTestSecretKey(e.target.value)}
+                          placeholder="Enter your Paystack Test Secret Key"
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                        />
+                      </div>
+                    </>
+                  )}
 
                   <button
                     type="submit"

@@ -224,22 +224,55 @@ export async function POST(req: Request) {
     }
 
     if (action === 'save_paystack_settings') {
-      const mode = sanitizeString(payload.mode, 20);
-      const publicKey = sanitizeString(payload.publicKey, 255);
-      const secretKey = sanitizeString(payload.secretKey, 255);
+      const mode = sanitizeString(payload.mode, 20) || 'test';
+      const testPublicKey = sanitizeString(payload.testPublicKey, 255);
+      const testSecretKey = sanitizeString(payload.testSecretKey, 255);
+      const livePublicKey = sanitizeString(payload.livePublicKey, 255);
+      const liveSecretKey = sanitizeString(payload.liveSecretKey, 255);
+
+      const activePublicKey = mode === 'live' ? livePublicKey : testPublicKey;
+      const activeSecretKey = mode === 'live' ? liveSecretKey : testSecretKey;
 
       await db.query(
         'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
         ['paystack_mode', mode, mode]
       );
-      await db.query(
-        'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
-        ['paystack_public_key', publicKey, publicKey]
-      );
-      await db.query(
-        'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
-        ['paystack_secret_key', secretKey, secretKey]
-      );
+      if (testPublicKey) {
+        await db.query(
+          'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+          ['paystack_test_public_key', testPublicKey, testPublicKey]
+        );
+      }
+      if (testSecretKey) {
+        await db.query(
+          'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+          ['paystack_test_secret_key', testSecretKey, testSecretKey]
+        );
+      }
+      if (livePublicKey) {
+        await db.query(
+          'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+          ['paystack_live_public_key', livePublicKey, livePublicKey]
+        );
+      }
+      if (liveSecretKey) {
+        await db.query(
+          'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+          ['paystack_live_secret_key', liveSecretKey, liveSecretKey]
+        );
+      }
+      if (activePublicKey) {
+        await db.query(
+          'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+          ['paystack_public_key', activePublicKey, activePublicKey]
+        );
+      }
+      if (activeSecretKey) {
+        await db.query(
+          'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+          ['paystack_secret_key', activeSecretKey, activeSecretKey]
+        );
+      }
       await logAdminActivity(adminEmail, adminName, 'Updated Paystack Payment Gateway Settings', `Mode: ${mode}`);
       return NextResponse.json({ success: true });
     }
