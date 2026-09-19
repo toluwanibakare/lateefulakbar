@@ -95,17 +95,17 @@ const EXPECT = [
   },
 ];
 
-const DEFAULT_ORDER = [
-  { time: "08:00 AM", title: "Daily Fortification", note: "Opening fortification, accreditation, seating by canopy, and quiet preparation." },
-  { time: "09:30 AM", title: "Welcome & Introduction", note: "Opening address from Nadwat Global Assembly, setting intentions together." },
-  { time: "10:15 AM", title: "Thanksgiving", note: "Reflecting on blessings and giving gratitude for answered prayers." },
-  { time: "10:45 AM", title: "Islamic Lecture / Spiritual Exhortation", note: "Inspiring talk and spiritual guidance by guest scholars and the convener." },
-  { time: "11:30 AM", title: "Collective Dhikr & Istighfār", note: "Seeking forgiveness and chanting remembrance in unison." },
-  { time: "12:15 PM", title: "Salawāt upon Prophet Muhammad ﷺ", note: "Sending blessings upon the Holy Prophet with deep devotion." },
-  { time: "01:00 PM", title: "Special Yā Lateef Dhikr", note: "The grand collective Yā Lateef tasbīh recitation across the venue." },
-  { time: "02:00 PM", title: "Guided Duʿā & Supplications", note: "Focused prayers for family, health, business, career, marriage, education, protection, prosperity and life concerns." },
-  { time: "03:00 PM", title: "Special Prayer for the Ummah", note: "Unifying prayers for peace, security, and relief for Muslims worldwide." },
-  { time: "03:30 PM", title: "Closing Duʿā & Remarks", note: "Final blessings, closing announcements, and orderly dispersal." },
+const DEFAULT_ORDER: { id?: number; time: string; title: string; note: string }[] = [
+  { id: 1, time: "08:00 AM", title: "Daily Fortification", note: "Opening fortification, accreditation, seating by canopy, and quiet preparation." },
+  { id: 2, time: "09:30 AM", title: "Welcome & Introduction", note: "Opening address from Nadwat Global Assembly, setting intentions together." },
+  { id: 3, time: "10:15 AM", title: "Thanksgiving", note: "Reflecting on blessings and giving gratitude for answered prayers." },
+  { id: 4, time: "10:45 AM", title: "Islamic Lecture / Spiritual Exhortation", note: "Inspiring talk and spiritual guidance by guest scholars and the convener." },
+  { id: 5, time: "11:30 AM", title: "Collective Dhikr & Istighfār", note: "Seeking forgiveness and chanting remembrance in unison." },
+  { id: 6, time: "12:15 PM", title: "Salawāt upon Prophet Muhammad ﷺ", note: "Sending blessings upon the Holy Prophet with deep devotion." },
+  { id: 7, time: "01:00 PM", title: "Special Yā Lateef Dhikr", note: "The grand collective Yā Lateef tasbīh recitation across the venue." },
+  { id: 8, time: "02:00 PM", title: "Guided Duʿā & Supplications", note: "Focused prayers for family, health, business, career, marriage, education, protection, prosperity and life concerns." },
+  { id: 9, time: "03:00 PM", title: "Special Prayer for the Ummah", note: "Unifying prayers for peace, security, and relief for Muslims worldwide." },
+  { id: 10, time: "03:30 PM", title: "Closing Duʿā & Remarks", note: "Final blessings, closing announcements, and orderly dispersal." },
 ];
 
 export default function Story() {
