@@ -41,6 +41,31 @@ export default function RegistrationPortal() {
       if (refParam) {
         set("referral", refParam.trim());
       }
+
+      const passCodeParam = params.get("code") || params.get("pass");
+      if (passCodeParam) {
+        fetch(`/api/register/pass?code=${encodeURIComponent(passCodeParam.trim())}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success && data.passCode) {
+              const origin = window.location.origin;
+              const refLink = `${origin}/register?ref=${data.referralCode}`;
+              setPass({
+                id: data.passCode,
+                ref: data.referralCode,
+                referralLink: refLink,
+                qrCode: data.qrCodeDataUrl,
+              });
+              if (data.registration?.fullName) {
+                setForm((f) => ({ ...f, fullName: data.registration.fullName }));
+              }
+              setTimeout(() => {
+                drawPass(data.registration?.fullName || "Guest", data.passCode, null, data.qrCodeDataUrl);
+              }, 200);
+            }
+          })
+          .catch((err) => console.error("Error auto-loading pass:", err));
+      }
     }
   }, []);
 
