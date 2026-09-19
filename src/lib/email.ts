@@ -22,6 +22,7 @@ function getEmailWrapper(title: string, innerHtml: string): string {
                 <td style="background-color: #ffffff; padding: 28px 24px 20px 24px; text-align: center; border-bottom: 4px solid #0f766e;">
                   <img src="${SITE_URL}/assets/brand/lateefulakbar.PNG" alt="LATEEF Logo" style="height: 64px; max-width: 240px; margin-bottom: 8px; object-fit: contain;" />
                   <h1 style="margin: 8px 0 0 0; color: #064e3b; font-size: 22px; font-weight: 800; letter-spacing: 0.5px;">LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027</h1>
+                  <p style="margin: 4px 0 0 0; color: #b45309; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">The Grand Spiritual Gathering of Sublime Minds</p>
                 </td>
               </tr>
 
@@ -113,6 +114,7 @@ export async function sendRegistrationEmail({
     <div style="text-align:center;padding:8px 0 4px 0;">
       <img src="${logoUrl}" alt="LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027" width="220" style="width:220px;max-width:70%;height:auto;border:0;outline:none;" />
       <h1 class="hero-title" style="margin:14px 0 4px 0;color:#064e3b;font-size:24px;font-weight:800;letter-spacing:0.3px;line-height:1.25;">LATEEF-UL-IL-AKBAR-LI-A’AZAM 2027</h1>
+      <p style="margin:0;color:#b45309;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;">The Grand Spiritual Gathering of Sublime Minds</p>
       <div style="width:64px;height:3px;background-color:#d97706;margin:14px auto 0 auto;border-radius:2px;"></div>
     </div>
 
