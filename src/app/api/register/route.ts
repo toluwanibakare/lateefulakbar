@@ -29,6 +29,24 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Valid full name, email, and phone number are required' }, { status: 400 });
     }
 
+    const db = await getDb();
+
+    // Check if email already registered
+    const [existing] = await db.query<RowDataPacket[]>(
+      `SELECT pass_code, referral_code, ticket_type, full_name FROM registrations WHERE LOWER(email) = LOWER(?) LIMIT 1`,
+      [email]
+    );
+
+    if (existing.length > 0) {
+      return NextResponse.json(
+        {
+          error: 'This email address has already been registered for a pass. Each email can only register once.',
+          existingPassCode: existing[0].pass_code,
+        },
+        { status: 400 }
+      );
+    }
+
     const type = ticketType || 'Standard Pass';
     
     // Generate unique Pass Code (e.g. LA2027-8F4A2)
@@ -55,7 +73,6 @@ export async function POST(req: Request) {
     });
 
     // Store in MySQL database
-    const db = await getDb();
     await db.query(
       `INSERT INTO registrations (full_name, email, phone, ticket_type, pass_code, referral_code, referred_by) VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [fullName, email, phone, type, passCode, referralCode, referredByInput || null]
