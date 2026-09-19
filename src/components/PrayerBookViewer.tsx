@@ -367,32 +367,7 @@ export default function PrayerBookViewer() {
                   </object>
                 </div>
 
-                {/* Bottom Navigation Control Bar */}
-                <div className="bg-cream border-t border-ink/10 px-3 py-2.5 sm:px-6 sm:py-3.5 flex items-center justify-between gap-2 text-xs shrink-0 min-w-0 w-full">
-                  <button
-                    type="button"
-                    onClick={(e) => { e.preventDefault(); goToPage(currentPage - 1); }}
-                    disabled={currentPage <= 1}
-                    className="inline-flex items-center gap-1 bg-white border border-ink/20 px-3 py-2 sm:px-4 font-semibold text-ink rounded-lg disabled:opacity-30 touch-manipulation hover:bg-mist transition-all shadow-sm min-h-[38px] shrink-0"
-                  >
-                    <ChevronLeft className="h-4 w-4 text-pine shrink-0" />
-                    <span>Prev</span>
-                  </button>
 
-                  <div className="font-mono text-xs font-semibold text-pine bg-pine/10 px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0">
-                    Page <strong className="text-pine">{currentPage}</strong> / {TOTAL_PAGES}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={(e) => { e.preventDefault(); goToPage(currentPage + 1); }}
-                    disabled={currentPage >= TOTAL_PAGES}
-                    className="inline-flex items-center gap-1 bg-vivid px-3 py-2 sm:px-4 font-semibold text-white rounded-lg disabled:opacity-30 touch-manipulation hover:bg-vivid-deep transition-all shadow-sm min-h-[38px] shrink-0"
-                  >
-                    <span>Next</span>
-                    <ChevronRight className="h-4 w-4 shrink-0" />
-                  </button>
-                </div>
               </div>
             </Reveal>
           </div>
