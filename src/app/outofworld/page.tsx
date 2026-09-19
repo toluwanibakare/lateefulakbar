@@ -556,7 +556,7 @@ export default function AdminPage() {
     try {
       const res = await fetch("/api/admin/crud", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           action: "save_paystack_settings",
           payload: { mode: paystackMode, publicKey: paystackPublicKey, secretKey: paystackSecretKey },
