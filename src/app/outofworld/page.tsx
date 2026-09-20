@@ -187,6 +187,16 @@ export default function AdminPage() {
   const [newsletterTemplateName, setNewsletterTemplateName] = useState("");
   const [savedTemplates, setSavedTemplates] = useState<{ id: string; name: string; subject: string; body: string }[]>([]);
 
+  const autoFormatYouTubeUrl = (rawUrl: string): string => {
+    if (!rawUrl) return '';
+    const trimmed = rawUrl.trim();
+    const match = trimmed.match(/(?:youtube\.com\/(?:watch\?v=|live\/|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (match && match[1]) {
+      return `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0`;
+    }
+    return trimmed;
+  };
+
   // Control Form States
   const [liveUrl, setLiveUrl] = useState("https://www.youtube.com/embed/live_stream?channel=nadwat");
   const [isLiveActive, setIsLiveActive] = useState(false);
@@ -1661,8 +1671,12 @@ export default function AdminPage() {
                           type="text"
                           required
                           value={liveUrl}
-                          onChange={(e) => setLiveUrl(e.target.value)}
-                          placeholder="e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://www.youtube.com/embed/VIDEO_ID"
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            const formatted = autoFormatYouTubeUrl(val);
+                            setLiveUrl(formatted);
+                          }}
+                          placeholder="Paste any YouTube video or live link (auto-formatted to embed link)"
                           className="w-full bg-cream border border-ink/15 rounded-xl pl-4 pr-28 py-3 text-xs text-ink font-mono focus:border-vivid focus:outline-none"
                         />
                         <button
@@ -1670,18 +1684,20 @@ export default function AdminPage() {
                           onClick={async () => {
                             setSavingLiveUrl(true);
                             try {
+                              const formatted = autoFormatYouTubeUrl(liveUrl);
+                              setLiveUrl(formatted);
                               const res = await fetch("/api/admin/crud", {
                                 method: "POST",
                                 headers: getAuthHeaders(),
                                 body: JSON.stringify({
                                   action: "save_setting",
-                                  payload: { key: "live_broadcast_url", value: liveUrl },
+                                  payload: { key: "live_broadcast_url", value: formatted },
                                 }),
                               });
                               const data = await res.json();
                               if (data.success) {
-                                setLiveBroadcastSaveStatus("YouTube link saved to database!");
-                                setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                                setLiveBroadcastSaveStatus("Activated");
+                                setTimeout(() => setLiveBroadcastSaveStatus(""), 3000);
                               } else {
                                 alert(data.error || "Failed to save YouTube link");
                               }
@@ -1700,14 +1716,13 @@ export default function AdminPage() {
                         </button>
                       </div>
                       <p className="text-[11px] text-faded mt-2">
-                        Enter any YouTube video/live URL and click the green <strong className="text-pine font-semibold font-mono">Save</strong> tick button to persist to database.
+                        Paste any YouTube video or live URL — automatically updates & formats to embed URL.
                       </p>
                     </div>
 
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-mist border border-sage/60">
                       <div>
-                        <h4 className="text-xs font-bold text-pine uppercase tracking-wider">Live Broadcast Stream Toggle</h4>
-                        <p className="text-[11px] text-faded mt-0.5">Activate to display the saved live video stream on the public website</p>
+                        <h4 className="text-xs font-bold text-[#1F2937] uppercase tracking-wider">Live Broadcast Stream Toggle</h4>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
@@ -1725,8 +1740,8 @@ export default function AdminPage() {
                               });
                               const data = await res.json();
                               if (data.success) {
-                                setLiveBroadcastSaveStatus("🟢 Broadcast Activated on Live Site!");
-                                setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                                setLiveBroadcastSaveStatus("Activated");
+                                setTimeout(() => setLiveBroadcastSaveStatus(""), 3000);
                               }
                             } catch (err) {
                               alert("Error activating live broadcast");
@@ -1753,8 +1768,8 @@ export default function AdminPage() {
                               });
                               const data = await res.json();
                               if (data.success) {
-                                setLiveBroadcastSaveStatus("⚪ Broadcast Deactivated (Offline Mode)");
-                                setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                                setLiveBroadcastSaveStatus("Deactivated");
+                                setTimeout(() => setLiveBroadcastSaveStatus(""), 3000);
                               }
                             } catch (err) {
                               alert("Error deactivating live broadcast");
