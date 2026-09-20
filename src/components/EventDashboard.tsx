@@ -11,6 +11,8 @@ export default function EventDashboard() {
   const [global, setGlobal] = useState(0);
   const [thanks, setThanks] = useState(false);
   const [mode, setMode] = useState<"tap" | "manual">("tap");
+  const [streamUrl, setStreamUrl] = useState("https://www.youtube.com/embed/0x1LqBHjWWE?rel=0");
+  const [isLiveActive, setIsLiveActive] = useState(false);
 
   useEffect(() => {
     // Fetch initial global tasbih count from MySQL
@@ -22,6 +24,17 @@ export default function EventDashboard() {
         }
       })
       .catch((err) => console.error("Error loading tasbih count:", err));
+
+    // Fetch broadcast stream setting
+    fetch("/api/updates")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          if (data.streamUrl) setStreamUrl(data.streamUrl);
+          setIsLiveActive(Boolean(data.isLive));
+        }
+      })
+      .catch((err) => console.error("Error loading broadcast settings:", err));
   }, []);
 
   const tap = () => {
@@ -121,14 +134,27 @@ export default function EventDashboard() {
                 <span className="font-mono text-[11px] text-white/60">Nadwat TV</span>
               </div>
               <div className="aspect-video w-full">
-                <iframe
-                  src="https://www.youtube.com/embed/0x1LqBHjWWE?rel=0"
-                  title="Lateeful Akbar live broadcast"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  loading="lazy"
-                  className="h-full w-full border-0"
-                />
+                {(() => {
+                  let embedSrc = streamUrl;
+                  if (embedSrc.includes('watch?v=')) {
+                    embedSrc = embedSrc.replace('watch?v=', 'embed/').split('&')[0];
+                  } else if (embedSrc.includes('youtu.be/')) {
+                    embedSrc = embedSrc.replace('youtu.be/', 'www.youtube.com/embed/').split('?')[0];
+                  }
+                  if (!embedSrc.includes('rel=0')) {
+                    embedSrc += (embedSrc.includes('?') ? '&' : '?') + 'rel=0';
+                  }
+                  return (
+                    <iframe
+                      src={embedSrc}
+                      title="Lateeful Akbar live broadcast"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      loading="lazy"
+                      className="h-full w-full border-0"
+                    />
+                  );
+                })()}
               </div>
             </div>
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border border-ink/15 dark:border-slate-800 bg-cream dark:bg-slate-800 px-5 py-4">

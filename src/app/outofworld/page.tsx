@@ -635,7 +635,8 @@ export default function AdminPage() {
       } else if (section === "settings") {
         const res = await fetch("/api/admin/crud?type=settings", { headers });
         const data = await res.json();
-        if (data.success && data.data) {
+          if (data.data.live_broadcast_url) setLiveUrl(data.data.live_broadcast_url);
+          if (data.data.live_broadcast_active !== undefined) setIsLiveActive(data.data.live_broadcast_active === "true" || data.data.live_broadcast_active === "1");
           if (data.data.paystack_mode) setPaystackMode(data.data.paystack_mode as any);
           if (data.data.paystack_test_public_key) setPaystackTestPublicKey(data.data.paystack_test_public_key);
           if (data.data.paystack_test_secret_key) setPaystackTestSecretKey(data.data.paystack_test_secret_key);
@@ -2114,6 +2115,87 @@ export default function AdminPage() {
                     className="w-full bg-vivid hover:bg-vivid-deep text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider shadow-md"
                   >
                     Save Paystack Gateway Settings
+                  </button>
+                </form>
+              <div className="lg:col-span-12 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                      <Radio className="h-5 w-5 text-vivid" /> Live Broadcast Video Stream Settings
+                    </h2>
+                    <p className="text-xs text-faded">Update YouTube embed/live link and toggle live broadcast on the public website</p>
+                  </div>
+                  <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                    isLiveActive
+                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                      : "bg-slate-100 text-slate-700 border border-slate-300"
+                  }`}>
+                    {isLiveActive ? "🟢 Broadcast Live On Site" : "⚪ Broadcast Offline"}
+                  </span>
+                </div>
+
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    try {
+                      await fetch("/api/admin/crud", {
+                        method: "POST",
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({
+                          action: "save_setting",
+                          payload: { key: "live_broadcast_url", value: liveUrl },
+                        }),
+                      });
+                      await fetch("/api/admin/crud", {
+                        method: "POST",
+                        headers: getAuthHeaders(),
+                        body: JSON.stringify({
+                          action: "save_setting",
+                          payload: { key: "live_broadcast_active", value: String(isLiveActive) },
+                        }),
+                      });
+                      alert("Live Broadcast Video settings saved successfully! The live video link is now updated across the site.");
+                    } catch (err) {
+                      alert("Error saving live broadcast settings");
+                    }
+                  }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                      YouTube Live / Video Link or Embed URL
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={liveUrl}
+                      onChange={(e) => setLiveUrl(e.target.value)}
+                      placeholder="e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://www.youtube.com/embed/VIDEO_ID"
+                      className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
+                    />
+                    <p className="text-[11px] text-faded mt-1">
+                      Supports full YouTube URLs (e.g., <code className="text-vivid font-bold">https://www.youtube.com/watch?v=...</code>), short links (<code className="text-vivid font-bold">https://youtu.be/...</code>), or embed links.
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3 pt-2">
+                    <input
+                      type="checkbox"
+                      id="toggleLiveBroadcast"
+                      checked={isLiveActive}
+                      onChange={(e) => setIsLiveActive(e.target.checked)}
+                      className="h-4 w-4 rounded text-vivid border-ink/20 focus:ring-vivid cursor-pointer"
+                    />
+                    <label htmlFor="toggleLiveBroadcast" className="text-xs font-bold text-pine cursor-pointer select-none">
+                      Activate & Display Live Video Stream on Public Website
+                    </label>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="bg-vivid hover:bg-vivid-deep text-white font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-md"
+                  >
+                    Update Live Video Link
                   </button>
                 </form>
               </div>
