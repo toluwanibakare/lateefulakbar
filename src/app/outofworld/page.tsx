@@ -525,6 +525,8 @@ export default function AdminPage() {
     };
   };
 
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
   // Check saved session & active section on load
   useEffect(() => {
     const savedUser = localStorage.getItem("admin_user");
@@ -538,6 +540,7 @@ export default function AdminPage() {
     if (savedSection) {
       setActiveSection(savedSection);
     }
+    setCheckingAuth(false);
   }, []);
 
   const handleSectionChange = (sectionId: string) => {
@@ -994,6 +997,18 @@ export default function AdminPage() {
       alert("Error adding AI knowledge item");
     }
   };
+
+  // Render Splash Loader while verifying session
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen bg-paper text-ink flex flex-col items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-3">
+          <div className="h-10 w-10 border-4 border-vivid border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-xs font-bold text-pine uppercase tracking-wider">Loading Admin Console...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Render Login View if unauthenticated
   if (!user) {
