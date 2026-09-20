@@ -13,6 +13,8 @@ export default function EventDashboard() {
   const [mode, setMode] = useState<"tap" | "manual">("tap");
   const [streamUrl, setStreamUrl] = useState("https://www.youtube.com/embed/0x1LqBHjWWE?rel=0");
   const [isLiveActive, setIsLiveActive] = useState(false);
+  const [isIframeLoading, setIsIframeLoading] = useState(true);
+  const [activeEmbedUrl, setActiveEmbedUrl] = useState("");
 
   useEffect(() => {
     // Fetch initial global tasbih count from MySQL
@@ -36,6 +38,23 @@ export default function EventDashboard() {
       })
       .catch((err) => console.error("Error loading broadcast settings:", err));
   }, []);
+
+  useEffect(() => {
+    let embedSrc = streamUrl;
+    if (embedSrc.includes('watch?v=')) {
+      embedSrc = embedSrc.replace('watch?v=', 'embed/').split('&')[0];
+    } else if (embedSrc.includes('youtu.be/')) {
+      embedSrc = embedSrc.replace('youtu.be/', 'www.youtube.com/embed/').split('?')[0];
+    }
+    if (!embedSrc.includes('rel=0')) {
+      embedSrc += (embedSrc.includes('?') ? '&' : '?') + 'rel=0';
+    }
+    
+    if (embedSrc !== activeEmbedUrl) {
+      setIsIframeLoading(true);
+      setActiveEmbedUrl(embedSrc);
+    }
+  }, [streamUrl, activeEmbedUrl]);
 
   const tap = () => {
     setTaps((t) => t + 1);
@@ -133,28 +152,28 @@ export default function EventDashboard() {
                 </span>
                 <span className="font-mono text-[11px] text-white/60">Nadwat TV</span>
               </div>
-              <div className="aspect-video w-full">
-                {(() => {
-                  let embedSrc = streamUrl;
-                  if (embedSrc.includes('watch?v=')) {
-                    embedSrc = embedSrc.replace('watch?v=', 'embed/').split('&')[0];
-                  } else if (embedSrc.includes('youtu.be/')) {
-                    embedSrc = embedSrc.replace('youtu.be/', 'www.youtube.com/embed/').split('?')[0];
-                  }
-                  if (!embedSrc.includes('rel=0')) {
-                    embedSrc += (embedSrc.includes('?') ? '&' : '?') + 'rel=0';
-                  }
-                  return (
-                    <iframe
-                      src={embedSrc}
-                      title="Lateeful Akbar live broadcast"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      loading="lazy"
-                      className="h-full w-full border-0"
-                    />
-                  );
-                })()}
+              <div className="relative aspect-video w-full bg-black overflow-hidden">
+                {/* Loading overlay spinner */}
+                {isIframeLoading && (
+                  <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-slate-950/95 text-white gap-3 backdrop-blur-sm transition-opacity duration-300">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-vivid border-t-transparent" />
+                    <p className="text-xs font-semibold tracking-widest uppercase text-emerald-400 animate-pulse">
+                      Loading Live Stream Feed...
+                    </p>
+                  </div>
+                )}
+
+                {activeEmbedUrl && (
+                  <iframe
+                    key={activeEmbedUrl}
+                    src={activeEmbedUrl}
+                    title="Lateeful Akbar live broadcast"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    onLoad={() => setIsIframeLoading(false)}
+                    className="h-full w-full border-0"
+                  />
+                )}
               </div>
             </div>
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border border-ink/15 dark:border-slate-800 bg-cream dark:bg-slate-800 px-5 py-4">
