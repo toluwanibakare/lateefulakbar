@@ -40,6 +40,11 @@ export default function SadaqahGiving() {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // Transactions Monitor Modal State
+  const [showTransactionsModal, setShowTransactionsModal] = useState(false);
+  const [transactionsList, setTransactionsList] = useState<any[]>([]);
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("All");
+
   useEffect(() => {
     // Fetch live donation campaigns & threshold data from MySQL database
     fetch('/api/donate')
@@ -163,19 +168,40 @@ export default function SadaqahGiving() {
   return (
     <section className="border-t border-ink/10 bg-paper py-20 sm:py-28">
       <div className="mx-auto max-w-7xl px-5 sm:px-6">
-        <div className="max-w-3xl">
-          <FadeIn>
-            <Eyebrow>Donation & Sadaqah Campaigns</Eyebrow>
-          </FadeIn>
-          <FadeIn delay={0.06}>
-            <h2 className="font-display mt-4 text-3xl font-light tracking-tight sm:text-5xl">
-              Equip the assembly — item by item, mat by mat.
-            </h2>
-          </FadeIn>
-          <FadeIn delay={0.12}>
-            <p className="mt-4 text-base leading-relaxed text-faded sm:text-lg">
-              You can sponsor specific physical needs for the gathering — water, prayer mats, cooling fans, or broadcast coverage. Each campaign tracks items needed and current progress set by organizers.
-            </p>
+        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+          <div className="max-w-3xl">
+            <FadeIn>
+              <Eyebrow>Donation & Sadaqah Campaigns</Eyebrow>
+            </FadeIn>
+            <FadeIn delay={0.06}>
+              <h2 className="font-display mt-4 text-3xl font-light tracking-tight sm:text-5xl">
+                Equip the assembly — item by item, mat by mat.
+              </h2>
+            </FadeIn>
+            <FadeIn delay={0.12}>
+              <p className="mt-4 text-base leading-relaxed text-faded sm:text-lg">
+                You can sponsor specific physical needs for the gathering — water, prayer mats, cooling fans, or broadcast coverage. Each campaign tracks items needed and current progress set by organizers.
+              </p>
+            </FadeIn>
+          </div>
+
+          <FadeIn delay={0.15}>
+            <button
+              onClick={() => {
+                fetch('/api/donate')
+                  .then((res) => res.json())
+                  .then((data) => {
+                    if (data.success && Array.isArray(data.transactions)) {
+                      setTransactionsList(data.transactions);
+                    }
+                  });
+                setShowTransactionsModal(true);
+              }}
+              className="px-5 py-3 bg-white border border-ink/20 text-pine font-bold text-xs uppercase tracking-wider hover:bg-vivid hover:text-white hover:border-vivid transition-all shadow-sm flex items-center gap-2 shrink-0 cursor-pointer"
+            >
+              <ShieldCheck className="h-4 w-4 text-vivid group-hover:text-white" />
+              <span>Monitor Recent Transactions</span>
+            </button>
           </FadeIn>
         </div>
 
@@ -381,6 +407,103 @@ export default function SadaqahGiving() {
                   </button>
                 </div>
               )}
+            </motion.div>
+          </div>
+        )}
+
+        {/* Transactions Monitor Modal */}
+        {showTransactionsModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowTransactionsModal(false)}
+              className="absolute inset-0 bg-ink/60 backdrop-blur-xs"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto border border-ink/15 bg-white p-6 shadow-2xl sm:p-8 rounded-2xl space-y-6"
+            >
+              <button
+                onClick={() => setShowTransactionsModal(false)}
+                className="absolute top-4 right-4 text-faded hover:text-ink"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-ink/10 pb-4">
+                <div>
+                  <Eyebrow>Transparency & Verification</Eyebrow>
+                  <h3 className="font-display mt-1 text-2xl font-light text-pine">
+                    Recent Donation Transactions
+                  </h3>
+                </div>
+
+                {/* Item Filter Dropdown */}
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-bold text-faded uppercase tracking-wider">Filter by Item:</label>
+                  <select
+                    value={selectedCategoryFilter}
+                    onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+                    className="bg-cream border border-ink/15 rounded-xl px-3 py-1.5 text-xs text-ink font-semibold focus:outline-none focus:border-vivid"
+                  >
+                    <option value="All">All Items ({transactionsList.length})</option>
+                    {Array.from(new Set(transactionsList.map((t) => t.category))).map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Transactions Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-3">Donor</th>
+                      <th className="py-3 px-3">Item / Category</th>
+                      <th className="py-3 px-3">Amount</th>
+                      <th className="py-3 px-3">Mode</th>
+                      <th className="py-3 px-3">Date & Time</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink/10">
+                    {transactionsList
+                      .filter((t) => selectedCategoryFilter === "All" || t.category === selectedCategoryFilter)
+                      .map((t, idx) => (
+                        <tr key={idx} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-3 font-bold text-ink">{t.donor_name || "Anonymous"}</td>
+                          <td className="py-3.5 px-3 font-semibold text-pine">{t.category}</td>
+                          <td className="py-3.5 px-3 font-extrabold text-vivid">₦{Number(t.amount).toLocaleString()}</td>
+                          <td className="py-3.5 px-3">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                              t.mode === 'live'
+                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            }`}>
+                              {t.mode === 'live' ? 'LIVE' : 'TEST'}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-3 text-faded font-mono">
+                            {new Date(t.created_at).toLocaleDateString()} {new Date(t.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </td>
+                        </tr>
+                      ))}
+                    {transactionsList.filter((t) => selectedCategoryFilter === "All" || t.category === selectedCategoryFilter).length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="py-8 text-center text-faded">
+                          No transactions found for &quot;{selectedCategoryFilter}&quot;.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </motion.div>
           </div>
         )}

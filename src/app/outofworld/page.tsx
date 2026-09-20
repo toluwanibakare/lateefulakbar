@@ -525,7 +525,7 @@ export default function AdminPage() {
     };
   };
 
-  // Check saved session on load
+  // Check saved session & active section on load
   useEffect(() => {
     const savedUser = localStorage.getItem("admin_user");
     if (savedUser) {
@@ -534,7 +534,16 @@ export default function AdminPage() {
         setUser(u);
       } catch (e) {}
     }
+    const savedSection = localStorage.getItem("admin_active_section");
+    if (savedSection) {
+      setActiveSection(savedSection);
+    }
   }, []);
+
+  const handleSectionChange = (sectionId: string) => {
+    setActiveSection(sectionId);
+    localStorage.setItem("admin_active_section", sectionId);
+  };
 
   // Fetch stats & active section data
   const loadDashboardStats = async () => {
@@ -1188,7 +1197,7 @@ export default function AdminPage() {
                   return (
                     <button
                       key={item.id}
-                      onClick={() => setActiveSection(item.id)}
+                      onClick={() => handleSectionChange(item.id)}
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                         isActive
                           ? "bg-vivid text-white shadow-md"

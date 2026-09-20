@@ -41,6 +41,11 @@ export async function GET() {
       `SELECT SUM(amount) as grandTotal, COUNT(*) as totalDonors FROM donations WHERE status = 'completed'`
     );
 
+    // Query completed transactions for donor transparency
+    const [transactions] = await db.query<RowDataPacket[]>(
+      `SELECT donor_name, amount, category, mode, created_at FROM donations WHERE status = 'completed' ORDER BY id DESC LIMIT 100`
+    );
+
     const categoryTotals: Record<string, number> = {};
     rows.forEach((r) => {
       categoryTotals[r.category] = Number(r.categoryTotal || 0);
@@ -50,6 +55,7 @@ export async function GET() {
       success: true,
       campaigns,
       categoryTotals,
+      transactions,
       grandTotal: Number(overallRows[0]?.grandTotal || 0),
       totalDonors: Number(overallRows[0]?.totalDonors || 0),
     });
