@@ -2159,7 +2159,7 @@ export default function AdminPage() {
 
                 {liveBroadcastSaveStatus && (
                   <div className="p-3 rounded-xl bg-mist border border-sage text-pine text-xs font-semibold flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-vivid" />
+                    <CheckCircle className="h-4 w-4 text-vivid" />
                     {liveBroadcastSaveStatus}
                   </div>
                 )}
@@ -2207,7 +2207,7 @@ export default function AdminPage() {
                         disabled={savingLiveUrl || !liveUrl}
                         className="inline-flex items-center justify-center gap-2 bg-vivid hover:bg-vivid-deep disabled:opacity-50 text-white font-bold py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider shadow-sm transition-all"
                       >
-                        <CheckCircle2 className="h-4 w-4" />
+                        <CheckCircle className="h-4 w-4" />
                         {savingLiveUrl ? "Saving..." : "Save Link"}
                       </button>
                     </div>
