@@ -635,6 +635,7 @@ export default function AdminPage() {
       } else if (section === "settings") {
         const res = await fetch("/api/admin/crud?type=settings", { headers });
         const data = await res.json();
+        if (data.success && data.data) {
           if (data.data.live_broadcast_url) setLiveUrl(data.data.live_broadcast_url);
           if (data.data.live_broadcast_active !== undefined) setIsLiveActive(data.data.live_broadcast_active === "true" || data.data.live_broadcast_active === "1");
           if (data.data.paystack_mode) setPaystackMode(data.data.paystack_mode as any);
@@ -2117,6 +2118,8 @@ export default function AdminPage() {
                     Save Paystack Gateway Settings
                   </button>
                 </form>
+              </div>
+
               <div className="lg:col-span-12 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-5">
                 <div className="flex justify-between items-center">
                   <div>
