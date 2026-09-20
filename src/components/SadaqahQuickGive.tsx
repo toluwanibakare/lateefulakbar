@@ -103,6 +103,7 @@ export default function SadaqahQuickGive() {
                   amount: effective,
                   category: 'General Sadaqah',
                   txRef: response.reference || response.trxref,
+                  mode: data.mode || 'live',
                 }),
               }).catch((err) => console.error('Error logging completed sadaqah:', err));
 

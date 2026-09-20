@@ -19,6 +19,7 @@ const ORDER = [
 
 export default function LivePage() {
   const [updates, setUpdates] = useState<any[]>([]);
+  const [schedule, setSchedule] = useState(ORDER);
 
   useEffect(() => {
     fetch('/api/updates')
@@ -29,6 +30,15 @@ export default function LivePage() {
         }
       })
       .catch((err) => console.error("Error fetching live updates:", err));
+
+    fetch('/api/schedule')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.schedule) && data.schedule.length > 0) {
+          setSchedule(data.schedule);
+        }
+      })
+      .catch((err) => console.error("Error fetching schedule:", err));
   }, []);
 
   return (
@@ -81,13 +91,13 @@ export default function LivePage() {
               </h2>
             </Reveal>
             <ol className="mt-8">
-              {ORDER.map((o, i) => (
-                <Reveal key={o.time} delay={Math.min(i * 0.04, 0.15)}>
+              {schedule.map((o: any, i: number) => (
+                <Reveal key={o.id || o.time || i} delay={Math.min(i * 0.04, 0.15)}>
                   <li className="flex gap-5 border-t border-ink/10 py-4 last:border-b">
-                    <span className="w-14 shrink-0 pt-0.5 font-mono text-sm text-fern">{o.time}</span>
+                    <span className="w-16 shrink-0 pt-0.5 font-mono text-xs sm:text-sm text-fern font-bold">{o.time}</span>
                     <div>
                       <h3 className="text-[15px] font-semibold text-ink">{o.title}</h3>
-                      <p className="mt-0.5 text-[13px] text-faded">{o.note}</p>
+                      {o.note && <p className="mt-0.5 text-[13px] text-faded">{o.note}</p>}
                     </div>
                   </li>
                 </Reveal>

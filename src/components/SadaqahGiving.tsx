@@ -135,6 +135,7 @@ export default function SadaqahGiving() {
                   amount: totalPay,
                   category: open.title,
                   txRef: response.reference || response.trxref,
+                  mode: data.mode || 'live',
                 }),
               }).catch((err) => console.error('Error logging completed donation:', err));
 

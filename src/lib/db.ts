@@ -125,10 +125,18 @@ async function initSchema(p: mysql.Pool) {
         amount DECIMAL(12,2) NOT NULL,
         category VARCHAR(100) NOT NULL,
         tx_ref VARCHAR(100) UNIQUE,
+        mode VARCHAR(20) DEFAULT 'live',
         status VARCHAR(50) DEFAULT 'completed',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    // Ensure mode column exists if table was created previously
+    try {
+      await p.query(`ALTER TABLE donations ADD COLUMN mode VARCHAR(20) DEFAULT 'live';`);
+    } catch (e) {
+      // Ignore if column already exists
+    }
 
     // 4. Blog stats
     await p.query(`
@@ -247,7 +255,13 @@ async function initSchema(p: mysql.Pool) {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
-    // Seed default schedule items if empty
+    // Clean up any exact duplicate schedule entries and seed if empty
+    await p.query(`
+      DELETE t1 FROM event_schedule t1
+      INNER JOIN event_schedule t2 
+      WHERE t1.id > t2.id AND t1.title = t2.title AND t1.time_slot = t2.time_slot;
+    `);
+
     const [existingSched] = await p.query<mysql.RowDataPacket[]>('SELECT COUNT(*) as count FROM event_schedule');
     if (existingSched[0]?.count === 0) {
       await p.query(`

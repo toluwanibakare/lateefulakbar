@@ -77,6 +77,7 @@ export async function POST(req: Request) {
     const amount = Number(body.amount);
     const category = sanitizeString(body.category, 100);
     const txRef = sanitizeString(body.txRef, 100);
+    const mode = body.mode ? sanitizeString(body.mode, 20) : 'live';
 
     if (isNaN(amount) || amount <= 0 || !category) {
       return NextResponse.json({ error: 'Valid amount and category are required' }, { status: 400 });
@@ -86,8 +87,8 @@ export async function POST(req: Request) {
     const db = await getDb();
 
     await db.query(
-      `INSERT INTO donations (donor_name, email, amount, category, tx_ref, status) VALUES (?, ?, ?, ?, ?, 'completed')`,
-      [donorName || 'Anonymous', email, amount, category, ref]
+      `INSERT INTO donations (donor_name, email, amount, category, tx_ref, mode, status) VALUES (?, ?, ?, ?, ?, ?, 'completed')`,
+      [donorName || 'Anonymous', email, amount, category, ref, mode]
     );
 
     // Update current quantity on matching campaign
