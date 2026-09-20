@@ -129,7 +129,7 @@ export default function EventDashboard() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
                   </span>
-                  Live from National Mosque Auditorium
+                  {isLiveActive ? "LIVE FROM NADWAT MOSQUE, LAGOS STATE, NIGERIA" : "RECORDING FEED — NADWAT MOSQUE, LAGOS"}
                 </span>
                 <span className="font-mono text-[11px] text-white/60">Nadwat TV</span>
               </div>
@@ -159,7 +159,7 @@ export default function EventDashboard() {
             </div>
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border border-ink/15 dark:border-slate-800 bg-cream dark:bg-slate-800 px-5 py-4">
               <p className="inline-flex items-center gap-2 text-sm font-medium text-ink dark:text-white">
-                <Radio className="h-4 w-4 text-vivid dark:text-emerald-400" /> Main Auditorium Feed - Abuja
+                <Radio className="h-4 w-4 text-vivid dark:text-emerald-400" /> Nadwat Mosque Main Feed - Lagos State, Nigeria
               </p>
               <a href="/venue" className="text-[13px] font-semibold text-pine dark:text-emerald-400 underline-offset-4 hover:underline">
                 Plan your route

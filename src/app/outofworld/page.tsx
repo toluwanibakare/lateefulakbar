@@ -693,7 +693,10 @@ export default function AdminPage() {
   useEffect(() => {
     if (user) {
       loadDashboardStats();
-      loadSectionData(activeSection);
+      loadSectionData("settings");
+      if (activeSection !== "settings") {
+        loadSectionData(activeSection);
+      }
     }
   }, [user, activeSection]);
 
