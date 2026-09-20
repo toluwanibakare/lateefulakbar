@@ -568,14 +568,22 @@ export default function PrayerBookViewer() {
                 )}
               </AnimatePresence>
 
-              <iframe
-                key={`modal-pdf-page-${currentPage}`}
-                ref={modalIframeRef}
-                src={pdfSrc}
+              <object
+                key={`modal-pdf-object-${currentPage}`}
+                data={`${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                type="application/pdf"
+                className="w-full h-full border-0 block"
                 onLoad={() => setIsPageLoading(false)}
-                className="w-full h-full border-0 select-none"
-                title="Fullscreen Asalatu Nadwat PDF Viewer"
-              />
+              >
+                <iframe
+                  key={`modal-pdf-page-${currentPage}`}
+                  ref={modalIframeRef}
+                  src={`${BASE_PDF_PATH}#page=${currentPage}&toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
+                  onLoad={() => setIsPageLoading(false)}
+                  className="w-full h-full border-0 select-none block"
+                  title="Fullscreen Asalatu Nadwat PDF Viewer"
+                />
+              </object>
             </div>
           </motion.div>
         )}
