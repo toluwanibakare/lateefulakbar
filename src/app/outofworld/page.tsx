@@ -682,6 +682,27 @@ export default function AdminPage() {
     }
   };
 
+  const handleResetTasbih = async () => {
+    if (!confirm("Are you sure you want to reset the global Tasbīh counter to 0?")) return;
+    try {
+      const res = await fetch("/api/tasbih", {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ count: 0 }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTasbihCountDisplay("0");
+        if (stats) setStats({ ...stats, tasbihCount: 0 });
+        alert("Global Tasbīh counter successfully reset to 0!");
+      } else {
+        alert(data.error || "Failed to reset Tasbīh count");
+      }
+    } catch (e) {
+      alert("Error resetting Tasbīh counter");
+    }
+  };
+
 
 
 
