@@ -1624,147 +1624,181 @@ export default function AdminPage() {
 
           {/* SECTION: LIVE EVENT STREAM MANAGEMENT */}
           {activeSection === "live_event" && (
-            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
-              <div className="flex justify-between items-center border-b border-ink/10 pb-4">
+            <div className="grid gap-8 lg:grid-cols-12">
+              {/* LIVE STREAM CONTROLS CARD */}
+              <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6 flex flex-col justify-between">
                 <div>
-                  <h2 className="text-base font-bold text-pine flex items-center gap-2">
-                    <Radio className="h-5 w-5 text-vivid animate-pulse" /> Live Stream Controls
-                  </h2>
-                  <p className="text-xs text-faded">Manage YouTube live stream embed link and live activation status</p>
+                  <div className="flex justify-between items-center border-b border-ink/10 pb-4 mb-4">
+                    <div>
+                      <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                        <Radio className="h-5 w-5 text-vivid animate-pulse" /> Live Stream Controls
+                      </h2>
+                      <p className="text-xs text-faded">Manage YouTube live stream embed link and live activation status</p>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                      isLiveActive
+                        ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
+                        : "bg-slate-100 text-slate-700 border border-slate-300"
+                    }`}>
+                      {isLiveActive ? "🟢 Broadcast Live On Site" : "⚪ Broadcast Offline"}
+                    </span>
+                  </div>
+
+                  {liveBroadcastSaveStatus && (
+                    <div className="p-3 rounded-xl bg-mist border border-sage text-pine text-xs font-semibold flex items-center gap-2 mb-4">
+                      <CheckCircle className="h-4 w-4 text-vivid" />
+                      {liveBroadcastSaveStatus}
+                    </div>
+                  )}
+
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        YouTube Live Stream Embed URL
+                      </label>
+                      <div className="relative flex items-center">
+                        <input
+                          type="text"
+                          required
+                          value={liveUrl}
+                          onChange={(e) => setLiveUrl(e.target.value)}
+                          placeholder="e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://www.youtube.com/embed/VIDEO_ID"
+                          className="w-full bg-cream border border-ink/15 rounded-xl pl-4 pr-28 py-3 text-xs text-ink font-mono focus:border-vivid focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            setSavingLiveUrl(true);
+                            try {
+                              const res = await fetch("/api/admin/crud", {
+                                method: "POST",
+                                headers: getAuthHeaders(),
+                                body: JSON.stringify({
+                                  action: "save_setting",
+                                  payload: { key: "live_broadcast_url", value: liveUrl },
+                                }),
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setLiveBroadcastSaveStatus("YouTube link saved to database!");
+                                setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                              } else {
+                                alert(data.error || "Failed to save YouTube link");
+                              }
+                            } catch (err) {
+                              alert("Error saving YouTube link to backend");
+                            } finally {
+                              setSavingLiveUrl(false);
+                            }
+                          }}
+                          disabled={savingLiveUrl || !liveUrl}
+                          title="Click tick icon to save link to database"
+                          className="absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1.5 bg-vivid hover:bg-vivid-deep disabled:opacity-50 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-all shadow-sm cursor-pointer"
+                        >
+                          <Check className="h-4 w-4 stroke-[3]" />
+                          <span>{savingLiveUrl ? "..." : "Save"}</span>
+                        </button>
+                      </div>
+                      <p className="text-[11px] text-faded mt-2">
+                        Enter any YouTube video/live URL and click the green <strong className="text-pine font-semibold font-mono">Save</strong> tick button to persist to database.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-mist border border-sage/60">
+                      <div>
+                        <h4 className="text-xs font-bold text-pine uppercase tracking-wider">Live Broadcast Stream Toggle</h4>
+                        <p className="text-[11px] text-faded mt-0.5">Activate to display the saved live video stream on the public website</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            setIsLiveActive(true);
+                            try {
+                              const res = await fetch("/api/admin/crud", {
+                                method: "POST",
+                                headers: getAuthHeaders(),
+                                body: JSON.stringify({
+                                  action: "save_setting",
+                                  payload: { key: "live_broadcast_active", value: "true" },
+                                }),
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setLiveBroadcastSaveStatus("🟢 Broadcast Activated on Live Site!");
+                                setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                              }
+                            } catch (err) {
+                              alert("Error activating live broadcast");
+                            }
+                          }}
+                          className={`font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-sm transition-all ${
+                            isLiveActive ? "bg-emerald-600 text-white ring-2 ring-emerald-400" : "bg-vivid hover:bg-vivid-deep text-white"
+                          }`}
+                        >
+                          Activate Live Stream
+                        </button>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            setIsLiveActive(false);
+                            try {
+                              const res = await fetch("/api/admin/crud", {
+                                method: "POST",
+                                headers: getAuthHeaders(),
+                                body: JSON.stringify({
+                                  action: "save_setting",
+                                  payload: { key: "live_broadcast_active", value: "false" },
+                                }),
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                setLiveBroadcastSaveStatus("⚪ Broadcast Deactivated (Offline Mode)");
+                                setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                              }
+                            } catch (err) {
+                              alert("Error deactivating live broadcast");
+                            }
+                          }}
+                          className={`font-bold py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider transition-all ${
+                            !isLiveActive ? "bg-rose-100 text-rose-800 border border-rose-300" : "bg-rose-50 text-rose-700 hover:bg-rose-100"
+                          }`}
+                        >
+                          Deactivate
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
-                  isLiveActive
-                    ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                    : "bg-slate-100 text-slate-700 border border-slate-300"
-                }`}>
-                  {isLiveActive ? "🟢 Broadcast Live On Site" : "⚪ Broadcast Offline"}
-                </span>
               </div>
 
-              {liveBroadcastSaveStatus && (
-                <div className="p-3 rounded-xl bg-mist border border-sage text-pine text-xs font-semibold flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-vivid" />
-                  {liveBroadcastSaveStatus}
-                </div>
-              )}
-
-              <div className="space-y-6">
+              {/* DIGITAL TASBIH COUNTER RESET CARD */}
+              <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 space-y-6 shadow-sm flex flex-col justify-between">
                 <div>
-                  <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                    YouTube Live Stream Embed URL
-                  </label>
-                  <div className="relative flex items-center">
-                    <input
-                      type="text"
-                      required
-                      value={liveUrl}
-                      onChange={(e) => setLiveUrl(e.target.value)}
-                      placeholder="e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://www.youtube.com/embed/VIDEO_ID"
-                      className="w-full bg-cream border border-ink/15 rounded-xl pl-4 pr-28 py-3 text-xs text-ink font-mono focus:border-vivid focus:outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        setSavingLiveUrl(true);
-                        try {
-                          const res = await fetch("/api/admin/crud", {
-                            method: "POST",
-                            headers: getAuthHeaders(),
-                            body: JSON.stringify({
-                              action: "save_setting",
-                              payload: { key: "live_broadcast_url", value: liveUrl },
-                            }),
-                          });
-                          const data = await res.json();
-                          if (data.success) {
-                            setLiveBroadcastSaveStatus("YouTube link saved to database!");
-                            setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
-                          } else {
-                            alert(data.error || "Failed to save YouTube link");
-                          }
-                        } catch (err) {
-                          alert("Error saving YouTube link to backend");
-                        } finally {
-                          setSavingLiveUrl(false);
-                        }
-                      }}
-                      disabled={savingLiveUrl || !liveUrl}
-                      title="Click tick icon to save link to database"
-                      className="absolute right-1.5 top-1/2 -translate-y-1/2 inline-flex items-center gap-1.5 bg-vivid hover:bg-vivid-deep disabled:opacity-50 text-white font-bold px-3 py-1.5 rounded-lg text-xs transition-all shadow-sm cursor-pointer"
-                    >
-                      <Check className="h-4 w-4 stroke-[3]" />
-                      <span>{savingLiveUrl ? "..." : "Save"}</span>
-                    </button>
+                  <h2 className="text-base font-bold text-pine flex items-center gap-2 border-b border-ink/10 pb-4">
+                    <Sliders className="h-5 w-5 text-vivid" /> Digital Tasbīh Counter Reset
+                  </h2>
+
+                  <div className="p-5 rounded-2xl bg-pine text-white text-center my-4">
+                    <span className="text-xs uppercase tracking-wider font-semibold text-sage block mb-1">
+                      Live Global Database Total
+                    </span>
+                    <div className="text-4xl font-extrabold text-white tabular-nums">
+                      {stats ? Number(stats.tasbihCount).toLocaleString() : tasbihCountDisplay}
+                    </div>
                   </div>
-                  <p className="text-[11px] text-faded mt-2">
-                    Enter any YouTube video/live URL and click the green <strong className="text-pine font-semibold font-mono">Save</strong> tick button to persist to database.
+
+                  <p className="text-xs text-faded">
+                    The Tasbīh counter increments automatically as website visitors recite. You can reset the database counter to 0 at the start of the event.
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-2xl bg-mist border border-sage/60">
-                  <div>
-                    <h4 className="text-xs font-bold text-pine uppercase tracking-wider">Live Broadcast Stream Toggle</h4>
-                    <p className="text-[11px] text-faded mt-0.5">Activate to display the saved live video stream on the public website</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        setIsLiveActive(true);
-                        try {
-                          const res = await fetch("/api/admin/crud", {
-                            method: "POST",
-                            headers: getAuthHeaders(),
-                            body: JSON.stringify({
-                              action: "save_setting",
-                              payload: { key: "live_broadcast_active", value: "true" },
-                            }),
-                          });
-                          const data = await res.json();
-                          if (data.success) {
-                            setLiveBroadcastSaveStatus("🟢 Broadcast Activated on Live Site!");
-                            setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
-                          }
-                        } catch (err) {
-                          alert("Error activating live broadcast");
-                        }
-                      }}
-                      className={`font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-sm transition-all ${
-                        isLiveActive ? "bg-emerald-600 text-white ring-2 ring-emerald-400" : "bg-vivid hover:bg-vivid-deep text-white"
-                      }`}
-                    >
-                      Activate Live Stream
-                    </button>
-                    <button
-                      type="button"
-                      onClick={async () => {
-                        setIsLiveActive(false);
-                        try {
-                          const res = await fetch("/api/admin/crud", {
-                            method: "POST",
-                            headers: getAuthHeaders(),
-                            body: JSON.stringify({
-                              action: "save_setting",
-                              payload: { key: "live_broadcast_active", value: "false" },
-                            }),
-                          });
-                          const data = await res.json();
-                          if (data.success) {
-                            setLiveBroadcastSaveStatus("⚪ Broadcast Deactivated (Offline Mode)");
-                            setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
-                          }
-                        } catch (err) {
-                          alert("Error deactivating live broadcast");
-                        }
-                      }}
-                      className={`font-bold py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider transition-all ${
-                        !isLiveActive ? "bg-rose-100 text-rose-800 border border-rose-300" : "bg-rose-50 text-rose-700 hover:bg-rose-100"
-                      }`}
-                    >
-                      Deactivate
-                    </button>
-                  </div>
-                </div>
+                <button
+                  onClick={handleResetTasbih}
+                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                >
+                  <RotateCcw className="h-4 w-4" /> Reset Tasbīh Counter to 0
+                </button>
               </div>
             </div>
           )}
@@ -3542,69 +3576,7 @@ export default function AdminPage() {
             </div>
           )}
 
-          {/* SECTION: LIVE EVENT STREAM & RESET TASBIH */}
-          {activeSection === "live_event" && (
-            <div className="grid gap-8 lg:grid-cols-12">
-              <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 space-y-6 shadow-sm">
-                <h2 className="text-sm font-bold text-pine flex items-center gap-2">
-                  <Radio className="h-4 w-4 text-rose-600 animate-pulse" /> Live Stream Controls
-                </h2>
 
-                <div>
-                  <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                    YouTube Live Stream Embed URL
-                  </label>
-                  <input
-                    type="text"
-                    value={liveUrl}
-                    onChange={(e) => setLiveUrl(e.target.value)}
-                    className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-3 text-xs text-ink focus:outline-none focus:border-vivid"
-                  />
-                </div>
-
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => { setIsLiveActive(true); alert("Live Stream Activated on Public Website!"); }}
-                    className="flex-1 bg-vivid hover:bg-vivid-deep text-white font-bold py-3 rounded-xl text-xs uppercase tracking-wider transition-colors shadow-md"
-                  >
-                    Activate Live Stream
-                  </button>
-                  <button
-                    onClick={() => { setIsLiveActive(false); alert("Live Stream Deactivated."); }}
-                    className="px-6 bg-rose-50 text-rose-700 hover:bg-rose-100 font-semibold py-3 rounded-xl text-xs uppercase tracking-wider transition-colors border border-rose-200"
-                  >
-                    Deactivate
-                  </button>
-                </div>
-              </div>
-
-              <div className="lg:col-span-6 bg-white border border-ink/15 rounded-2xl p-6 space-y-6 shadow-sm">
-                <h2 className="text-sm font-bold text-pine flex items-center gap-2">
-                  <Sliders className="h-4 w-4 text-vivid" /> Digital Tasbīh Counter Reset
-                </h2>
-
-                <div className="p-5 rounded-2xl bg-pine text-white text-center">
-                  <span className="text-xs uppercase tracking-wider font-semibold text-sage block mb-1">
-                    Live Global Database Total
-                  </span>
-                  <div className="text-4xl font-extrabold text-white tabular-nums">
-                    {stats ? Number(stats.tasbihCount).toLocaleString() : tasbihCountDisplay}
-                  </div>
-                </div>
-
-                <p className="text-xs text-faded">
-                  The Tasbīh counter increments automatically as website visitors recite. You can reset the database counter to 0 at the start of the event.
-                </p>
-
-                <button
-                  onClick={handleResetTasbih}
-                  className="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2"
-                >
-                  <RotateCcw className="h-4 w-4" /> Reset Tasbīh Counter to 0
-                </button>
-              </div>
-            </div>
-          )}
 
           {/* SECTION: EVENT UPDATES */}
           {activeSection === "updates" && (
