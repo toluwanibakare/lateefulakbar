@@ -2849,8 +2849,8 @@ export default function AdminPage() {
                                 {d.mode === 'live' ? 'LIVE' : 'TEST'}
                               </span>
                             </td>
-                            <td className="py-3.5 px-4 text-faded">
-                              {new Date(d.created_at).toLocaleDateString()}
+                            <td className="py-3.5 px-4 text-faded font-mono">
+                              {new Date(d.created_at).toLocaleDateString()} {new Date(d.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </td>
                           </tr>
                         ))}

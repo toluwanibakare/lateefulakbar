@@ -44,10 +44,10 @@ export async function GET(req: Request) {
       console.warn('Stats warning (referrals):', e);
     }
 
-    // 3. Donations total (Prefers mode = 'live', or fallback if legacy)
+    // 3. Donations total (LIVE MODE ONLY for Dashboard)
     try {
       const [donRows] = await db.query<RowDataPacket[]>(
-        'SELECT SUM(amount) as total_amount, COUNT(DISTINCT email) as total_donors FROM donations WHERE status = "completed" AND (mode = "live" OR mode IS NULL OR mode = "")'
+        'SELECT SUM(amount) as total_amount, COUNT(DISTINCT email) as total_donors FROM donations WHERE status = "completed" AND mode = "live"'
       );
       totalDonations = Number(donRows[0]?.total_amount || 0);
       totalDonors = Number(donRows[0]?.total_donors || 0);
@@ -122,13 +122,13 @@ export async function GET(req: Request) {
       console.warn('Stats warning (registrationTrend):', e);
     }
 
-    // 10. Real Donation Category Split (Live Mode & Legacy)
+    // 10. Real Donation Category Split (Live Mode Only)
     let donationCategorySplit: any[] = [];
     try {
       const [splitRows] = await db.query<RowDataPacket[]>(
         `SELECT category as name, SUM(amount) as value
          FROM donations
-         WHERE status = 'completed' AND (mode = 'live' OR mode IS NULL OR mode = '')
+         WHERE status = 'completed' AND mode = 'live'
          GROUP BY category`
       );
       const COLOR_PALETTE = ['#01923c', '#0b3d2e', '#9a7b2e', '#34d399', '#d97706', '#0284c7'];
