@@ -190,6 +190,8 @@ export default function AdminPage() {
   // Control Form States
   const [liveUrl, setLiveUrl] = useState("https://www.youtube.com/embed/live_stream?channel=nadwat");
   const [isLiveActive, setIsLiveActive] = useState(false);
+  const [savingLiveUrl, setSavingLiveUrl] = useState(false);
+  const [liveBroadcastSaveStatus, setLiveBroadcastSaveStatus] = useState("");
   const [tasbihCountDisplay, setTasbihCountDisplay] = useState("0");
   const [updateTitle, setUpdateTitle] = useState("");
   const [updateContent, setUpdateContent] = useState("");
@@ -2155,70 +2157,103 @@ export default function AdminPage() {
                   </span>
                 </div>
 
-                <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    try {
-                      await fetch("/api/admin/crud", {
-                        method: "POST",
-                        headers: getAuthHeaders(),
-                        body: JSON.stringify({
-                          action: "save_setting",
-                          payload: { key: "live_broadcast_url", value: liveUrl },
-                        }),
-                      });
-                      await fetch("/api/admin/crud", {
-                        method: "POST",
-                        headers: getAuthHeaders(),
-                        body: JSON.stringify({
-                          action: "save_setting",
-                          payload: { key: "live_broadcast_active", value: String(isLiveActive) },
-                        }),
-                      });
-                      alert("Live Broadcast Video settings saved successfully! The live video link is now updated across the site.");
-                    } catch (err) {
-                      alert("Error saving live broadcast settings");
-                    }
-                  }}
-                  className="space-y-4"
-                >
+                {liveBroadcastSaveStatus && (
+                  <div className="p-3 rounded-xl bg-mist border border-sage text-pine text-xs font-semibold flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-vivid" />
+                    {liveBroadcastSaveStatus}
+                  </div>
+                )}
+
+                <div className="space-y-5">
                   <div>
                     <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
                       YouTube Live / Video Link or Embed URL
                     </label>
-                    <input
-                      type="text"
-                      required
-                      value={liveUrl}
-                      onChange={(e) => setLiveUrl(e.target.value)}
-                      placeholder="e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://www.youtube.com/embed/VIDEO_ID"
-                      className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono"
-                    />
-                    <p className="text-[11px] text-faded mt-1">
-                      Supports full YouTube URLs (e.g., <code className="text-vivid font-bold">https://www.youtube.com/watch?v=...</code>), short links (<code className="text-vivid font-bold">https://youtu.be/...</code>), or embed links.
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="text"
+                        required
+                        value={liveUrl}
+                        onChange={(e) => setLiveUrl(e.target.value)}
+                        placeholder="e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://www.youtube.com/embed/VIDEO_ID"
+                        className="flex-1 bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono focus:border-vivid focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setSavingLiveUrl(true);
+                          try {
+                            const res = await fetch("/api/admin/crud", {
+                              method: "POST",
+                              headers: getAuthHeaders(),
+                              body: JSON.stringify({
+                                action: "save_setting",
+                                payload: { key: "live_broadcast_url", value: liveUrl },
+                              }),
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              setLiveBroadcastSaveStatus("YouTube stream link saved successfully!");
+                              setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                            } else {
+                              alert(data.error || "Failed to save YouTube link");
+                            }
+                          } catch (err) {
+                            alert("Error saving YouTube link to backend");
+                          } finally {
+                            setSavingLiveUrl(false);
+                          }
+                        }}
+                        disabled={savingLiveUrl || !liveUrl}
+                        className="inline-flex items-center justify-center gap-2 bg-vivid hover:bg-vivid-deep disabled:opacity-50 text-white font-bold py-2.5 px-5 rounded-xl text-xs uppercase tracking-wider shadow-sm transition-all"
+                      >
+                        <CheckCircle2 className="h-4 w-4" />
+                        {savingLiveUrl ? "Saving..." : "Save Link"}
+                      </button>
+                    </div>
+                    <p className="text-[11px] text-faded mt-1.5">
+                      Paste full YouTube URL (<code className="text-vivid font-bold">https://www.youtube.com/watch?v=...</code>), short link (<code className="text-vivid font-bold">https://youtu.be/...</code>), or embed link and click <strong className="text-pine font-semibold">Save Link</strong>.
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3 pt-2">
-                    <input
-                      type="checkbox"
-                      id="toggleLiveBroadcast"
-                      checked={isLiveActive}
-                      onChange={(e) => setIsLiveActive(e.target.checked)}
-                      className="h-4 w-4 rounded text-vivid border-ink/20 focus:ring-vivid cursor-pointer"
-                    />
-                    <label htmlFor="toggleLiveBroadcast" className="text-xs font-bold text-pine cursor-pointer select-none">
-                      Activate & Display Live Video Stream on Public Website
-                    </label>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl bg-mist border border-sage/60">
+                    <div>
+                      <h4 className="text-xs font-bold text-pine uppercase tracking-wider">Live Broadcast Stream Toggle</h4>
+                      <p className="text-[11px] text-faded">Activate to display the saved live video stream on the public website</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const newActive = !isLiveActive;
+                        setIsLiveActive(newActive);
+                        try {
+                          const res = await fetch("/api/admin/crud", {
+                            method: "POST",
+                            headers: getAuthHeaders(),
+                            body: JSON.stringify({
+                              action: "save_setting",
+                              payload: { key: "live_broadcast_active", value: String(newActive) },
+                            }),
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            setLiveBroadcastSaveStatus(newActive ? "🟢 Broadcast Activated on Live Site!" : "⚪ Broadcast Deactivated (Offline Mode)");
+                            setTimeout(() => setLiveBroadcastSaveStatus(""), 4000);
+                          }
+                        } catch (err) {
+                          alert("Error updating live broadcast status");
+                        }
+                      }}
+                      className={`inline-flex items-center justify-center gap-2 font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-sm transition-all ${
+                        isLiveActive
+                          ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                          : "bg-slate-700 hover:bg-slate-800 text-white"
+                      }`}
+                    >
+                      {isLiveActive ? "🟢 Deactivate Live Broadcast" : "🚀 Activate Live Broadcast"}
+                    </button>
                   </div>
-
-                  <button
-                    type="submit"
-                    className="bg-vivid hover:bg-vivid-deep text-white font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-wider shadow-md"
-                  >
-                    Update Live Video Link
-                  </button>
-                </form>
+                </div>
               </div>
             </div>
           )}
