@@ -57,8 +57,8 @@ function getEmailWrapper(title: string, innerHtml: string): string {
 }
 
 function getSmtpConfig() {
-  const user = process.env.SMTP_USER || 'lateefulakbar@gmail.com';
-  const pass = process.env.SMTP_PASS || 'dvyvgkrwxgjliqgp';
+  const user = process.env.SMTP_USER || '';
+  const pass = process.env.SMTP_PASS || '';
   const host = process.env.SMTP_HOST || 'smtp.gmail.com';
   const port = Number(process.env.SMTP_PORT) || 587;
   const from = process.env.FROM_EMAIL || '"Lateeful-Ul-Akbar 2027" <lateefulakbar@gmail.com>';
