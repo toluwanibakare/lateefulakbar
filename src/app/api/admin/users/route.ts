@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { RowDataPacket } from 'mysql2';
-import { sanitizeString, isValidEmail, isValidPassword } from '@/lib/security';
+import { sanitizeString, isValidEmail, isValidPassword, verifyAdminToken } from '@/lib/security';
 import { logAdminActivity } from '@/app/api/admin/crud/route';
 import { sendAdminPasswordChangedEmail } from '@/lib/email';
 
