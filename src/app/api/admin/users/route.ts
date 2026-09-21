@@ -59,6 +59,11 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  // Authorization Guard
+  if (!verifyAdminToken(req.headers.get('authorization'))) {
+    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
+  }
+
   try {
     const body = await req.json();
     const { action, payload } = body;
@@ -102,6 +107,7 @@ export async function POST(req: Request) {
     if (action === 'change_password') {
       const { email, currentPassword, newPassword } = payload;
       const cleanEmail = sanitizeString(email, 100).toLowerCase();
+      const cleanCurrentPassword = sanitizeString(currentPassword, 100);
       const cleanNewPassword = sanitizeString(newPassword, 100);
 
       const passCheck = isValidPassword(cleanNewPassword);
@@ -113,8 +119,39 @@ export async function POST(req: Request) {
         return NextResponse.json({ success: false, error: 'Invalid password details' }, { status: 400 });
       }
 
-      // Check if it's dynamic admin user
-      await db.query('UPDATE admin_users SET password = ? WHERE email = ?', [cleanNewPassword, cleanEmail]);
+      // Check preset accounts or dynamic mysql admin users
+      let updateCount = 0;
+      
+      // Update app_settings override if preset account or dynamic account
+      const settingKey = `admin_pass_${cleanEmail}`;
+      
+      // First verify current password if set in app_settings or preset env
+      const [settingRows] = await db.query<RowDataPacket[]>(
+        'SELECT setting_value FROM app_settings WHERE setting_key = ?',
+        [settingKey]
+      );
+      
+      if (settingRows.length > 0) {
+        if (cleanCurrentPassword && settingRows[0].setting_value !== cleanCurrentPassword) {
+          return NextResponse.json({ success: false, error: 'Current password is incorrect' }, { status: 400 });
+        }
+      }
+
+      // Save new password override in app_settings for all admin accounts
+      await db.query(
+        'INSERT INTO app_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?',
+        [settingKey, cleanNewPassword, cleanNewPassword]
+      );
+      updateCount++;
+
+      // Also update admin_users table if user exists there
+      try {
+        const [res] = await db.query<any>('UPDATE admin_users SET password = ? WHERE email = ?', [cleanNewPassword, cleanEmail]);
+        if (res.affectedRows) updateCount += res.affectedRows;
+      } catch (e) {
+        // Table might not exist yet or user is preset admin
+      }
+
       await logAdminActivity(cleanEmail, cleanEmail, 'Changed Password', 'Admin password successfully updated');
       
       // Trigger Security Email Alert

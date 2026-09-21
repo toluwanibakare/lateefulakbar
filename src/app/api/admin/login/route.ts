@@ -65,8 +65,18 @@ export async function POST(req: Request) {
       );
     }
 
+    const db = await getDb();
+    
+    // Check if password has been changed via app_settings
+    const settingKey = `admin_pass_${email}`;
+    const [overrideRows] = await db.query<RowDataPacket[]>(
+      'SELECT setting_value FROM app_settings WHERE setting_key = ?',
+      [settingKey]
+    );
+    const customPassword = overrideRows.length > 0 ? overrideRows[0].setting_value : null;
+
     // Master Super Admin
-    if (email === 'admin@lateefulakbar.com' && password === SUPER_ADMIN_PASSWORD) {
+    if (email === 'admin@lateefulakbar.com' && (password === (customPassword || SUPER_ADMIN_PASSWORD))) {
       resetFailedLogin(lockoutKey);
       await logAdminActivity('admin@lateefulakbar.com', 'Super Admin', 'User Login', 'Authenticated as Super Admin');
       const token = process.env.SUPER_ADMIN_TOKEN || 'session_super_admin_lateeful_akbar_2027';
@@ -91,7 +101,7 @@ export async function POST(req: Request) {
     }
 
     // Preset Role Accounts
-    if (email === 'content@lateefulakbar.com' && password === CONTENT_ADMIN_PASSWORD) {
+    if (email === 'content@lateefulakbar.com' && (password === (customPassword || CONTENT_ADMIN_PASSWORD))) {
       resetFailedLogin(lockoutKey);
       await logAdminActivity('content@lateefulakbar.com', 'Content Manager', 'User Login', 'Authenticated as Content Admin');
       return NextResponse.json({
@@ -106,7 +116,7 @@ export async function POST(req: Request) {
       });
     }
 
-    if (email === 'event@lateefulakbar.com' && password === EVENT_ADMIN_PASSWORD) {
+    if (email === 'event@lateefulakbar.com' && (password === (customPassword || EVENT_ADMIN_PASSWORD))) {
       resetFailedLogin(lockoutKey);
       await logAdminActivity('event@lateefulakbar.com', 'Event Coordinator', 'User Login', 'Authenticated as Event Admin');
       return NextResponse.json({
@@ -121,7 +131,7 @@ export async function POST(req: Request) {
       });
     }
 
-    if (email === 'finance@lateefulakbar.com' && password === FINANCE_ADMIN_PASSWORD) {
+    if (email === 'finance@lateefulakbar.com' && (password === (customPassword || FINANCE_ADMIN_PASSWORD))) {
       resetFailedLogin(lockoutKey);
       await logAdminActivity('finance@lateefulakbar.com', 'Finance Controller', 'User Login', 'Authenticated as Finance Admin');
       return NextResponse.json({
@@ -137,10 +147,10 @@ export async function POST(req: Request) {
     }
 
     // Dynamic MySQL Admin Users Query
-    const db = await getDb();
+    const effectivePass = customPassword || password;
     const [rows] = await db.query<RowDataPacket[]>(
       `SELECT * FROM admin_users WHERE email = ? AND password = ?`,
-      [email, password]
+      [email, effectivePass]
     );
 
     if (rows.length > 0) {
