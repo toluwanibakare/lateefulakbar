@@ -282,29 +282,7 @@ export default function PrayerBookViewer() {
                   </div>
                 </div>
 
-                {/* Page Number Pills Strip */}
-                <div className="border-b border-ink/10 bg-mist px-2.5 py-1.5 sm:px-4 flex items-center gap-2 shrink-0 min-w-0 w-full">
-                  <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-faded shrink-0">
-                    Page:
-                  </span>
-                  <div className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin touch-pan-x">
-                    {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
-                      <button
-                        type="button"
-                        key={p}
-                        ref={currentPage === p ? activeBtnRef : null}
-                        onClick={(e) => { e.preventDefault(); goToPage(p); }}
-                        className={`h-7 min-w-7 sm:h-7 sm:min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 touch-manipulation ${
-                          currentPage === p
-                            ? "bg-vivid text-white font-bold scale-105 shadow-sm"
-                            : "bg-white text-ink/70 hover:bg-pine/10 hover:text-pine border border-ink/10"
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+
 
                 {/* PDF Content Area with Mobile Touch Scroll Support */}
                 <div
@@ -503,28 +481,7 @@ export default function PrayerBookViewer() {
               </button>
             </div>
 
-            <div className="bg-slate-800 px-3 py-1.5 sm:px-4 flex items-center gap-2 border-b border-white/10 min-w-0 w-full">
-              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-white/60 shrink-0">
-                Page:
-              </span>
-              <div className="min-w-0 flex-1 flex items-center gap-1.5 overflow-x-auto py-1 scrollbar-thin touch-pan-x">
-                {Array.from({ length: TOTAL_PAGES }, (_, i) => i + 1).map((p) => (
-                  <button
-                    type="button"
-                    key={p}
-                    ref={currentPage === p ? modalActiveBtnRef : null}
-                    onClick={(e) => { e.preventDefault(); goToPage(p); }}
-                    className={`h-7 min-w-7 px-2 flex items-center justify-center rounded text-xs font-mono transition-all shrink-0 touch-manipulation ${
-                      currentPage === p
-                        ? "bg-vivid text-white font-bold scale-105"
-                        : "bg-white/10 text-white/70 hover:bg-white/20"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                ))}
-              </div>
-            </div>
+
 
             <div
               onContextMenu={(e) => e.preventDefault()}
