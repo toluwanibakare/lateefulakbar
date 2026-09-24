@@ -69,10 +69,10 @@ export default function SadaqahGiving() {
               text: dbC.description || "Community donation project for Lateeful Akbar 2027",
               icon: titleLower.includes("tent") || titleLower.includes("canopy") ? Home : titleLower.includes("fan") || titleLower.includes("cool") ? Wind : titleLower.includes("water") ? Droplets : titleLower.includes("mat") ? Layers : Video,
               image: (!dbC.image_url || dbC.image_url.includes("user-donation-media")) ? fallbackImg : dbC.image_url,
-              target: dbC.target_qty || 100,
+              target: Number(dbC.target_qty) || 0,
               raised: dbC.current_qty || 0,
-              unit: titleLower.includes("tent") || titleLower.includes("canopy") ? "tents" : titleLower.includes("mat") ? "mats" : titleLower.includes("water") ? "packs" : titleLower.includes("fan") ? "fans" : "units",
-              unitPrice: Number(dbC.unit_price) || 25000,
+              unit: titleLower.includes("tent") || titleLower.includes("canopy") ? "tents" : titleLower.includes("mat") ? "mats" : titleLower.includes("water") ? "packs" : titleLower.includes("fan") ? "fans" : "items",
+              unitPrice: Number(dbC.unit_price) || 0,
             };
           });
           setCampaigns(dbCampaigns);
@@ -208,7 +208,8 @@ export default function SadaqahGiving() {
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {campaigns.map((c) => {
             const Icon = c.icon;
-            const pct = Math.min(100, Math.round((c.raised / c.target) * 100));
+            const hasTarget = c.target > 0;
+            const pct = hasTarget ? Math.min(100, Math.round((c.raised / c.target) * 100)) : 0;
 
             return (
               <div key={c.id}>
@@ -234,21 +235,27 @@ export default function SadaqahGiving() {
                     <p className="text-sm leading-relaxed text-faded">{c.text}</p>
 
                     <div className="mt-6 space-y-3">
-                      <div>
-                        <div className="flex justify-between text-xs font-semibold">
-                          <span className="text-ink">
-                            {fmt(c.raised)} / {fmt(c.target)} {c.unit || "raised"}
-                          </span>
-                          <span className="text-vivid font-bold">{pct}%</span>
+                      {hasTarget ? (
+                        <div>
+                          <div className="flex justify-between text-xs font-semibold">
+                            <span className="text-ink">
+                              {fmt(c.raised)} / {fmt(c.target)} {c.unit || "raised"}
+                            </span>
+                            <span className="text-vivid font-bold">{pct}%</span>
+                          </div>
+                          <div className="mt-2 h-2 w-full overflow-hidden bg-mist rounded-full">
+                            <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
+                          </div>
                         </div>
-                        <div className="mt-2 h-2 w-full overflow-hidden bg-mist rounded-full">
-                          <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
+                      ) : (
+                        <div className="text-xs font-semibold text-pine bg-emerald-50 px-3 py-1.5 rounded-md border border-emerald-200/60 inline-block">
+                          Open Voluntary Donation
                         </div>
-                      </div>
+                      )}
 
-                      {c.unitPrice && (
+                      {Boolean(c.unitPrice) && (
                         <div className="text-xs font-bold text-pine">
-                          ₦{fmt(c.unitPrice)} per item
+                          ₦{fmt(c.unitPrice!)} per item
                         </div>
                       )}
 

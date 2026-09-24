@@ -153,8 +153,8 @@ export async function POST(req: Request) {
     if (action === 'create_campaign') {
       const title = sanitizeString(payload.title, 255);
       const category = sanitizeString(payload.category, 100);
-      const targetQty = Number(payload.targetQty) || 100;
-      const unitPrice = Number(payload.unitPrice) || 0;
+      const targetQty = payload.targetQty !== undefined && payload.targetQty !== null && payload.targetQty !== '' ? Number(payload.targetQty) : 0;
+      const unitPrice = payload.unitPrice !== undefined && payload.unitPrice !== null && payload.unitPrice !== '' ? Number(payload.unitPrice) : 0;
       const description = sanitizeString(payload.description, 2000);
       const imageUrl = sanitizeString(payload.imageUrl, 500);
 
@@ -215,9 +215,9 @@ export async function POST(req: Request) {
       const id = Number(payload.id);
       const title = sanitizeString(payload.title, 255);
       const category = sanitizeString(payload.category, 100);
-      const targetQty = Number(payload.targetQty) || 100;
+      const targetQty = payload.targetQty !== undefined && payload.targetQty !== null && payload.targetQty !== '' ? Number(payload.targetQty) : 0;
       const currentQty = Number(payload.currentQty) || 0;
-      const unitPrice = Number(payload.unitPrice) || 0;
+      const unitPrice = payload.unitPrice !== undefined && payload.unitPrice !== null && payload.unitPrice !== '' ? Number(payload.unitPrice) : 0;
       const description = sanitizeString(payload.description, 2000);
       const imageUrl = sanitizeString(payload.imageUrl, 500);
       const isActive = payload.is_active !== undefined ? (payload.is_active ? 1 : 0) : 1;

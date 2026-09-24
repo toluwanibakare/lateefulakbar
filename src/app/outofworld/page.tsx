@@ -222,9 +222,9 @@ export default function AdminPage() {
   const [editingCampaign, setEditingCampaign] = useState<any | null>(null);
   const [newCampaignTitle, setNewCampaignTitle] = useState("");
   const [newCampaignCategory, setNewCampaignCategory] = useState("");
-  const [newCampaignTargetQty, setNewCampaignTargetQty] = useState(500);
-  const [newCampaignCurrentQty, setNewCampaignCurrentQty] = useState(0);
-  const [newCampaignUnitPrice, setNewCampaignUnitPrice] = useState(25000);
+  const [newCampaignTargetQty, setNewCampaignTargetQty] = useState<string>("");
+  const [newCampaignCurrentQty, setNewCampaignCurrentQty] = useState<string>("0");
+  const [newCampaignUnitPrice, setNewCampaignUnitPrice] = useState<string>("");
   const [newCampaignDescription, setNewCampaignDescription] = useState("");
   const [newCampaignImageUrl, setNewCampaignImageUrl] = useState("");
 
@@ -235,11 +235,11 @@ export default function AdminPage() {
       const isEditing = Boolean(editingCampaign?.id);
       const action = isEditing ? "update_campaign" : "create_campaign";
       const payload = {
-        ...(isEditing ? { id: editingCampaign.id, currentQty: newCampaignCurrentQty } : {}),
+        ...(isEditing ? { id: editingCampaign.id, currentQty: Number(newCampaignCurrentQty) || 0 } : {}),
         title: newCampaignTitle,
         category: newCampaignCategory || newCampaignTitle,
-        targetQty: newCampaignTargetQty,
-        unitPrice: newCampaignUnitPrice,
+        targetQty: newCampaignTargetQty !== "" ? Number(newCampaignTargetQty) : 0,
+        unitPrice: newCampaignUnitPrice !== "" ? Number(newCampaignUnitPrice) : 0,
         description: newCampaignDescription,
         imageUrl: newCampaignImageUrl,
       };
@@ -260,12 +260,16 @@ export default function AdminPage() {
         setNewCampaignCategory("");
         setNewCampaignDescription("");
         setNewCampaignImageUrl("");
-        setNewCampaignCurrentQty(0);
+        setNewCampaignTargetQty("");
+        setNewCampaignUnitPrice("");
+        setNewCampaignCurrentQty("0");
         setEditingCampaign(null);
         setShowAddCampaignForm(false);
         alert(isEditing ? "Donation item updated successfully!" : "Donation item published to live site!");
         loadSectionData("donations");
         loadSectionData("sadaqah");
+      } else {
+        alert(data.error || "Failed to save donation item");
       }
     } catch (e) {
       alert("Error saving campaign");
@@ -276,9 +280,9 @@ export default function AdminPage() {
     setEditingCampaign(c);
     setNewCampaignTitle(c.title || "");
     setNewCampaignCategory(c.category || "");
-    setNewCampaignTargetQty(c.target_qty || 100);
-    setNewCampaignCurrentQty(c.current_qty || 0);
-    setNewCampaignUnitPrice(c.unit_price || 0);
+    setNewCampaignTargetQty(c.target_qty ? String(c.target_qty) : "");
+    setNewCampaignCurrentQty(String(c.current_qty || 0));
+    setNewCampaignUnitPrice(c.unit_price ? String(c.unit_price) : "");
     setNewCampaignDescription(c.description || "");
     setNewCampaignImageUrl(c.image_url || "");
     setShowAddCampaignForm(true);
@@ -2794,28 +2798,28 @@ export default function AdminPage() {
                       <div className="grid gap-4 sm:grid-cols-3">
                         <div>
                           <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                            Target Threshold (Qty)
+                            Target Threshold (Qty) <span className="text-faded font-normal lowercase">(optional)</span>
                           </label>
                           <input
                             type="number"
-                            required
-                            min={1}
+                            min={0}
+                            placeholder="Optional (e.g. 500)"
                             value={newCampaignTargetQty}
-                            onChange={(e) => setNewCampaignTargetQty(Number(e.target.value))}
+                            onChange={(e) => setNewCampaignTargetQty(e.target.value)}
                             className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
                           />
                         </div>
 
                         <div>
                           <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                            Unit Price (₦)
+                            Unit Price (₦) <span className="text-faded font-normal lowercase">(optional)</span>
                           </label>
                           <input
                             type="number"
-                            required
-                            min={100}
+                            min={0}
+                            placeholder="Optional (e.g. 25000)"
                             value={newCampaignUnitPrice}
-                            onChange={(e) => setNewCampaignUnitPrice(Number(e.target.value))}
+                            onChange={(e) => setNewCampaignUnitPrice(e.target.value)}
                             className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
                           />
                         </div>
@@ -2829,7 +2833,7 @@ export default function AdminPage() {
                               type="number"
                               min={0}
                               value={newCampaignCurrentQty}
-                              onChange={(e) => setNewCampaignCurrentQty(Number(e.target.value))}
+                              onChange={(e) => setNewCampaignCurrentQty(e.target.value)}
                               className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
                             />
                           </div>
@@ -2887,7 +2891,10 @@ export default function AdminPage() {
                 {/* Full Width Grid of Live Site Items */}
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {campaigns.map((c) => {
-                    const pct = Math.min(100, Math.round(((c.current_qty || 0) / (c.target_qty || 1)) * 100));
+                    const hasTarget = Number(c.target_qty || 0) > 0;
+                    const pct = hasTarget ? Math.min(100, Math.round(((c.current_qty || 0) / Number(c.target_qty)) * 100)) : 0;
+                    const unitPriceNum = Number(c.unit_price || 0);
+
                     return (
                       <div key={c.id} className="p-5 rounded-2xl bg-cream border border-ink/10 space-y-3 flex flex-col justify-between shadow-xs">
                         <div className="space-y-3">
@@ -2902,28 +2909,38 @@ export default function AdminPage() {
                               <h3 className="font-bold text-sm text-pine">{c.title}</h3>
                               <span className="text-[10px] text-faded block">Category: {c.category}</span>
                             </div>
-                            <span className="text-xs font-bold text-vivid bg-mist px-2.5 py-1 rounded-lg border border-sage shrink-0">
-                              ₦{Number(c.unit_price || 0).toLocaleString()}
-                            </span>
+                            {unitPriceNum > 0 ? (
+                              <span className="text-xs font-bold text-vivid bg-mist px-2.5 py-1 rounded-lg border border-sage shrink-0">
+                                ₦{unitPriceNum.toLocaleString()}
+                              </span>
+                            ) : (
+                              <span className="text-xs font-semibold text-pine bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 shrink-0">
+                                Open Amount
+                              </span>
+                            )}
                           </div>
 
                           <p className="text-xs text-faded line-clamp-2">{c.description || "Community donation project"}</p>
 
-                          <div>
-                            <div className="flex justify-between text-xs font-bold mb-1">
-                              <span className="text-ink">
-                                {c.current_qty || 0} / {c.target_qty || 100} items raised
-                              </span>
-                              <span className="text-vivid font-mono">{pct}%</span>
+                          {hasTarget && (
+                            <div>
+                              <div className="flex justify-between text-xs font-bold mb-1">
+                                <span className="text-ink">
+                                  {c.current_qty || 0} / {c.target_qty} items raised
+                                </span>
+                                <span className="text-vivid font-mono">{pct}%</span>
+                              </div>
+                              <div className="h-2 w-full bg-mist rounded-full overflow-hidden">
+                                <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
+                              </div>
                             </div>
-                            <div className="h-2 w-full bg-mist rounded-full overflow-hidden">
-                              <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
-                            </div>
-                          </div>
+                          )}
                         </div>
 
                         <div className="flex items-center justify-between border-t border-ink/10 pt-3 text-xs">
-                          <span className="text-[11px] font-mono text-faded">Target: {c.target_qty} items</span>
+                          <span className="text-[11px] font-mono text-faded">
+                            {hasTarget ? `Target: ${c.target_qty} items` : "Open Giving"}
+                          </span>
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => startEditCampaign(c)}
