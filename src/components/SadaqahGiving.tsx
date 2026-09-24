@@ -208,8 +208,9 @@ export default function SadaqahGiving() {
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {campaigns.map((c) => {
             const Icon = c.icon;
-            const hasTarget = c.target > 0;
-            const pct = hasTarget ? Math.min(100, Math.round((c.raised / c.target) * 100)) : 0;
+            const hasTargetQty = c.target > 0;
+            const isPriceThreshold = !hasTargetQty && Boolean(c.unitPrice);
+            const pct = hasTargetQty ? Math.min(100, Math.round((c.raised / c.target) * 100)) : 0;
 
             return (
               <div key={c.id}>
@@ -235,7 +236,7 @@ export default function SadaqahGiving() {
                     <p className="text-sm leading-relaxed text-faded">{c.text}</p>
 
                     <div className="mt-6 space-y-3">
-                      {hasTarget ? (
+                      {hasTargetQty ? (
                         <div>
                           <div className="flex justify-between text-xs font-semibold">
                             <span className="text-ink">
@@ -246,16 +247,22 @@ export default function SadaqahGiving() {
                           <div className="mt-2 h-2 w-full overflow-hidden bg-mist rounded-full">
                             <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
                           </div>
+                          {Boolean(c.unitPrice) && (
+                            <div className="mt-2 text-xs font-bold text-pine">
+                              ₦{fmt(c.unitPrice!)} per item
+                            </div>
+                          )}
+                        </div>
+                      ) : isPriceThreshold ? (
+                        <div className="space-y-1">
+                          <div className="text-xs font-semibold text-vivid bg-emerald-50 px-3 py-1.5 rounded-md border border-emerald-200/60 inline-block font-bold">
+                            Target Threshold: ₦{fmt(c.unitPrice!)}
+                          </div>
+                          <p className="text-[11px] text-faded">Deposit any amount towards reaching this ₦ target.</p>
                         </div>
                       ) : (
                         <div className="text-xs font-semibold text-pine bg-emerald-50 px-3 py-1.5 rounded-md border border-emerald-200/60 inline-block">
                           Open Voluntary Donation
-                        </div>
-                      )}
-
-                      {Boolean(c.unitPrice) && (
-                        <div className="text-xs font-bold text-pine">
-                          ₦{fmt(c.unitPrice!)} per item
                         </div>
                       )}
 
@@ -312,7 +319,7 @@ export default function SadaqahGiving() {
                   <p className="mt-1 text-xs text-faded">{open.text}</p>
 
                   <div className="mt-6 space-y-4">
-                    {open.unitPrice ? (
+                    {open.target > 0 && open.unitPrice ? (
                       <div>
                         <label className="text-xs font-semibold uppercase tracking-wider text-faded">
                           Number of items (₦{fmt(open.unitPrice)} each)
@@ -336,7 +343,7 @@ export default function SadaqahGiving() {
                     ) : (
                       <div>
                         <label className="text-xs font-semibold uppercase tracking-wider text-faded">
-                          Custom Donation Amount (₦)
+                          Custom Donation Amount (₦) {open.target === 0 && open.unitPrice ? `(Target: ₦${fmt(open.unitPrice)})` : ''}
                         </label>
                         <input
                           type="number"

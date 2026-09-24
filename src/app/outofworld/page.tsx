@@ -222,11 +222,45 @@ export default function AdminPage() {
   const [editingCampaign, setEditingCampaign] = useState<any | null>(null);
   const [newCampaignTitle, setNewCampaignTitle] = useState("");
   const [newCampaignCategory, setNewCampaignCategory] = useState("");
+  const [newCampaignThresholdType, setNewCampaignThresholdType] = useState<"quantity" | "price" | "open">("quantity");
   const [newCampaignTargetQty, setNewCampaignTargetQty] = useState<string>("");
+  const [newCampaignTargetPrice, setNewCampaignTargetPrice] = useState<string>("");
   const [newCampaignCurrentQty, setNewCampaignCurrentQty] = useState<string>("0");
   const [newCampaignUnitPrice, setNewCampaignUnitPrice] = useState<string>("");
   const [newCampaignDescription, setNewCampaignDescription] = useState("");
   const [newCampaignImageUrl, setNewCampaignImageUrl] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success && data.url) {
+        setNewCampaignImageUrl(data.url);
+      } else {
+        alert(data.error || "Failed to upload image.");
+      }
+    } catch (err) {
+      console.error("Error uploading file:", err);
+      alert("Error uploading image file.");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
 
   const handleCreateOrUpdateCampaign = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -234,12 +268,26 @@ export default function AdminPage() {
     try {
       const isEditing = Boolean(editingCampaign?.id);
       const action = isEditing ? "update_campaign" : "create_campaign";
+      
+      // Calculate targetQty, unitPrice based on thresholdType selection
+      let finalTargetQty = 0;
+      let finalUnitPrice = 0;
+
+      if (newCampaignThresholdType === "quantity") {
+        finalTargetQty = newCampaignTargetQty !== "" ? Number(newCampaignTargetQty) : 0;
+        finalUnitPrice = newCampaignUnitPrice !== "" ? Number(newCampaignUnitPrice) : 0;
+      } else if (newCampaignThresholdType === "price") {
+        // For price threshold (e.g. Internet 50,000 NGN threshold), set unitPrice as the target threshold price
+        finalUnitPrice = newCampaignTargetPrice !== "" ? Number(newCampaignTargetPrice) : 0;
+        finalTargetQty = 0;
+      }
+
       const payload = {
         ...(isEditing ? { id: editingCampaign.id, currentQty: Number(newCampaignCurrentQty) || 0 } : {}),
         title: newCampaignTitle,
         category: newCampaignCategory || newCampaignTitle,
-        targetQty: newCampaignTargetQty !== "" ? Number(newCampaignTargetQty) : 0,
-        unitPrice: newCampaignUnitPrice !== "" ? Number(newCampaignUnitPrice) : 0,
+        targetQty: finalTargetQty,
+        unitPrice: finalUnitPrice,
         description: newCampaignDescription,
         imageUrl: newCampaignImageUrl,
       };
@@ -261,6 +309,7 @@ export default function AdminPage() {
         setNewCampaignDescription("");
         setNewCampaignImageUrl("");
         setNewCampaignTargetQty("");
+        setNewCampaignTargetPrice("");
         setNewCampaignUnitPrice("");
         setNewCampaignCurrentQty("0");
         setEditingCampaign(null);
@@ -280,9 +329,29 @@ export default function AdminPage() {
     setEditingCampaign(c);
     setNewCampaignTitle(c.title || "");
     setNewCampaignCategory(c.category || "");
-    setNewCampaignTargetQty(c.target_qty ? String(c.target_qty) : "");
+    
+    // Determine threshold type from existing model values
+    const hasTargetQty = Number(c.target_qty || 0) > 0;
+    const hasUnitPrice = Number(c.unit_price || 0) > 0;
+
+    if (hasTargetQty) {
+      setNewCampaignThresholdType("quantity");
+      setNewCampaignTargetQty(String(c.target_qty));
+      setNewCampaignUnitPrice(c.unit_price ? String(c.unit_price) : "");
+      setNewCampaignTargetPrice("");
+    } else if (hasUnitPrice) {
+      setNewCampaignThresholdType("price");
+      setNewCampaignTargetPrice(String(c.unit_price));
+      setNewCampaignTargetQty("");
+      setNewCampaignUnitPrice("");
+    } else {
+      setNewCampaignThresholdType("open");
+      setNewCampaignTargetQty("");
+      setNewCampaignUnitPrice("");
+      setNewCampaignTargetPrice("");
+    }
+
     setNewCampaignCurrentQty(String(c.current_qty || 0));
-    setNewCampaignUnitPrice(c.unit_price ? String(c.unit_price) : "");
     setNewCampaignDescription(c.description || "");
     setNewCampaignImageUrl(c.image_url || "");
     setShowAddCampaignForm(true);
@@ -2795,46 +2864,112 @@ export default function AdminPage() {
                         </div>
                       </div>
 
-                      <div className="grid gap-4 sm:grid-cols-3">
-                        <div>
-                          <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                            Target Threshold (Qty) <span className="text-faded font-normal lowercase">(optional)</span>
+                      {/* Campaign Threshold Mode Selector */}
+                      <div className="bg-white p-4 rounded-xl border border-ink/15 space-y-3">
+                        <label className="block text-xs font-bold text-pine uppercase tracking-wider">
+                          Select Campaign Threshold Type
+                        </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <label className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all text-xs font-bold ${newCampaignThresholdType === 'quantity' ? 'bg-vivid/10 border-vivid text-vivid' : 'bg-mist/40 border-ink/10 text-faded'}`}>
+                            <input
+                              type="radio"
+                              name="thresholdType"
+                              value="quantity"
+                              checked={newCampaignThresholdType === 'quantity'}
+                              onChange={() => setNewCampaignThresholdType('quantity')}
+                              className="accent-vivid"
+                            />
+                            <span>Threshold by Quantity (e.g. 10 Chairs)</span>
                           </label>
-                          <input
-                            type="number"
-                            min={0}
-                            placeholder="Optional (e.g. 500)"
-                            value={newCampaignTargetQty}
-                            onChange={(e) => setNewCampaignTargetQty(e.target.value)}
-                            className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
-                          />
+
+                          <label className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all text-xs font-bold ${newCampaignThresholdType === 'price' ? 'bg-vivid/10 border-vivid text-vivid' : 'bg-mist/40 border-ink/10 text-faded'}`}>
+                            <input
+                              type="radio"
+                              name="thresholdType"
+                              value="price"
+                              checked={newCampaignThresholdType === 'price'}
+                              onChange={() => setNewCampaignThresholdType('price')}
+                              className="accent-vivid"
+                            />
+                            <span>Threshold by Price (e.g. ₦50,000 Internet)</span>
+                          </label>
+
+                          <label className={`flex items-center gap-2 p-3 rounded-xl border cursor-pointer transition-all text-xs font-bold ${newCampaignThresholdType === 'open' ? 'bg-vivid/10 border-vivid text-vivid' : 'bg-mist/40 border-ink/10 text-faded'}`}>
+                            <input
+                              type="radio"
+                              name="thresholdType"
+                              value="open"
+                              checked={newCampaignThresholdType === 'open'}
+                              onChange={() => setNewCampaignThresholdType('open')}
+                              className="accent-vivid"
+                            />
+                            <span>Open Voluntary Donation (No Limit)</span>
+                          </label>
                         </div>
 
-                        <div>
-                          <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                            Unit Price (₦) <span className="text-faded font-normal lowercase">(optional)</span>
-                          </label>
-                          <input
-                            type="number"
-                            min={0}
-                            placeholder="Optional (e.g. 25000)"
-                            value={newCampaignUnitPrice}
-                            onChange={(e) => setNewCampaignUnitPrice(e.target.value)}
-                            className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
-                          />
-                        </div>
+                        {/* Dynamic Input Fields Based on Selection */}
+                        {newCampaignThresholdType === 'quantity' && (
+                          <div className="grid gap-4 sm:grid-cols-2 pt-2 border-t border-ink/10">
+                            <div>
+                              <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                                Target Quantity (Number of Items Needed)
+                              </label>
+                              <input
+                                type="number"
+                                min={1}
+                                required
+                                placeholder="e.g. 10 chairs, 500 mats"
+                                value={newCampaignTargetQty}
+                                onChange={(e) => setNewCampaignTargetQty(e.target.value)}
+                                className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                                Unit Price Per Item (₦) <span className="text-faded font-normal lowercase">(optional)</span>
+                              </label>
+                              <input
+                                type="number"
+                                min={0}
+                                placeholder="e.g. 15000 (leave blank if open per item)"
+                                value={newCampaignUnitPrice}
+                                onChange={(e) => setNewCampaignUnitPrice(e.target.value)}
+                                className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {newCampaignThresholdType === 'price' && (
+                          <div className="pt-2 border-t border-ink/10">
+                            <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                              Target Price Threshold (₦)
+                            </label>
+                            <input
+                              type="number"
+                              min={1}
+                              required
+                              placeholder="e.g. 50000 for Internet, 100000 for Broadcast"
+                              value={newCampaignTargetPrice}
+                              onChange={(e) => setNewCampaignTargetPrice(e.target.value)}
+                              className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                            />
+                            <p className="text-[11px] text-faded mt-1">Donors can deposit any custom amount towards reaching this ₦ target threshold.</p>
+                          </div>
+                        )}
 
                         {editingCampaign && (
-                          <div>
+                          <div className="pt-2 border-t border-ink/10">
                             <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                              Raised (Current Qty)
+                              {newCampaignThresholdType === 'price' ? 'Current Amount Raised (₦)' : 'Current Quantity Raised'}
                             </label>
                             <input
                               type="number"
                               min={0}
                               value={newCampaignCurrentQty}
                               onChange={(e) => setNewCampaignCurrentQty(e.target.value)}
-                              className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
+                              className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink font-mono font-bold"
                             />
                           </div>
                         )}
@@ -2853,17 +2988,55 @@ export default function AdminPage() {
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                          Cover Image URL
+                      {/* Image File Upload & URL Input */}
+                      <div className="space-y-3 bg-white p-4 rounded-xl border border-ink/15">
+                        <label className="block text-xs font-bold text-pine uppercase tracking-wider">
+                          Campaign Image (Upload JPG/PNG File or Provide URL)
                         </label>
-                        <input
-                          type="text"
-                          placeholder="/assets/donation-tents.jpg"
-                          value={newCampaignImageUrl}
-                          onChange={(e) => setNewCampaignImageUrl(e.target.value)}
-                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
-                        />
+                        
+                        <div className="flex flex-col sm:flex-row items-center gap-3">
+                          <label className="w-full sm:w-auto px-4 py-2.5 bg-vivid/10 text-vivid hover:bg-vivid/20 border border-vivid/30 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all">
+                            {uploadingImage ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin text-vivid" />
+                                <span>Uploading Image...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="h-4 w-4 text-vivid" />
+                                <span>Upload Image File (PNG / JPG)</span>
+                              </>
+                            )}
+                            <input
+                              type="file"
+                              accept="image/png, image/jpeg, image/jpg, image/webp"
+                              onChange={handleImageUpload}
+                              disabled={uploadingImage}
+                              className="hidden"
+                            />
+                          </label>
+
+                          <span className="text-xs font-bold text-faded uppercase">OR</span>
+
+                          <input
+                            type="text"
+                            placeholder="Image URL (e.g. /uploads/donations/chair.png)"
+                            value={newCampaignImageUrl}
+                            onChange={(e) => setNewCampaignImageUrl(e.target.value)}
+                            className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                          />
+                        </div>
+
+                        {newCampaignImageUrl && (
+                          <div className="flex items-center gap-3 pt-2">
+                            <div className="h-12 w-16 relative rounded-lg overflow-hidden border border-ink/15 bg-mist shrink-0">
+                              <Image src={newCampaignImageUrl} alt="Preview" fill className="object-cover" />
+                            </div>
+                            <span className="text-xs font-mono text-emerald-700 font-semibold truncate">
+                              Preview Loaded: {newCampaignImageUrl}
+                            </span>
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex justify-end gap-3 pt-2">
@@ -2891,9 +3064,14 @@ export default function AdminPage() {
                 {/* Full Width Grid of Live Site Items */}
                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                   {campaigns.map((c) => {
-                    const hasTarget = Number(c.target_qty || 0) > 0;
-                    const pct = hasTarget ? Math.min(100, Math.round(((c.current_qty || 0) / Number(c.target_qty)) * 100)) : 0;
+                    const hasTargetQty = Number(c.target_qty || 0) > 0;
                     const unitPriceNum = Number(c.unit_price || 0);
+                    const isPriceThreshold = !hasTargetQty && unitPriceNum > 0;
+                    
+                    let pct = 0;
+                    if (hasTargetQty) {
+                      pct = Math.min(100, Math.round(((c.current_qty || 0) / Number(c.target_qty)) * 100));
+                    }
 
                     return (
                       <div key={c.id} className="p-5 rounded-2xl bg-cream border border-ink/10 space-y-3 flex flex-col justify-between shadow-xs">
@@ -2909,9 +3087,13 @@ export default function AdminPage() {
                               <h3 className="font-bold text-sm text-pine">{c.title}</h3>
                               <span className="text-[10px] text-faded block">Category: {c.category}</span>
                             </div>
-                            {unitPriceNum > 0 ? (
+                            {hasTargetQty && unitPriceNum > 0 ? (
                               <span className="text-xs font-bold text-vivid bg-mist px-2.5 py-1 rounded-lg border border-sage shrink-0">
-                                ₦{unitPriceNum.toLocaleString()}
+                                ₦{unitPriceNum.toLocaleString()} / item
+                              </span>
+                            ) : isPriceThreshold ? (
+                              <span className="text-xs font-bold text-vivid bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 shrink-0">
+                                ₦{unitPriceNum.toLocaleString()} Target
                               </span>
                             ) : (
                               <span className="text-xs font-semibold text-pine bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200 shrink-0">
@@ -2922,7 +3104,7 @@ export default function AdminPage() {
 
                           <p className="text-xs text-faded line-clamp-2">{c.description || "Community donation project"}</p>
 
-                          {hasTarget && (
+                          {hasTargetQty && (
                             <div>
                               <div className="flex justify-between text-xs font-bold mb-1">
                                 <span className="text-ink">
@@ -2939,7 +3121,7 @@ export default function AdminPage() {
 
                         <div className="flex items-center justify-between border-t border-ink/10 pt-3 text-xs">
                           <span className="text-[11px] font-mono text-faded">
-                            {hasTarget ? `Target: ${c.target_qty} items` : "Open Giving"}
+                            {hasTargetQty ? `Target: ${c.target_qty} items` : isPriceThreshold ? `Target: ₦${unitPriceNum.toLocaleString()}` : "Open Giving"}
                           </span>
                           <div className="flex items-center gap-2">
                             <button
