@@ -37,8 +37,9 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create target upload directory inside public folder
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'donations');
+    // Create target upload directory inside public folder (e.g. uploads/blog or uploads/donations)
+    const folderType = (formData.get('folder') as string) === 'blog' ? 'blog' : 'donations';
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads', folderType);
     await fs.mkdir(uploadDir, { recursive: true });
 
     // Generate clean unique filename
@@ -50,7 +51,7 @@ export async function POST(req: Request) {
     // Write file to disk
     await fs.writeFile(filePath, buffer);
 
-    const publicUrl = `/uploads/donations/${filename}`;
+    const publicUrl = `/uploads/${folderType}/${filename}`;
     return NextResponse.json({
       success: true,
       url: publicUrl,

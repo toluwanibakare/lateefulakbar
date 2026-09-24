@@ -366,6 +366,39 @@ export default function AdminPage() {
   const [newBlogContent, setNewBlogContent] = useState("");
   const [newBlogImage, setNewBlogImage] = useState("");
   const [newBlogReadTime, setNewBlogReadTime] = useState("5 min");
+  const [uploadingBlogImage, setUploadingBlogImage] = useState(false);
+
+  const handleBlogImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingBlogImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "blog");
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("admin_token") || ""}`,
+        },
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (data.success && data.url) {
+        setNewBlogImage(data.url);
+      } else {
+        alert(data.error || "Failed to upload blog image.");
+      }
+    } catch (err) {
+      console.error("Error uploading blog image file:", err);
+      alert("Error uploading blog image file.");
+    } finally {
+      setUploadingBlogImage(false);
+    }
+  };
 
   // Gallery Media State
   const [showAddGalleryForm, setShowAddGalleryForm] = useState(false);
@@ -2487,32 +2520,67 @@ export default function AdminPage() {
                       </div>
                     </div>
 
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      <div>
-                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                          Cover Image URL
+                    <div className="space-y-3 bg-white p-4 rounded-xl border border-ink/15">
+                      <label className="block text-xs font-bold text-pine uppercase tracking-wider">
+                        Article Cover Image (Upload JPG/PNG File or Provide URL)
+                      </label>
+                      
+                      <div className="flex flex-col sm:flex-row items-center gap-3">
+                        <label className="w-full sm:w-auto px-4 py-2.5 bg-vivid/10 text-vivid hover:bg-vivid/20 border border-vivid/30 rounded-xl font-bold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all">
+                          {uploadingBlogImage ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin text-vivid" />
+                              <span>Uploading Image...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="h-4 w-4 text-vivid" />
+                              <span>Upload Image File (PNG / JPG)</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/png, image/jpeg, image/jpg, image/webp"
+                            onChange={handleBlogImageUpload}
+                            disabled={uploadingBlogImage}
+                            className="hidden"
+                          />
                         </label>
+
+                        <span className="text-xs font-bold text-faded uppercase">OR</span>
+
                         <input
                           type="text"
-                          placeholder="/assets/crowd-67.jpg"
+                          placeholder="Image URL (e.g. /uploads/blog/article_cover.png)"
                           value={newBlogImage}
                           onChange={(e) => setNewBlogImage(e.target.value)}
-                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                          className="w-full bg-cream border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
                         />
                       </div>
 
-                      <div>
-                        <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
-                          Estimated Read Time
-                        </label>
-                        <input
-                          type="text"
-                          placeholder="e.g. 5 min"
-                          value={newBlogReadTime}
-                          onChange={(e) => setNewBlogReadTime(e.target.value)}
-                          className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
-                        />
-                      </div>
+                      {newBlogImage && (
+                        <div className="flex items-center gap-3 pt-2">
+                          <div className="h-12 w-16 relative rounded-lg overflow-hidden border border-ink/15 bg-mist shrink-0">
+                            <Image src={newBlogImage} alt="Preview" fill className="object-cover" />
+                          </div>
+                          <span className="text-xs font-mono text-emerald-700 font-semibold truncate">
+                            Preview Loaded: {newBlogImage}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-faded uppercase tracking-wider mb-2">
+                        Estimated Read Time
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 5 min"
+                        value={newBlogReadTime}
+                        onChange={(e) => setNewBlogReadTime(e.target.value)}
+                        className="w-full bg-white border border-ink/15 rounded-xl px-4 py-2.5 text-xs text-ink"
+                      />
                     </div>
 
                     <div>
