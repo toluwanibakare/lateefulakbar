@@ -154,46 +154,103 @@ export default function VendorRegistrationForm() {
     const catStr = effectiveCategoryString();
     const effectiveSub = form.subCategory === "Other (Specify your own)" ? form.customSubCategory : form.subCategory;
 
+    const processVendorSubmission = async (payRef?: string) => {
+      try {
+        const res = await fetch("/api/vendor-register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            businessName: form.businessName,
+            contactPerson: form.contactPerson,
+            phone: form.phone,
+            email: form.email,
+            address: form.address,
+            socialHandle: form.socialHandle,
+            category: form.category,
+            subCategory: effectiveSub,
+            description: form.description,
+            spaces: form.spaces,
+            electricity: form.electricity,
+            powerDetails: form.powerDetails,
+            staffCount: form.staffCount,
+            totalPrice,
+            paymentRef: payRef,
+          }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          const code = data.stallCode || ("ZONE-" + form.category.charAt(0).toUpperCase() + "-" + Math.floor(10 + Math.random() * 90));
+          const ref = data.paymentRef || payRef || ("PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase());
+          const id = data.passCode || ("VND-" + Math.floor(1000 + Math.random() * 9000));
+          setPass({ id, code, ref });
+        } else {
+          alert(data.error || "Failed to submit vendor application.");
+        }
+      } catch (err) {
+        console.error("Vendor registration database error:", err);
+        alert("An error occurred submitting your application. Please try again.");
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+    // Initialize Paystack Online Payment for Vendor Stall
     try {
-      const res = await fetch("/api/vendor-register", {
+      const payInitRes = await fetch("/api/paystack/init", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          businessName: form.businessName,
-          contactPerson: form.contactPerson,
-          phone: form.phone,
+          amount: totalPrice,
           email: form.email,
-          address: form.address,
-          socialHandle: form.socialHandle,
-          category: form.category,
-          subCategory: effectiveSub,
-          description: form.description,
-          spaces: form.spaces,
-          electricity: form.electricity,
-          powerDetails: form.powerDetails,
-          staffCount: form.staffCount,
-          totalPrice,
+          donorName: form.businessName,
+          category: `Vendor Stall - ${form.category}`,
         }),
       });
 
-      const data = await res.json();
-      const code = data.stallCode || ("ZONE-" + form.category.charAt(0).toUpperCase() + "-" + Math.floor(10 + Math.random() * 90));
-      const ref = data.paymentRef || ("PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase());
-      const id = data.passCode || ("VND-" + Math.floor(1000 + Math.random() * 9000));
+      const initData = await payInitRes.json();
+      if (initData.authorizationUrl) {
+        // Save pending application before redirecting to Paystack
+        await processVendorSubmission();
+        window.location.href = initData.authorizationUrl;
+        return;
+      }
 
-      setPass({ id, code, ref });
-      setTimeout(() => drawBadge(form.contactPerson, form.businessName, code, catStr), 200);
-    } catch (err) {
-      console.error("Vendor registration database error:", err);
-      // Fallback local badge generation
-      const code = "ZONE-" + form.category.charAt(0).toUpperCase() + "-" + Math.floor(10 + Math.random() * 90);
-      const ref = "PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase();
-      const id = "VND-" + Math.floor(1000 + Math.random() * 9000);
+      // Use Paystack Popup if standard popup key is present
+      const paystackKey = initData.publicKey || process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_test_2c7e896530c8018102ab4d741c95b997e534ba2e";
+      const loadScript = () =>
+        new Promise((resolve) => {
+          if ((window as any).PaystackPop) return resolve(true);
+          const script = document.createElement("script");
+          script.src = "https://js.paystack.co/v1/inline.js";
+          script.onload = () => resolve(true);
+          script.onerror = () => resolve(false);
+          document.body.appendChild(script);
+        });
 
-      setPass({ id, code, ref });
-      setTimeout(() => drawBadge(form.contactPerson, form.businessName, code, catStr), 200);
-    } finally {
-      setSubmitting(false);
+      const loaded = await loadScript();
+      if (loaded && (window as any).PaystackPop) {
+        const handler = (window as any).PaystackPop.setup({
+          key: paystackKey,
+          email: form.email,
+          amount: Math.round(totalPrice * 100),
+          currency: "NGN",
+          onClose: function () {
+            setSubmitting(false);
+          },
+          callback: function (response: any) {
+            const payRef = response.reference || response.trxref;
+            processVendorSubmission(payRef);
+          },
+        });
+        handler.openIframe();
+      } else {
+        // Fallback direct submission if popup script unavailable
+        await processVendorSubmission();
+      }
+    } catch (payErr) {
+      console.warn("Paystack init error, proceeding with application submission:", payErr);
+      await processVendorSubmission();
     }
   };
 
@@ -676,27 +733,41 @@ export default function VendorRegistrationForm() {
                 </form>
               </Reveal>
             ) : (
-              /* Approved Vendor Badge */
+              /* Pending Vendor Application Confirmation */
               <div className="border border-pine/30 bg-cream p-6 text-center sm:p-10 rounded-xl shadow-xl">
-                <span className="text-[11px] font-bold uppercase tracking-[0.24em] text-fern bg-fern/10 px-3 py-1 rounded-full">
-                  Alhamdulillah — Vendor Approved
+                <span className="text-[11px] font-bold uppercase tracking-[0.24em] text-amber-800 bg-amber-100 px-3.5 py-1.5 rounded-full inline-block font-semibold">
+                  Application Under Review
                 </span>
-                <h3 className="font-display mt-3 text-3xl text-ink">Stall Pass Approved</h3>
-                <p className="mx-auto mt-2 max-w-md text-sm text-faded">
-                  Your stall code is <strong className="font-mono text-pine">{pass.code}</strong>. Payment reference <strong className="font-mono text-faded">{pass.ref}</strong>.
+                <h3 className="font-display mt-4 text-3xl text-ink">Vendor Application Submitted</h3>
+                <p className="mx-auto mt-3 max-w-md text-sm text-faded leading-relaxed">
+                  Jazakallahu Khair! Your vendor stall application for <strong className="text-ink">{form.businessName}</strong> has been received by the Vendor Operations Committee.
                 </p>
 
-                <div className="mx-auto mt-6 max-w-sm">
-                  <canvas ref={canvasRef} className="w-full border border-ink/15 bg-white shadow-2xl rounded-lg" />
+                <div className="mx-auto mt-6 max-w-md border border-ink/15 bg-white p-5 rounded-lg text-left space-y-3">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Business Name:</span>
+                    <span className="font-semibold text-ink">{form.businessName}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Contact Person:</span>
+                    <span className="font-semibold text-ink">{form.contactPerson} ({form.phone})</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Category:</span>
+                    <span className="font-semibold text-ink">{form.category}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Payment Ref:</span>
+                    <span className="font-mono font-semibold text-pine">{pass.ref}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Status:</span>
+                    <span className="font-bold text-amber-600 uppercase">Pending Admin Approval</span>
+                  </div>
                 </div>
 
-                <div className="mt-6 flex flex-wrap justify-center gap-3">
-                  <button
-                    onClick={downloadPass}
-                    className="inline-flex items-center gap-2 bg-vivid px-6 py-3 text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep shadow-md"
-                  >
-                    <Download className="h-4 w-4" /> Download Official Vendor Pass
-                  </button>
+                <div className="mt-6 text-xs text-faded max-w-md mx-auto leading-relaxed">
+                  Upon review and approval by the Vendor Committee, your official Vendor Pass and Stall Zone Code will be sent directly to <strong>{form.email}</strong>.
                 </div>
               </div>
             )}

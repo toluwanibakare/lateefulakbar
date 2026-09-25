@@ -30,6 +30,7 @@ export async function POST(req: Request) {
     const powerDetails = sanitizeString(body.powerDetails || '', 500);
     const staffCount = parseInt(body.staffCount || '2', 10);
     const totalPrice = parseFloat(body.totalPrice || '0');
+    const paymentRefInput = sanitizeString(body.paymentRef || '', 100);
 
     if (!businessName || !contactPerson || !phone || !email || !isValidEmail(email)) {
       return NextResponse.json(
@@ -40,13 +41,13 @@ export async function POST(req: Request) {
 
     const passCode = "VND-" + Math.floor(1000 + Math.random() * 9000);
     const stallCode = "ZONE-" + (category.charAt(0).toUpperCase()) + "-" + Math.floor(10 + Math.random() * 90);
-    const paymentRef = "PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase();
+    const paymentRef = paymentRefInput || ("PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase());
 
     const db = await getDb();
     await db.query(
       `INSERT INTO vendors 
-       (business_name, contact_person, phone, email, address, social_handle, category, sub_category, description, spaces, electricity, power_details, staff_count, total_price, pass_code, payment_ref) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       (business_name, contact_person, phone, email, address, social_handle, category, sub_category, description, spaces, electricity, power_details, staff_count, total_price, pass_code, payment_ref, status) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [
         businessName,
         contactPerson,
@@ -67,27 +68,27 @@ export async function POST(req: Request) {
       ]
     );
 
-    // Trigger Vendor Registration Email
-    sendVendorRegistrationEmail({
-      to: email,
+    // Send notification email to Admin
+    sendVendorSubmissionAdminEmail({
       businessName,
       contactPerson,
-      stallCode,
-      passCode,
+      email,
+      phone,
       category,
-      spaces,
       totalPrice,
-    }).catch((err) => console.error('Error sending vendor email:', err));
+    }).catch((err) => console.error('Error sending vendor admin notification:', err));
 
     return NextResponse.json({
       success: true,
       passCode,
       stallCode,
       paymentRef,
+      status: 'pending',
     });
   } catch (error) {
     console.error('Vendor registration API error:', error);
     return NextResponse.json({ error: 'Failed to submit vendor registration.' }, { status: 500 });
   }
 }
+
 

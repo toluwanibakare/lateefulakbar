@@ -43,6 +43,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ success: true, data: rows });
     }
 
+    if (type === 'media') {
+      const [rows] = await db.query<RowDataPacket[]>(
+        'SELECT * FROM media_accreditations ORDER BY id DESC'
+      );
+      return NextResponse.json({ success: true, data: rows });
+    }
+
     if (type === 'referrals') {
       const [rows] = await db.query<RowDataPacket[]>(
         `SELECT r1.full_name, r1.email, r1.referral_code, r1.pass_code,
@@ -318,6 +325,72 @@ export async function POST(req: Request) {
       const id = Number(payload.id);
       await db.query('DELETE FROM event_schedule WHERE id = ?', [id]);
       await logAdminActivity(adminEmail, adminName, 'Deleted Schedule Item', `ID: ${id}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'approve_vendor') {
+      const id = Number(payload.id);
+      const [rows] = await db.query<RowDataPacket[]>('SELECT * FROM vendors WHERE id = ?', [id]);
+      if (rows.length === 0) {
+        return NextResponse.json({ success: false, error: 'Vendor not found' }, { status: 404 });
+      }
+      const vendor = rows[0];
+      const stallCode = vendor.pass_code || ("ZONE-" + (vendor.category?.charAt(0).toUpperCase() || "V") + "-" + Math.floor(10 + Math.random() * 90));
+      const passCode = "VND-" + Math.floor(1000 + Math.random() * 9000);
+
+      await db.query('UPDATE vendors SET status = "approved", pass_code = ? WHERE id = ?', [stallCode, id]);
+      await logAdminActivity(adminEmail, adminName, 'Approved Vendor Application', `ID: ${id}, Business: ${vendor.business_name}`);
+
+      const { sendVendorRegistrationEmail } = await import('@/lib/email');
+      sendVendorRegistrationEmail({
+        to: vendor.email,
+        businessName: vendor.business_name,
+        contactPerson: vendor.contact_person,
+        stallCode,
+        passCode,
+        category: vendor.category,
+        spaces: vendor.spaces || 1,
+        totalPrice: vendor.total_price || 0,
+      }).catch((err) => console.error('Error sending vendor approval email:', err));
+
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'decline_vendor') {
+      const id = Number(payload.id);
+      await db.query('UPDATE vendors SET status = "declined" WHERE id = ?', [id]);
+      await logAdminActivity(adminEmail, adminName, 'Declined Vendor Application', `ID: ${id}`);
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'approve_media') {
+      const id = Number(payload.id);
+      const [rows] = await db.query<RowDataPacket[]>('SELECT * FROM media_accreditations WHERE id = ?', [id]);
+      if (rows.length === 0) {
+        return NextResponse.json({ success: false, error: 'Media application not found' }, { status: 404 });
+      }
+      const mediaApp = rows[0];
+      const accreditationNumber = mediaApp.accreditation_number || ("PRESS-" + Math.floor(1000 + Math.random() * 9000));
+
+      await db.query('UPDATE media_accreditations SET status = "approved" WHERE id = ?', [id]);
+      await logAdminActivity(adminEmail, adminName, 'Approved Media Accreditation', `ID: ${id}, Name: ${mediaApp.full_name}, Org: ${mediaApp.org_name}`);
+
+      const { sendMediaApprovalEmail } = await import('@/lib/email');
+      sendMediaApprovalEmail({
+        to: mediaApp.email,
+        fullName: mediaApp.full_name,
+        orgName: mediaApp.org_name,
+        accreditationNumber,
+        mediaType: mediaApp.media_type,
+      }).catch((err) => console.error('Error sending media approval email:', err));
+
+      return NextResponse.json({ success: true });
+    }
+
+    if (action === 'decline_media') {
+      const id = Number(payload.id);
+      await db.query('UPDATE media_accreditations SET status = "declined" WHERE id = ?', [id]);
+      await logAdminActivity(adminEmail, adminName, 'Declined Media Accreditation', `ID: ${id}`);
       return NextResponse.json({ success: true });
     }
 

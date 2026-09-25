@@ -612,7 +612,209 @@ export async function sendAdminWelcomeEmail({
     });
     return { success: true };
   } catch (err) {
-    console.error('Error sending admin welcome email:', err);
+// 6. Admin Submission Alert for Vendor Application
+export async function sendVendorSubmissionAdminEmail({
+  businessName,
+  contactPerson,
+  email,
+  phone,
+  category,
+  totalPrice,
+}: {
+  businessName: string;
+  contactPerson: string;
+  email: string;
+  phone: string;
+  category: string;
+  totalPrice: number;
+}) {
+  const transporter = await getTransporter();
+  const adminEmail = process.env.ADMIN_NOTIFY_EMAIL || 'lateefulakbar@gmail.com';
+  if (!transporter) {
+    console.log(`[EMAIL SIMULATION] Admin notified of new vendor application for ${businessName}`);
+    return { success: true, simulated: true };
+  }
+
+  const innerHtml = `
+    <h2 style="margin: 0 0 16px 0; color: #064e3b; font-size: 20px;">New Vendor Application Submitted</h2>
+    <p style="font-size: 15px; line-height: 1.6; color: #334155;">
+      A new vendor application has been submitted on the portal and is awaiting your review in the Admin Management Console.
+    </p>
+
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px; margin: 20px 0;">
+      <table border="0" cellpadding="6" cellspacing="0" width="100%" style="font-size: 14px; color: #334155;">
+        <tr>
+          <td width="35%" style="font-weight: 600; color: #047857;">Business Name:</td>
+          <td width="65%" style="font-weight: bold; color: #0f172a;">${businessName}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Contact Person:</td>
+          <td>${contactPerson}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Email:</td>
+          <td><a href="mailto:${email}" style="color: #0d9488;">${email}</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Phone:</td>
+          <td>${phone}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Category:</td>
+          <td>${category}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Stall Price:</td>
+          <td style="font-weight: 800; color: #064e3b;">₦${totalPrice.toLocaleString()}</td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="font-size: 14px; color: #475569;">
+      Log into the <a href="${SITE_URL}/outofworld" style="color: #0d9488; font-weight: bold;">Admin Panel</a> under <strong>Vendor Applications</strong> to review and approve or decline this application.
+    </p>
+  `;
+
+  try {
+    const cfg = getSmtpConfig();
+    await transporter.sendMail({
+      from: cfg.from,
+      to: adminEmail,
+      subject: `[NEW VENDOR APPLICATION] ${businessName} (${category})`,
+      html: getEmailWrapper('New Vendor Application Received', innerHtml),
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('Error sending vendor admin notification:', err);
+    return { success: false, error: err };
+  }
+}
+
+// 7. Admin Submission Alert for Media Accreditation
+export async function sendMediaSubmissionAdminEmail({
+  fullName,
+  orgName,
+  email,
+  phone,
+  mediaType,
+}: {
+  fullName: string;
+  orgName: string;
+  email: string;
+  phone: string;
+  mediaType: string;
+}) {
+  const transporter = await getTransporter();
+  const adminEmail = process.env.ADMIN_NOTIFY_EMAIL || 'lateefulakbar@gmail.com';
+  if (!transporter) {
+    console.log(`[EMAIL SIMULATION] Admin notified of media application for ${fullName} (${orgName})`);
+    return { success: true, simulated: true };
+  }
+
+  const innerHtml = `
+    <h2 style="margin: 0 0 16px 0; color: #064e3b; font-size: 20px;">New Media Accreditation Request</h2>
+    <p style="font-size: 15px; line-height: 1.6; color: #334155;">
+      A media representative has submitted an accreditation request for Lateeful Akbar 2027.
+    </p>
+
+    <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px; margin: 20px 0;">
+      <table border="0" cellpadding="6" cellspacing="0" width="100%" style="font-size: 14px; color: #334155;">
+        <tr>
+          <td width="35%" style="font-weight: 600; color: #047857;">Applicant Name:</td>
+          <td width="65%" style="font-weight: bold; color: #0f172a;">${fullName}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Media House / Org:</td>
+          <td style="font-weight: bold; color: #0d9488;">${orgName}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Media Type:</td>
+          <td>${mediaType}</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Email:</td>
+          <td><a href="mailto:${email}" style="color: #0d9488;">${email}</a></td>
+        </tr>
+        <tr>
+          <td style="font-weight: 600; color: #047857;">Phone:</td>
+          <td>${phone}</td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="font-size: 14px; color: #475569;">
+      Log into the <a href="${SITE_URL}/outofworld" style="color: #0d9488; font-weight: bold;">Admin Panel</a> under <strong>Media Accreditation</strong> to review and issue clearance.
+    </p>
+  `;
+
+  try {
+    const cfg = getSmtpConfig();
+    await transporter.sendMail({
+      from: cfg.from,
+      to: adminEmail,
+      subject: `[MEDIA ACCREDITATION REQUEST] ${fullName} - ${orgName}`,
+      html: getEmailWrapper('New Media Accreditation Request', innerHtml),
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('Error sending media admin notification:', err);
+    return { success: false, error: err };
+  }
+}
+
+// 8. Approved Media Pass Email (Sent when Admin approves)
+export async function sendMediaApprovalEmail({
+  to,
+  fullName,
+  orgName,
+  accreditationNumber,
+  mediaType,
+}: {
+  to: string;
+  fullName: string;
+  orgName: string;
+  accreditationNumber: string;
+  mediaType: string;
+}) {
+  const transporter = await getTransporter();
+  if (!transporter) {
+    console.log(`[EMAIL SIMULATION] Media approval email sent to ${to}`);
+    return { success: true, simulated: true };
+  }
+
+  const innerHtml = `
+    <h2 style="margin: 0 0 16px 0; color: #064e3b; font-size: 20px;">Accreditation Approved!</h2>
+    <p style="font-size: 15px; line-height: 1.6; color: #334155;">
+      As-Salāmu ‘Alaykum <strong>${fullName}</strong>,
+    </p>
+    <p style="font-size: 15px; line-height: 1.6; color: #334155;">
+      We are pleased to inform you that your media accreditation application for <strong>${orgName}</strong> at <strong>Lateeful-Ul-Akbar Li-A’azam 2027</strong> has been officially <strong>APPROVED</strong>.
+    </p>
+
+    <div style="background-color: #ecfdf5; border: 2px solid #10b981; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: center;">
+      <p style="margin: 0 0 6px 0; font-size: 11px; color: #047857; text-transform: uppercase; letter-spacing: 2px; font-weight: 700;">Official Press Accreditation Code</p>
+      <div style="font-size: 28px; font-weight: 800; color: #064e3b; letter-spacing: 2px;">${accreditationNumber}</div>
+      <div style="border-top: 1px dashed #6ee7b7; margin: 16px 0;"></div>
+      <p style="margin: 0 0 6px 0; font-size: 14px; color: #334155;">Organization: <strong>${orgName}</strong></p>
+      <p style="margin: 0; font-size: 14px; color: #334155;">Category: <strong>${mediaType}</strong></p>
+    </div>
+
+    <p style="font-size: 14px; line-height: 1.6; color: #475569;">
+      Please present this pass code upon arrival at the Media Desk at Tafawa Balewa Square (TBS) Main Bowl, Lagos, to collect your physical press badge and media zone lanyard.
+    </p>
+  `;
+
+  try {
+    const cfg = getSmtpConfig();
+    await transporter.sendMail({
+      from: cfg.from,
+      to,
+      subject: `[APPROVED] Press & Media Accreditation - ${orgName} [${accreditationNumber}]`,
+      html: getEmailWrapper('Media Accreditation Approved', innerHtml),
+    });
+    return { success: true };
+  } catch (err) {
+    console.error('Error sending media approval email:', err);
     return { success: false, error: err };
   }
 }

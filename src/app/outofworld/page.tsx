@@ -106,6 +106,8 @@ const ALL_PERMISSIONS = [
   { id: "live_event", label: "Live Event Stream" },
   { id: "updates", label: "Event Updates" },
   { id: "attendees", label: "Attendees" },
+  { id: "vendors", label: "Vendor Applications" },
+  { id: "media", label: "Media Accreditation" },
   { id: "referrals", label: "Referrals Leaderboard" },
   { id: "newsletter", label: "Email & Newsletter Hub" },
   { id: "blog", label: "Blog Manager" },
@@ -136,6 +138,8 @@ export default function AdminPage() {
 
   // Data lists
   const [attendees, setAttendees] = useState<any[]>([]);
+  const [vendorsList, setVendorsList] = useState<any[]>([]);
+  const [mediaList, setMediaList] = useState<any[]>([]);
   const [referrals, setReferrals] = useState<any[]>([]);
   const [campaigns, setCampaigns] = useState<any[]>([]);
   const [updates, setUpdates] = useState<any[]>([]);
@@ -698,6 +702,14 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/crud?type=attendees", { headers });
         const data = await res.json();
         if (data.success) setAttendees(data.data);
+      } else if (section === "vendors") {
+        const res = await fetch("/api/admin/crud?type=vendors", { headers });
+        const data = await res.json();
+        if (data.success) setVendorsList(data.data || []);
+      } else if (section === "media") {
+        const res = await fetch("/api/admin/crud?type=media", { headers });
+        const data = await res.json();
+        if (data.success) setMediaList(data.data || []);
       } else if (section === "referrals") {
         const res = await fetch("/api/admin/crud?type=referrals", { headers });
         const data = await res.json();
@@ -1256,6 +1268,8 @@ export default function AdminPage() {
       group: "PEOPLE",
       items: [
         { id: "attendees", label: "Attendees", icon: Users },
+        { id: "vendors", label: "Vendor Applications", icon: ShoppingBag },
+        { id: "media", label: "Media Accreditation", icon: Camera },
         { id: "referrals", label: "Referrals Leaderboard", icon: Share2 },
       ],
     },
@@ -1683,6 +1697,248 @@ export default function AdminPage() {
                       <tr>
                         <td colSpan={6} className="py-8 text-center text-faded">
                           No registered attendees found.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: VENDORS MANAGEMENT */}
+          {activeSection === "vendors" && (
+            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-ink/10 pb-5">
+                <div>
+                  <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                    <ShoppingBag className="h-5 w-5 text-vivid" /> Vendor Applications Directory ({vendorsList.length})
+                  </h2>
+                  <p className="text-xs text-faded mt-0.5">Review, approve, or decline vendor applications. Approving generates official stall passes and emails the vendor.</p>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-faded" />
+                    <input
+                      type="text"
+                      placeholder="Search business, contact, email..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-cream border border-ink/15 rounded-xl pl-9 pr-4 py-2 text-xs text-ink focus:outline-none focus:border-vivid"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4">Business Name</th>
+                      <th className="py-3 px-4">Contact Person</th>
+                      <th className="py-3 px-4">Category</th>
+                      <th className="py-3 px-4">Price</th>
+                      <th className="py-3 px-4">Stall / Pass Code</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink/10">
+                    {vendorsList
+                      .filter((v) => {
+                        if (!searchQuery) return true;
+                        const q = searchQuery.toLowerCase();
+                        return (
+                          v.business_name?.toLowerCase().includes(q) ||
+                          v.contact_person?.toLowerCase().includes(q) ||
+                          v.email?.toLowerCase().includes(q) ||
+                          v.category?.toLowerCase().includes(q)
+                        );
+                      })
+                      .map((ven) => (
+                        <tr key={ven.id} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-4 font-bold text-pine">
+                            {ven.business_name}
+                            <span className="block text-[11px] font-normal text-faded">{ven.email} ({ven.phone})</span>
+                          </td>
+                          <td className="py-3.5 px-4 text-ink">{ven.contact_person}</td>
+                          <td className="py-3.5 px-4 text-faded">
+                            {ven.category} {ven.sub_category ? `(${ven.sub_category})` : ''}
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-ink">₦{Number(ven.total_price || 0).toLocaleString()}</td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-vivid">{ven.pass_code || "-"}</td>
+                          <td className="py-3.5 px-4">
+                            <span className={`px-2.5 py-1 rounded font-bold text-[10px] uppercase ${
+                              ven.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                              ven.status === 'declined' ? 'bg-red-100 text-red-800' :
+                              'bg-amber-100 text-amber-800'
+                            }`}>
+                              {ven.status || 'pending'}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right space-x-2">
+                            {ven.status !== 'approved' && (
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Approve vendor ${ven.business_name}?`)) return;
+                                  const res = await fetch("/api/admin/crud", {
+                                    method: "POST",
+                                    headers: getAuthHeaders(),
+                                    body: JSON.stringify({ action: "approve_vendor", payload: { id: ven.id } }),
+                                  });
+                                  const d = await res.json();
+                                  if (d.success) loadSectionData("vendors");
+                                }}
+                                className="px-3 py-1 bg-emerald-700 text-white rounded text-[11px] font-bold hover:bg-emerald-800"
+                              >
+                                Approve
+                              </button>
+                            )}
+                            {ven.status !== 'declined' && (
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Decline vendor ${ven.business_name}?`)) return;
+                                  const res = await fetch("/api/admin/crud", {
+                                    method: "POST",
+                                    headers: getAuthHeaders(),
+                                    body: JSON.stringify({ action: "decline_vendor", payload: { id: ven.id } }),
+                                  });
+                                  const d = await res.json();
+                                  if (d.success) loadSectionData("vendors");
+                                }}
+                                className="px-3 py-1 bg-red-700 text-white rounded text-[11px] font-bold hover:bg-red-800"
+                              >
+                                Decline
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    {vendorsList.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-faded">
+                          No vendor applications submitted yet.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* SECTION: MEDIA ACCREDITATION MANAGEMENT */}
+          {activeSection === "media" && (
+            <div className="bg-white border border-ink/15 rounded-2xl p-6 shadow-sm space-y-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-ink/10 pb-5">
+                <div>
+                  <h2 className="text-base font-bold text-pine flex items-center gap-2">
+                    <Camera className="h-5 w-5 text-vivid" /> Media Accreditation Directory ({mediaList.length})
+                  </h2>
+                  <p className="text-xs text-faded mt-0.5">Review press applications, assign media clearance, and approve/decline press passes.</p>
+                </div>
+
+                <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:w-64">
+                    <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-faded" />
+                    <input
+                      type="text"
+                      placeholder="Search name, org, email..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full bg-cream border border-ink/15 rounded-xl pl-9 pr-4 py-2 text-xs text-ink focus:outline-none focus:border-vivid"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4">Applicant Name</th>
+                      <th className="py-3 px-4">Media Organization</th>
+                      <th className="py-3 px-4">Media Type</th>
+                      <th className="py-3 px-4">Coverage Role</th>
+                      <th className="py-3 px-4">Accreditation Code</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-ink/10">
+                    {mediaList
+                      .filter((m) => {
+                        if (!searchQuery) return true;
+                        const q = searchQuery.toLowerCase();
+                        return (
+                          m.full_name?.toLowerCase().includes(q) ||
+                          m.org_name?.toLowerCase().includes(q) ||
+                          m.email?.toLowerCase().includes(q) ||
+                          m.media_type?.toLowerCase().includes(q)
+                        );
+                      })
+                      .map((med) => (
+                        <tr key={med.id} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-4 font-bold text-pine">
+                            {med.full_name}
+                            <span className="block text-[11px] font-normal text-faded">{med.email} ({med.phone})</span>
+                          </td>
+                          <td className="py-3.5 px-4 font-semibold text-ink">{med.org_name}</td>
+                          <td className="py-3.5 px-4 text-faded">{med.media_type}</td>
+                          <td className="py-3.5 px-4 text-ink">{med.role || med.coverage_type || "-"}</td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-vivid">{med.accreditation_number || "-"}</td>
+                          <td className="py-3.5 px-4">
+                            <span className={`px-2.5 py-1 rounded font-bold text-[10px] uppercase ${
+                              med.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                              med.status === 'declined' ? 'bg-red-100 text-red-800' :
+                              'bg-amber-100 text-amber-800'
+                            }`}>
+                              {med.status || 'pending'}
+                            </span>
+                          </td>
+                          <td className="py-3.5 px-4 text-right space-x-2">
+                            {med.status !== 'approved' && (
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Approve press accreditation for ${med.full_name} (${med.org_name})?`)) return;
+                                  const res = await fetch("/api/admin/crud", {
+                                    method: "POST",
+                                    headers: getAuthHeaders(),
+                                    body: JSON.stringify({ action: "approve_media", payload: { id: med.id } }),
+                                  });
+                                  const d = await res.json();
+                                  if (d.success) loadSectionData("media");
+                                }}
+                                className="px-3 py-1 bg-emerald-700 text-white rounded text-[11px] font-bold hover:bg-emerald-800"
+                              >
+                                Approve
+                              </button>
+                            )}
+                            {med.status !== 'declined' && (
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Decline press accreditation for ${med.full_name}?`)) return;
+                                  const res = await fetch("/api/admin/crud", {
+                                    method: "POST",
+                                    headers: getAuthHeaders(),
+                                    body: JSON.stringify({ action: "decline_media", payload: { id: med.id } }),
+                                  });
+                                  const d = await res.json();
+                                  if (d.success) loadSectionData("media");
+                                }}
+                                className="px-3 py-1 bg-red-700 text-white rounded text-[11px] font-bold hover:bg-red-800"
+                              >
+                                Decline
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    {mediaList.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="py-8 text-center text-faded">
+                          No media accreditation requests submitted yet.
                         </td>
                       </tr>
                     )}

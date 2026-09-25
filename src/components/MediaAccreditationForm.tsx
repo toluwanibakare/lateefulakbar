@@ -529,27 +529,37 @@ export default function MediaAccreditationForm() {
                 </form>
               </Reveal>
             ) : (
-              /* Media Pass Certificate */
+              /* Media Application Submitted Confirmation */
               <div className="border border-pine/30 bg-cream p-6 text-center sm:p-10 rounded-xl shadow-xl">
-                <span className="text-[11px] font-bold uppercase tracking-[0.24em] text-red-600 bg-red-100 px-3 py-1 rounded-full">
-                  Media Application Submitted
+                <span className="text-[11px] font-bold uppercase tracking-[0.24em] text-amber-800 bg-amber-100 px-3.5 py-1.5 rounded-full inline-block font-semibold">
+                  Application Under Review
                 </span>
-                <h3 className="font-display mt-3 text-3xl text-ink">Press Pass Issued</h3>
-                <p className="mx-auto mt-2 max-w-md text-sm text-faded">
-                  Your Press ID is <strong className="font-mono text-pine">{submitted.id}</strong>. Reference <strong className="font-mono text-faded">{submitted.ref}</strong>.
+                <h3 className="font-display mt-4 text-3xl text-ink">Media Application Received</h3>
+                <p className="mx-auto mt-3 max-w-md text-sm text-faded leading-relaxed">
+                  Jazakallahu Khair! Your press accreditation request for <strong className="text-ink">{form.orgName}</strong> has been submitted to the Nadwat Media Committee.
                 </p>
 
-                <div className="mx-auto mt-6 max-w-sm">
-                  <canvas ref={canvasRef} className="w-full border border-ink/15 bg-white shadow-2xl rounded-lg" />
+                <div className="mx-auto mt-6 max-w-md border border-ink/15 bg-white p-5 rounded-lg text-left space-y-3">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Applicant Name:</span>
+                    <span className="font-semibold text-ink">{form.fullName}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Organization:</span>
+                    <span className="font-semibold text-ink">{form.orgName}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Application Ref:</span>
+                    <span className="font-mono font-semibold text-pine">{submitted.ref}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-faded">Status:</span>
+                    <span className="font-bold text-amber-600 uppercase">Pending Approval</span>
+                  </div>
                 </div>
 
-                <div className="mt-6 flex flex-wrap justify-center gap-3">
-                  <button
-                    onClick={downloadPass}
-                    className="inline-flex items-center gap-2 bg-vivid px-6 py-3 text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep shadow-md"
-                  >
-                    <Download className="h-4 w-4" /> Download Official Press Badge
-                  </button>
+                <div className="mt-6 text-xs text-faded max-w-md mx-auto leading-relaxed">
+                  Upon approval by the Media Committee, your official Press Accreditation Pass Code and access instructions will be sent directly to <strong>{form.email}</strong>.
                 </div>
               </div>
             )}
