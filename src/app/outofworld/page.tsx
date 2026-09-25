@@ -7,6 +7,8 @@ import {
   LayoutDashboard,
   Radio,
   Users,
+  ShoppingBag,
+  Camera,
   Share2,
   Trophy,
   Mail,

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { checkRateLimit, sanitizeString, isValidEmail } from '@/lib/security';
-import { sendVendorRegistrationEmail } from '@/lib/email';
+import { sendVendorRegistrationEmail, sendVendorSubmissionAdminEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   try {
@@ -76,7 +76,7 @@ export async function POST(req: Request) {
       phone,
       category,
       totalPrice,
-    }).catch((err) => console.error('Error sending vendor admin notification:', err));
+    }).catch((err: any) => console.error('Error sending vendor admin notification:', err));
 
     return NextResponse.json({
       success: true,
