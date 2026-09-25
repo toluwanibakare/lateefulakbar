@@ -612,6 +612,11 @@ export async function sendAdminWelcomeEmail({
     });
     return { success: true };
   } catch (err) {
+    console.error('Error sending admin welcome email:', err);
+    return { success: false, error: err };
+  }
+}
+
 // 6. Admin Submission Alert for Vendor Application
 export async function sendVendorSubmissionAdminEmail({
   businessName,
