@@ -23,7 +23,7 @@ function getEnvKey(keyName: string): string {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { amount, email, donorName, category } = body;
+    const { amount, email, donorName, category, callbackUrl } = body;
 
     if (!amount || amount <= 0 || !email) {
       return NextResponse.json({ error: 'Valid amount and email are required' }, { status: 400 });
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
               category: category || 'General Sadaqah',
               mode,
             },
-            callback_url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://lateefulakbar.com'}/sadaqah?status=success`,
+            callback_url: callbackUrl || `${process.env.NEXT_PUBLIC_APP_URL || 'https://lateefulakbar.com'}/sadaqah?status=success`,
           }),
         });
 

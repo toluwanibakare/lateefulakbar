@@ -34,6 +34,20 @@ export default function SadaqahQuickGive() {
   const effective = custom ? parseFloat(custom) || 0 : amount || 0;
 
   useEffect(() => {
+    // Check if user returned from Paystack redirect with reference/trxref
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('reference') || params.get('trxref');
+    if (ref) {
+      fetch(`/api/paystack/verify?reference=${encodeURIComponent(ref)}`)
+        .then((res) => res.json())
+        .then((vData) => {
+          if (vData.success) {
+            setDone(true);
+          }
+        })
+        .catch((err) => console.error('Error verifying returning sadaqah payment:', err));
+    }
+
     fetch('/api/donate')
       .then((res) => res.json())
       .then((data) => {

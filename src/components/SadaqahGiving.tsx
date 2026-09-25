@@ -46,6 +46,20 @@ export default function SadaqahGiving() {
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("All");
 
   useEffect(() => {
+    // Check if user returned from Paystack redirect with reference/trxref
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('reference') || params.get('trxref');
+    if (ref) {
+      fetch(`/api/paystack/verify?reference=${encodeURIComponent(ref)}`)
+        .then((res) => res.json())
+        .then((vData) => {
+          if (vData.success) {
+            console.log('Payment verified successfully:', vData.data);
+          }
+        })
+        .catch((err) => console.error('Error verifying returning payment:', err));
+    }
+
     // Fetch live donation campaigns & threshold data from MySQL database
     fetch('/api/donate')
       .then((res) => res.json())
