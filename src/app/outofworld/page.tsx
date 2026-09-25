@@ -3148,7 +3148,7 @@ export default function AdminPage() {
                         <div className="space-y-3">
                           {c.image_url && (
                             <div className="aspect-video relative rounded-xl overflow-hidden bg-mist border border-ink/10">
-                              <Image src={c.image_url} alt={c.title} fill className="object-cover" />
+                              <Image src={c.image_url} alt={c.title} fill unoptimized={c.image_url.startsWith("http")} className="object-cover" />
                             </div>
                           )}
 

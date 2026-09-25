@@ -220,13 +220,11 @@ export default function SadaqahGiving() {
                       src={c.image}
                       alt={c.title}
                       fill
+                      unoptimized={c.image.startsWith("http")}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-pine/70 via-transparent to-transparent" />
-                    <div className="absolute top-4 left-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-pine backdrop-blur-md shadow-sm">
-                      <Icon className="h-5 w-5" />
-                    </div>
                     <div className="absolute bottom-4 left-4 right-4 text-white">
                       <h3 className="font-display text-2xl font-normal">{c.title}</h3>
                     </div>
