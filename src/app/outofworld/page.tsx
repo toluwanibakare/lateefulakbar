@@ -2821,7 +2821,7 @@ export default function AdminPage() {
                       {newBlogImage && (
                         <div className="flex items-center gap-3 pt-2">
                           <div className="h-12 w-16 relative rounded-lg overflow-hidden border border-ink/15 bg-mist shrink-0">
-                            <Image src={newBlogImage} alt="Preview" fill className="object-cover" />
+                            <Image src={newBlogImage} alt="Preview" fill unoptimized className="object-cover" />
                           </div>
                           <span className="text-xs font-mono text-emerald-700 font-semibold truncate">
                             Preview Loaded: {newBlogImage}
@@ -3358,7 +3358,7 @@ export default function AdminPage() {
                         {newCampaignImageUrl && (
                           <div className="flex items-center gap-3 pt-2">
                             <div className="h-12 w-16 relative rounded-lg overflow-hidden border border-ink/15 bg-mist shrink-0">
-                              <Image src={newCampaignImageUrl} alt="Preview" fill className="object-cover" />
+                              <Image src={newCampaignImageUrl} alt="Preview" fill unoptimized className="object-cover" />
                             </div>
                             <span className="text-xs font-mono text-emerald-700 font-semibold truncate">
                               Preview Loaded: {newCampaignImageUrl}
