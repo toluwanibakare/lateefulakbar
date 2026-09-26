@@ -19,11 +19,17 @@ type Campaign = {
 };
 
 const INITIAL: Campaign[] = [
-  { id: "mats", title: "Prayer Mats & Rugs", text: "Clean mats for the canopies, laid before dawn.", icon: Layers, image: "/assets/praying_mat.jpeg", target: 500, raised: 310, unit: "mats", unitPrice: 15000 },
-  { id: "water", title: "Water & Hydration Points", text: "Cool packs moved through the rows all morning.", icon: Droplets, image: "/assets/donation-water.jpg", target: 1000, raised: 780, unit: "packs", unitPrice: 5000 },
-  { id: "cooling", title: "Provide Cooling Fans", text: "Industrial fans and shade for the midday heat.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 200, raised: 134, unit: "fans", unitPrice: 25000 },
-  { id: "tents", title: "Canopies & Event Tents", text: "Shaded canopies and large tents for assembly rows.", icon: Home, image: "/assets/donation-tents.jpg", target: 50, raised: 18, unit: "tents", unitPrice: 50000 },
-  { id: "media", title: "Nadwat TV Live Broadcast", text: "Cameras, drone and HD livestream production.", icon: Video, image: "/assets/donation-media.jpg", target: 50, raised: 22, unit: "units", unitPrice: 100000 },
+  { id: "venue", title: "TBS Venue Rental", text: "Main bowl rental and facility access for Tafawa Balewa Square.", icon: Home, image: "/assets/crowd-12.jpg", target: 0, raised: 0, unit: "facility", unitPrice: 22500000 },
+  { id: "tents", title: "6 Marquee Tents (25m x 100m)", text: "Large shaded marquee tents (25m x 100m) for assembly rows.", icon: Home, image: "/assets/donation-tents.jpg", target: 6, raised: 0, unit: "tents", unitPrice: 4000000 },
+  { id: "led", title: "40 Digital LED Screens", text: "High-definition digital LED display screens around the bowl.", icon: Video, image: "/assets/donation-media.jpg", target: 40, raised: 0, unit: "screens", unitPrice: 250000 },
+  { id: "stage", title: "Stage Setup & Infrastructure", text: "Main elevated stage, podium, backdrop, and structure.", icon: Layers, image: "/assets/crowd-11.jpg", target: 0, raised: 0, unit: "setup", unitPrice: 7500000 },
+  { id: "water", title: "2,000 Cartons Nestlé Water (60cl)", text: "Nestlé bottled water cartons (60cl) served to worshippers.", icon: Droplets, image: "/assets/donation-water.jpg", target: 2000, raised: 0, unit: "cartons", unitPrice: 3600 },
+  { id: "sound", title: "Professional Sound System", text: "High-grade arena audio speakers, amplifiers and mics.", icon: Video, image: "/assets/crowd-08.jpg", target: 0, raised: 0, unit: "system", unitPrice: 6000000 },
+  { id: "power", title: "Generators, Fuel (Diesel/PMS) & Security", text: "Heavy-duty power generators, fuel supply, and site security.", icon: Wind, image: "/assets/drone-wide.png", target: 0, raised: 0, unit: "power", unitPrice: 5000000 },
+  { id: "cooling", title: "Cooling (Regular & Mist Fans)", text: "Industrial standing fans and mist cooling fans across rows.", icon: Wind, image: "/assets/donation-cooling.jpg", target: 1000, raised: 0, unit: "fans", unitPrice: 3000 },
+  { id: "internet", title: "Internet & Media Production Equipment", text: "Dedicated high-speed internet, livestream encoders, and cameras.", icon: Wifi, image: "/assets/donation-internet.jpg", target: 0, raised: 0, unit: "setup", unitPrice: 2900000 },
+  { id: "ads", title: "Digital Advertising & Publicity", text: "Publicity, billboards, social media, and digital awareness.", icon: Video, image: "/assets/event-banner.png", target: 0, raised: 0, unit: "campaign", unitPrice: 1380000 },
+  { id: "mats", title: "White Prayer Mats", text: "White prayer mats per roll laid before dawn.", icon: Layers, image: "/assets/praying_mat.jpeg", target: 1000, raised: 0, unit: "rolls", unitPrice: 85000 },
 ];
 
 function fmt(n: number) {

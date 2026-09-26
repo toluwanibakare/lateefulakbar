@@ -71,11 +71,17 @@ export async function GET(req: Request) {
         try {
           await db.query(`
             INSERT INTO sadaqah_campaigns (title, category, target_qty, current_qty, unit_price, description, image_url, is_active) VALUES
-            ('Prayer Mats & Rugs', 'mats', 500, 310, 15000.00, 'Clean mats for the canopies, laid before dawn.', '/assets/praying_mat.jpeg', 1),
-            ('Water & Hydration Points', 'water', 1000, 780, 5000.00, 'Cool packs moved through the rows all morning.', '/assets/donation-water.jpg', 1),
-            ('Provide Cooling Fans', 'cooling', 200, 134, 25000.00, 'Industrial fans and shade for the midday heat.', '/assets/donation-cooling.jpg', 1),
-            ('Canopies & Event Tents', 'tents', 50, 18, 50000.00, 'Shaded canopies and large tents for assembly rows.', '/assets/donation-tents.jpg', 1),
-            ('Nadwat TV Live Broadcast', 'media', 50, 22, 100000.00, 'Cameras, drone and HD livestream production.', '/assets/donation-media.jpg', 1)
+            ('TBS Venue Rental', 'Venue', 0, 0, 22500000.00, 'Main bowl rental and facility access for Tafawa Balewa Square.', '/assets/crowd-12.jpg', 1),
+            ('6 Marquee Tents (25m x 100m)', 'tents', 6, 0, 4000000.00, 'Large shaded marquee tents (25m x 100m) for assembly rows.', '/assets/donation-tents.jpg', 1),
+            ('40 Digital LED Screens', 'media', 40, 0, 250000.00, 'High-definition digital LED display screens around the bowl.', '/assets/donation-media.jpg', 1),
+            ('Stage Setup & Infrastructure', 'Stage', 0, 0, 7500000.00, 'Main elevated stage, podium, backdrop, and structure.', '/assets/crowd-11.jpg', 1),
+            ('2,000 Cartons Nestlé Water (60cl)', 'water', 2000, 0, 3600.00, 'Nestlé bottled water cartons (60cl) served to worshippers.', '/assets/donation-water.jpg', 1),
+            ('Professional Sound System', 'Sound', 0, 0, 6000000.00, 'High-grade arena audio speakers, amplifiers and mics.', '/assets/crowd-08.jpg', 1),
+            ('Generators, Fuel (Diesel/PMS) & Security', 'Power & Security', 0, 0, 5000000.00, 'Heavy-duty power generators, fuel supply, and site security.', '/assets/drone-wide.png', 1),
+            ('Cooling (Regular & Mist Fans)', 'cooling', 1000, 0, 3000.00, 'Industrial standing fans and mist cooling fans across rows.', '/assets/donation-cooling.jpg', 1),
+            ('Internet & Media Production Equipment', 'Media & Tech', 0, 0, 2900000.00, 'Dedicated high-speed internet, livestream encoders, and cameras.', '/assets/donation-internet.jpg', 1),
+            ('Digital Advertising & Publicity', 'Publicity', 0, 0, 1380000.00, 'Publicity, billboards, social media, and digital awareness.', '/assets/event-banner.png', 1),
+            ('White Prayer Mats', 'mats', 1000, 0, 85000.00, 'White prayer mats per roll laid before dawn.', '/assets/praying_mat.jpeg', 1)
           `);
           const [seeded] = await db.query<RowDataPacket[]>(
             'SELECT * FROM sadaqah_campaigns ORDER BY id DESC'
