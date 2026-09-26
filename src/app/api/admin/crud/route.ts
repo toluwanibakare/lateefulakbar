@@ -38,7 +38,7 @@ export async function GET(req: Request) {
 
     if (type === 'vendors') {
       const [rows] = await db.query<RowDataPacket[]>(
-        'SELECT * FROM vendors ORDER BY id DESC'
+        "SELECT * FROM vendors WHERE payment_status = 'paid' ORDER BY id DESC"
       );
       return NextResponse.json({ success: true, data: rows });
     }

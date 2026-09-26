@@ -90,6 +90,14 @@ export async function GET(req: Request) {
             [category, category]
           );
 
+          // Update vendor payment_status to 'paid' if this was a vendor payment
+          if (category.toLowerCase().includes('vendor')) {
+            await db.query(
+              `UPDATE vendors SET payment_status = 'paid' WHERE email = ? OR payment_ref = ?`,
+              [email, txRef]
+            );
+          }
+
           // Send Receipt Email
           if (email) {
             const { sendDonationReceiptEmail } = await import('@/lib/email');

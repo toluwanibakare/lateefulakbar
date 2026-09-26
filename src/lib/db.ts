@@ -111,6 +111,11 @@ async function initSchema(p: mysql.Pool) {
     } catch (e) {
       // Ignore if column already exists
     }
+    try {
+      await p.query(`ALTER TABLE vendors ADD COLUMN payment_status VARCHAR(50) DEFAULT 'unpaid';`);
+    } catch (e) {
+      // Ignore if column already exists
+    }
     await p.query(`
       CREATE TABLE IF NOT EXISTS tasbih (
         id INT PRIMARY KEY DEFAULT 1,
