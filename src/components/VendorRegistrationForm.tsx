@@ -74,12 +74,33 @@ export default function VendorRegistrationForm() {
   const selectedCategoryObj = CATEGORIES.find((c) => c.title === form.category) || CATEGORIES[0];
   const totalPrice = selectedCategoryObj.price * parseInt(form.spaces || "1", 10) + (form.electricity === "Yes" ? 15000 : 0);
 
-  const onLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [logoUploading, setLogoUploading] = useState(false);
+
+  const onLogo = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // Show local preview immediately
     const r = new FileReader();
     r.onloadend = () => setLogo(r.result as string);
     r.readAsDataURL(file);
+
+    // Upload to server
+    setLogoUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "vendors");
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.success && data.url) {
+        setLogo(data.url);
+      }
+    } catch (err) {
+      console.error("Error uploading logo file:", err);
+    } finally {
+      setLogoUploading(false);
+    }
   };
 
   const effectiveCategoryString = () => {
@@ -173,6 +194,7 @@ export default function VendorRegistrationForm() {
             electricity: form.electricity,
             powerDetails: form.powerDetails,
             staffCount: form.staffCount,
+            logoUrl: logo,
             totalPrice,
             paymentRef: payRef,
           }),

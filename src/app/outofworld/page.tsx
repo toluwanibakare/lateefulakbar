@@ -1737,6 +1737,7 @@ export default function AdminPage() {
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
                     <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
+                      <th className="py-3 px-4">Brand Logo</th>
                       <th className="py-3 px-4">Business Name</th>
                       <th className="py-3 px-4">Contact Person</th>
                       <th className="py-3 px-4">Category</th>
@@ -1760,6 +1761,27 @@ export default function AdminPage() {
                       })
                       .map((ven) => (
                         <tr key={ven.id} className="hover:bg-cream/60">
+                          <td className="py-3.5 px-4">
+                            {ven.logo_url ? (
+                              <div className="flex items-center gap-2">
+                                <div className="h-10 w-10 relative rounded-lg border border-ink/15 overflow-hidden bg-white shrink-0">
+                                  <Image src={ven.logo_url} alt={ven.business_name} fill unoptimized className="object-cover" />
+                                </div>
+                                <a
+                                  href={ven.logo_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  download
+                                  className="p-1.5 rounded-lg bg-mist text-pine hover:bg-vivid hover:text-white transition-colors"
+                                  title="Download / View Logo"
+                                >
+                                  <Download className="h-3.5 w-3.5" />
+                                </a>
+                              </div>
+                            ) : (
+                              <span className="text-[10px] text-faded italic">No logo</span>
+                            )}
+                          </td>
                           <td className="py-3.5 px-4 font-bold text-pine">
                             {ven.business_name}
                             <span className="block text-[11px] font-normal text-faded">{ven.email} ({ven.phone})</span>
@@ -1819,7 +1841,7 @@ export default function AdminPage() {
                       ))}
                     {vendorsList.length === 0 && (
                       <tr>
-                        <td colSpan={7} className="py-8 text-center text-faded">
+                        <td colSpan={8} className="py-8 text-center text-faded">
                           No vendor applications submitted yet.
                         </td>
                       </tr>

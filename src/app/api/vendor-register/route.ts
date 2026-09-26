@@ -43,11 +43,13 @@ export async function POST(req: Request) {
     const stallCode = "ZONE-" + (category.charAt(0).toUpperCase()) + "-" + Math.floor(10 + Math.random() * 90);
     const paymentRef = paymentRefInput || ("PAY-" + Math.random().toString(36).slice(2, 8).toUpperCase());
 
+    const logoUrl = body.logoUrl ? sanitizeString(body.logoUrl, 2000) : null;
+
     const db = await getDb();
     await db.query(
       `INSERT INTO vendors 
-       (business_name, contact_person, phone, email, address, social_handle, category, sub_category, description, spaces, electricity, power_details, staff_count, total_price, pass_code, payment_ref, status) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
+       (business_name, contact_person, phone, email, address, social_handle, category, sub_category, description, spaces, electricity, power_details, staff_count, logo_url, total_price, pass_code, payment_ref, status) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending')`,
       [
         businessName,
         contactPerson,
@@ -62,6 +64,7 @@ export async function POST(req: Request) {
         electricity,
         powerDetails,
         staffCount,
+        logoUrl,
         totalPrice,
         stallCode,
         paymentRef,

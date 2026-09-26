@@ -97,6 +97,7 @@ async function initSchema(p: mysql.Pool) {
         electricity VARCHAR(10) DEFAULT 'No',
         power_details TEXT,
         staff_count INT DEFAULT 2,
+        logo_url TEXT,
         total_price DECIMAL(12,2) DEFAULT 0.00,
         pass_code VARCHAR(50) UNIQUE,
         payment_ref VARCHAR(100),
@@ -104,6 +105,12 @@ async function initSchema(p: mysql.Pool) {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+
+    try {
+      await p.query(`ALTER TABLE vendors ADD COLUMN logo_url TEXT;`);
+    } catch (e) {
+      // Ignore if column already exists
+    }
     await p.query(`
       CREATE TABLE IF NOT EXISTS tasbih (
         id INT PRIMARY KEY DEFAULT 1,

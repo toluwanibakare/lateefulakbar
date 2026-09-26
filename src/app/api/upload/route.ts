@@ -37,8 +37,9 @@ export async function POST(req: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Create target upload directory inside public folder (e.g. uploads/blog or uploads/donations)
-    const folderType = (formData.get('folder') as string) === 'blog' ? 'blog' : 'donations';
+    // Create target upload directory inside public folder (e.g. uploads/blog, uploads/vendors or uploads/donations)
+    const rawFolder = (formData.get('folder') as string) || 'donations';
+    const folderType = ['blog', 'vendors', 'donations'].includes(rawFolder) ? rawFolder : 'donations';
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', folderType);
     await fs.mkdir(uploadDir, { recursive: true });
 
