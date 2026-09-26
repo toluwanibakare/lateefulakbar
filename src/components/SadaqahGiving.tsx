@@ -205,24 +205,7 @@ export default function SadaqahGiving() {
             </FadeIn>
           </div>
 
-          <FadeIn delay={0.15}>
-            <button
-              onClick={() => {
-                fetch('/api/donate')
-                  .then((res) => res.json())
-                  .then((data) => {
-                    if (data.success && Array.isArray(data.transactions)) {
-                      setTransactionsList(data.transactions);
-                    }
-                  });
-                setShowTransactionsModal(true);
-              }}
-              className="px-5 py-3 bg-white border border-ink/20 text-pine font-bold text-xs uppercase tracking-wider hover:bg-vivid hover:text-white hover:border-vivid transition-all shadow-sm flex items-center gap-2 shrink-0 cursor-pointer"
-            >
-              <ShieldCheck className="h-4 w-4 text-vivid group-hover:text-white" />
-              <span>Monitor Recent Transactions</span>
-            </button>
-          </FadeIn>
+
         </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
