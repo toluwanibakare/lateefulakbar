@@ -106,7 +106,8 @@ export default function SadaqahGiving() {
       });
   }, []);
 
-  const totalPay = open?.unitPrice ? open.unitPrice * Math.max(1, qty) : Number(amount) || 0;
+  const hasFixedUnitPrice = open?.target ? open.target > 0 && Boolean(open.unitPrice) : false;
+  const totalPay = hasFixedUnitPrice ? (open?.unitPrice! * Math.max(1, qty)) : (Number(amount) || 0);
 
   const pay = async () => {
     if (!open || !totalPay) return;
