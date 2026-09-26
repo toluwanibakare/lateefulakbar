@@ -4,14 +4,16 @@ import path from 'path';
 import { verifyAdminToken, checkRateLimit } from '@/lib/security';
 
 export async function POST(req: Request) {
-  // Security Check: Verify Admin Authorization
-  if (!verifyAdminToken(req.headers.get('authorization'))) {
-    return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
-  }
-
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
+    const rawFolder = (formData.get('folder') as string) || 'donations';
+    const folderType = ['blog', 'vendors', 'donations'].includes(rawFolder) ? rawFolder : 'donations';
+
+    // Security Check: Verify Admin Authorization for admin-only uploads (blog/donations)
+    if (folderType !== 'vendors' && !verifyAdminToken(req.headers.get('authorization'))) {
+      return NextResponse.json({ success: false, error: 'Unauthorized access' }, { status: 401 });
+    }
 
     if (!file) {
       return NextResponse.json({ success: false, error: 'No file uploaded' }, { status: 400 });
@@ -38,8 +40,6 @@ export async function POST(req: Request) {
     const buffer = Buffer.from(bytes);
 
     // Create target upload directory inside public folder (e.g. uploads/blog, uploads/vendors or uploads/donations)
-    const rawFolder = (formData.get('folder') as string) || 'donations';
-    const folderType = ['blog', 'vendors', 'donations'].includes(rawFolder) ? rawFolder : 'donations';
     const uploadDir = path.join(process.cwd(), 'public', 'uploads', folderType);
     await fs.mkdir(uploadDir, { recursive: true });
 
