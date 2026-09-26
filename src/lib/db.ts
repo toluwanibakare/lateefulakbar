@@ -123,6 +123,31 @@ async function initSchema(p: mysql.Pool) {
       INSERT IGNORE INTO tasbih (id, count) VALUES (1, 0);
     `);
 
+    // 2b. Media Accreditations table
+    await p.query(`
+      CREATE TABLE IF NOT EXISTS media_accreditations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        full_name VARCHAR(255) NOT NULL,
+        phone VARCHAR(50) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        city VARCHAR(100),
+        org_name VARCHAR(255) NOT NULL,
+        media_type VARCHAR(100) DEFAULT 'Digital Media',
+        role VARCHAR(100),
+        social_handles VARCHAR(255),
+        purpose TEXT,
+        coverage_type VARCHAR(100) DEFAULT 'Photography',
+        crew_count INT DEFAULT 1,
+        crew_details TEXT,
+        equipment TEXT,
+        interview_access VARCHAR(10) DEFAULT 'No',
+        special_requests TEXT,
+        accreditation_number VARCHAR(50) UNIQUE NOT NULL,
+        status VARCHAR(50) DEFAULT 'pending',
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
     // 3. Donations table
     await p.query(`
       CREATE TABLE IF NOT EXISTS donations (
