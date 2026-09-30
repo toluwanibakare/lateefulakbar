@@ -168,7 +168,7 @@ export default function VenueMapAndRules() {
                   </div>
                   <div>
                     <a
-                      href="https://www.google.com/maps/dir/?api=1&destination=Tafawa+Balewa+Square+Main+Bowl+Lagos&destination_place_id=ChIJz6qAChu7OBARIr0yGUPIDzM"
+                      href="https://maps.app.goo.gl/Pku9tkKwuK1DBSF8A?g_st=ic"
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 bg-vivid px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-vivid-deep transition-all hover:scale-105 rounded-lg"

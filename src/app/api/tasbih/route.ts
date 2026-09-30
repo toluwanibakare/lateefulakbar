@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json().catch(() => ({}));
-    const increment = Math.max(1, Math.min(Number(body.increment) || 1, 100)); // Cap max increment at 100 per request
+    const increment = Math.max(1, Number(body.increment) || 1); // Accept any amount for Tasbih count increment
 
     const db = await getDb();
     await db.query('UPDATE tasbih SET count = count + ? WHERE id = 1', [increment]);
