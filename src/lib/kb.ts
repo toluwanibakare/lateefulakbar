@@ -30,7 +30,7 @@ Lateeful Akbar 2027 Comprehensive Knowledge Base & Client Guidelines:
 - Event Title: Lateeful Akbar 2027
 - Date & Time: Sunday, 24th January, 2027 (Gates open at 08:00 WAT).
 - Official Venue: TAFAWA BALEWA SQUARE (MAIN BOWL) RACE COURSE, LAGOS ISLAND, LAGOS, NIGERIA.
-- Meaning & Theme: Centered on invoking Allah by His beautiful name "Yā Lateef" (‫يَا لَطِيف‬) — Al-Lateef: The Most Subtle, The Most Gentle. It is a grand spiritual gathering for collective Duʿā, Dhikr, Qur'anic reflection, and seeking divine intervention for life challenges (financial hardship, family, health, career, marriage, education, migration, protection, and prosperity).
+- Meaning & Theme: Centered on invoking Allah by His beautiful name "Yā Lateef" (‫يَا لَطِيف‬) - Al-Lateef: The Most Subtle, The Most Gentle. It is a grand spiritual gathering for collective Duʿā, Dhikr, Qur'anic reflection, and seeking divine intervention for life challenges (financial hardship, family, health, career, marriage, education, migration, protection, and prosperity).
 - Programme Highlights: Daily Fortification, Welcome & Introduction, Thanksgiving, Islamic Lecture / Spiritual Exhortation, Collective Dhikr & Istighfār, Salawāt upon Prophet Muhammad (ﷺ), Special Yā Lateef Dhikr, Guided Duʿā for personal and family needs, Special Prayer for the Ummah, and Closing Duʿā.
 - Official Livestream: https://www.youtube.com/watch?v=0x1LqBHjWWE&list=PLJsrEKjc7MxyNwPx5xjQa4OrPJNQlWJmd
 - Photos Archive: https://nadwatmedia.pixieset.com/lateefulakbar20226/

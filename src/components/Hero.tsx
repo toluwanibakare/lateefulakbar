@@ -115,7 +115,7 @@ export default function Hero() {
             </motion.div>
           </AnimatePresence>
         )}
-        {/* Balanced cinematic veils — clear vibrant imagery with sharp text contrast */}
+        {/* Balanced cinematic veils - clear vibrant imagery with sharp text contrast */}
         <div className="absolute inset-0 bg-pine/40 mix-blend-multiply" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#061711] via-[#061711]/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#061711]/70 via-[#061711]/30 to-transparent" />
@@ -166,7 +166,7 @@ export default function Hero() {
           className="mt-6 flex max-w-2xl flex-col gap-4"
         >
           <p className="text-[15px] leading-relaxed text-white/95 sm:text-lg font-normal drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-            The Grand Spiritual Gathering Of Sublime Minds. Tens of thousands in white — breathing the same dhikr, Seeking Allah’s kindness in a unified tone.
+            The Grand Spiritual Gathering Of Sublime Minds. Tens of thousands in white - breathing the same dhikr, Seeking Allah’s kindness in a unified tone.
           </p>
           <p className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] font-medium tracking-wide text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)]">
             <span className="inline-flex items-center gap-1.5">

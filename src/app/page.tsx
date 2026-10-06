@@ -88,7 +88,7 @@ export default function Home() {
                 One day. One square. One voice.
               </h2>
               <p className="mt-4 max-w-lg text-[15px] leading-relaxed text-faded">
-                Lateef ul-il-Akbar-Il-A’azam is Nadwat&apos;s grand seating of dhikr — tens of
+                Lateef ul-il-Akbar-Il-A’azam is Nadwat&apos;s grand seating of dhikr - tens of
                 thousands in white under the Name Yaa Lateef. No headline acts; the crowd&apos;s
                 recitation is the event.
               </p>
@@ -102,7 +102,7 @@ export default function Home() {
                   <Image src="/assets/crowd-67.jpg" alt="A sea of worshippers in white at TBS" fill sizes="(max-width: 1024px) 100vw, 50vw" className="img-true object-cover transition-transform duration-700 hover:scale-105" />
                 </div>
               </TiltCard>
-              <p className="mt-3 text-xs text-faded italic">Previous seating — the Square in white.</p>
+              <p className="mt-3 text-xs text-faded italic">Previous seating - the Square in white.</p>
             </FadeIn>
           </div>
         </section>
@@ -127,7 +127,7 @@ export default function Home() {
                   committee can plan.”
                 </blockquote>
                 <p className="mt-4 text-sm text-faded">
-                  Shaikh Dr. Abdur Rahman Ade Lawal — Chief Missioner, Nadwat Global Assembly.
+                  Shaikh Dr. Abdur Rahman Ade Lawal - Chief Missioner, Nadwat Global Assembly.
                 </p>
               </FadeIn>
               <FadeIn direction="up" delay={0.2}>
@@ -170,11 +170,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Support vs Sadaqah — the split, explained briefly */}
+        {/* Support vs Sadaqah - the split, explained briefly */}
         <section className="border-t border-ink/10 bg-cream">
           <div className="mx-auto max-w-7xl px-5 py-16 sm:px-6 md:py-24">
             <FadeIn direction="up">
-              <Eyebrow>Giving — two clear paths</Eyebrow>
+              <Eyebrow>Giving - two clear paths</Eyebrow>
             </FadeIn>
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
               <FadeIn direction="right" delay={0.1}>
@@ -183,7 +183,7 @@ export default function Home() {
                     <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Support</p>
                     <h3 className="font-display mt-2 text-3xl tracking-tight">You can support our needs to host the event</h3>
                     <p className="mt-3 text-sm leading-relaxed text-faded">
-                      Mats, water, cooling fans, broadcast, tents — pick a campaign, watch the bar
+                      Mats, water, cooling fans, broadcast, tents - pick a campaign, watch the bar
                       move, and contribute directly.
                     </p>
                     <div className="relative mt-5 aspect-[16/8] overflow-hidden bg-mist">
@@ -204,11 +204,11 @@ export default function Home() {
                     <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-sage">Sadaqah</p>
                     <h3 className="font-display mt-2 text-3xl tracking-tight">Simple voluntary giving</h3>
                     <p className="mt-3 text-sm leading-relaxed text-white/75">
-                      Any amount, given with sincerity — pooled where the gathering needs it most.
+                      Any amount, given with sincerity - pooled where the gathering needs it most.
                     </p>
                     <p lang="ar" className="font-arabic mt-5 text-xl text-sage/90">يَـٰٓأَيُّهَا ٱللَّذِينَ ءَامَنُوٓا۟ إِن تَنصُرُوا۟ ٱللَّهَ يَنصُرْكُمْ وَيُثَبِّتْ أَقْدَامَكُمْ</p>
                     <p className="mt-2 text-xs italic text-sage/80">
-                      “O believers! If you stand up for Allah, He will help you and make your steps firm.” — Q 47:7
+                      “O believers! If you stand up for Allah, He will help you and make your steps firm.” - Q 47:7
                     </p>
                     <div className="mt-6">
                       <Link href="/sadaqah" className="inline-flex items-center gap-2 bg-white px-6 py-3 text-sm font-semibold text-pine hover:bg-mist transition-all hover:shadow-lg">
@@ -233,14 +233,14 @@ export default function Home() {
               </TiltCard>
             </FadeIn>
             <FadeIn direction="left" delay={0.15}>
-              <Eyebrow>Registration — free</Eyebrow>
+              <Eyebrow>Registration - free</Eyebrow>
               <h2 className="font-display mt-4 text-4xl font-light tracking-tight sm:text-5xl">
                 Your pass in three short steps
               </h2>
               <ol className="mt-5 space-y-2.5 text-sm text-faded">
-                <li><strong className="text-ink">1.</strong> Who is coming — name, contact, canopy</li>
-                <li><strong className="text-ink">2.</strong> How you join — city, physical or online</li>
-                <li><strong className="text-ink">3.</strong> Photo — printed on your pass artwork</li>
+                <li><strong className="text-ink">1.</strong> Who is coming - name, contact, canopy</li>
+                <li><strong className="text-ink">2.</strong> How you join - city, physical or online</li>
+                <li><strong className="text-ink">3.</strong> Photo - printed on your pass artwork</li>
               </ol>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href="/register" className="bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep transition-all hover:shadow-lg">
@@ -348,7 +348,7 @@ export default function Home() {
                   <div className="flex flex-1 flex-col p-6 sm:p-8">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-fern">Venue</p>
                     <h3 className="font-display mt-3 text-2xl tracking-tight">Tafawa Balewa Square</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-faded">Gates, canopies, parking, medical — plus your route from anywhere.</p>
+                    <p className="mt-2 text-sm leading-relaxed text-faded">Gates, canopies, parking, medical - plus your route from anywhere.</p>
                     <div className="mt-6"><ViewMore href="/venue">Plan your visit</ViewMore></div>
                   </div>
                 </div>

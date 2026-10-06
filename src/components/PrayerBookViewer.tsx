@@ -121,7 +121,7 @@ export default function PrayerBookViewer() {
           <div className="lg:col-span-4 flex flex-col justify-between space-y-6 min-w-0 w-full">
             <div>
               <Reveal>
-                <Eyebrow>09 — Prayer book</Eyebrow>
+                <Eyebrow>09 - Prayer book</Eyebrow>
               </Reveal>
               <Reveal delay={0.06}>
                 <h2 className="font-display text-balance mt-3 sm:mt-5 text-2xl xs:text-3xl leading-tight font-light tracking-tight text-ink sm:text-4xl">
@@ -421,7 +421,7 @@ export default function PrayerBookViewer() {
                 onClick={() => setShowInstructionOverlay(false)}
                 className="mt-5 w-full bg-vivid py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white rounded-lg hover:bg-vivid-deep transition-all shadow-lg touch-manipulation"
               >
-                Got It — Start Reading
+                Got It - Start Reading
               </button>
             </motion.div>
           </motion.div>
@@ -441,7 +441,7 @@ export default function PrayerBookViewer() {
               <div className="flex items-center gap-2 sm:gap-3 overflow-hidden min-w-0">
                 <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-sage shrink-0" />
                 <span className="font-display text-xs sm:text-lg font-light truncate max-w-[140px] xs:max-w-[240px] sm:max-w-none">
-                  Asalatu Nadwat — PDF Prayer Book
+                  Asalatu Nadwat - PDF Prayer Book
                 </span>
                 <span className="hidden sm:inline-block text-xs font-mono bg-white/10 px-2.5 py-0.5 rounded text-white/80 shrink-0">
                   Page {currentPage} of {TOTAL_PAGES}

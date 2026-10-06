@@ -4,13 +4,13 @@ import SadaqahQuickGive from "@/components/SadaqahQuickGive";
 import { Reveal } from "@/components/ui";
 
 export const metadata = {
-  title: "Sadaqah — Give Any Amount",
+  title: "Sadaqah - Give Any Amount",
   description: "Simple voluntary sadaqah: any amount. Pools into wherever the gathering needs it most.",
 };
 
 const FAQS = [
   { q: "Is Sadaqah different from Support?", a: "Yes. Sadaqah is open, free-will giving of any amount pooled where needed most. Support funds a specific campaign (mats, water, fans) with a live target bar." },
-  { q: "How do I pay?", a: "Direct online payment — card or bank transfer. You get a receipt immediately." },
+  { q: "How do I pay?", a: "Direct online payment - card or bank transfer. You get a receipt immediately." },
   { q: "Can I give monthly?", a: "Yes. Choose “Make it monthly” on the form and your sadaqah repeats until you cancel from your receipt link." },
   { q: "Can I give anonymously?", a: "Yes. Tick “Give anonymously” and your name is kept off every public mention. The reward remains with Allah." },
 ];

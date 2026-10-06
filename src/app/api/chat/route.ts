@@ -112,7 +112,7 @@ ${EVENT_KNOWLEDGE_BASE}`,
       } else if (q.includes('parking') || q.includes('car') || q.includes('drive') || q.includes('vehicle')) {
         reply = 'Vehicle parking is STRICTLY PROHIBITED within the Main Bowl. All vehicles must be parked in designated official parking zones outside the main bowl.';
       } else if (q.includes('founder') || q.includes('missioner') || q.includes('sheikh') || q.includes('ade lawal') || q.includes('lawal')) {
-        reply = 'The founder and Chief Missioner of NADWAT is Shaikh Dr. Abdur Rahman Ade Lawal Ph.D Mnipr — an Al-Azhar graduate, IVLP alumnus, media consultant, author, and marriage counselor.';
+        reply = 'The founder and Chief Missioner of NADWAT is Shaikh Dr. Abdur Rahman Ade Lawal Ph.D Mnipr - an Al-Azhar graduate, IVLP alumnus, media consultant, author, and marriage counselor.';
       } else if (q.includes('theme') || q.includes('about') || q.includes('lateef') || q.includes('meaning')) {
         reply = 'Lateeful Akbar is Nadwat’s annual spiritual gathering focused on Dhikr, Duʿā, and seeking Allah through His beautiful name Al-Lateef (The Most Subtle, The Most Gentle).';
       } else if (q.includes('ticket') || q.includes('register') || q.includes('cost') || q.includes('price') || q.includes('pass')) {

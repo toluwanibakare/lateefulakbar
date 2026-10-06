@@ -14,11 +14,11 @@ function fmt(n: number) {
 const DEFAULT_IMPACT = [
   { amount: "₦1,000", text: "Cold water for a row of guests through the morning dhikr." },
   { amount: "₦5,000", text: "A share in mats, shade and sound for the Square." },
-  { amount: "₦25,000", text: "A full cooling fan hour — relief for hundreds at midday." },
+  { amount: "₦25,000", text: "A full cooling fan hour - relief for hundreds at midday." },
 ];
 
 /**
- * Sadaqah — free-will giving, tithe-style.
+ * Sadaqah - free-will giving, tithe-style.
  * Simple amount → Paystack. Separate from Donate (targeted campaigns).
  */
 export default function SadaqahQuickGive() {
@@ -146,7 +146,7 @@ export default function SadaqahQuickGive() {
         {/* Left: meaning */}
         <div className="lg:col-span-6">
           <Reveal>
-            <Eyebrow>Sadaqah — like a tithe, from the heart</Eyebrow>
+            <Eyebrow>Sadaqah - like a tithe, from the heart</Eyebrow>
           </Reveal>
           <Reveal delay={0.06}>
             <h2 className="font-display text-balance mt-5 text-4xl leading-tight font-light tracking-tight text-ink sm:text-5xl">
@@ -179,7 +179,7 @@ export default function SadaqahQuickGive() {
           <Reveal delay={0.1}>
             <p className="mt-6 flex items-start gap-2 text-[12px] leading-relaxed text-faded">
               <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-fern" />
-              Funding a specific need instead — mats, fans, tents? Visit Support to pick a
+              Funding a specific need instead - mats, fans, tents? Visit Support to pick a
               campaign with a live target. Sadaqah here is the open, general giving.
             </p>
             <a
@@ -207,7 +207,7 @@ export default function SadaqahQuickGive() {
               {!done ? (
                 <form onSubmit={pay} className="p-6 sm:p-8">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-faded">
-                    1 — Choose an amount (₦)
+                    1 - Choose an amount (₦)
                   </p>
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {PRESETS.map((p) => (
@@ -233,13 +233,13 @@ export default function SadaqahQuickGive() {
                     min={100}
                     value={custom}
                     onChange={(e) => setCustom(e.target.value)}
-                    placeholder="Or type any amount — e.g. 7500"
+                    placeholder="Or type any amount - e.g. 7500"
                     aria-label="Custom amount in naira"
                     className="mt-3 w-full border border-ink/20 bg-white px-4 py-3.5 font-mono text-lg text-ink placeholder:text-sm placeholder:text-ink/35 focus:border-pine focus:outline-none"
                   />
 
                   <p className="mt-7 text-[11px] font-semibold uppercase tracking-[0.2em] text-faded">
-                    2 — Your details for receipt
+                    2 - Your details for receipt
                   </p>
                   <div className="mt-3 grid gap-4 sm:grid-cols-2">
                     <div className="sm:col-span-2">
@@ -308,11 +308,11 @@ export default function SadaqahQuickGive() {
                         <span>Processing Payment...</span>
                       </>
                     ) : (
-                      `Give Sadaqah — ₦${fmt(effective)}`
+                      `Give Sadaqah - ₦${fmt(effective)}`
                     )}
                   </button>
                   <p className="mt-3 text-center text-[12px] text-faded">
-                    Card · Bank transfer — receipt by email.
+                    Card · Bank transfer - receipt by email.
                   </p>
                 </form>
               ) : (

@@ -3,7 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import VendorRegistrationForm from "@/components/VendorRegistrationForm";
 
 export const metadata: Metadata = {
-  title: "Vendor Portal — Lateeful Akbar 2027",
+  title: "Vendor Portal - Lateeful Akbar 2027",
   description:
     "Register as an accredited vendor for Lateeful Akbar 2027 at Tafawa Balewa Square. Apply for food stalls, clothing, books, drinks and services.",
 };

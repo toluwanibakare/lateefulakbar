@@ -154,7 +154,7 @@ html.dark .bg-white.shadow-lg {
   letter-spacing: 0.01em;
 }
 
-/* Amiri (Qur'anic Naskh style font as on quran.com) — crisp diacritics and traditional proportion */
+/* Amiri (Qur'anic Naskh style font as on quran.com) - crisp diacritics and traditional proportion */
 .font-arabic {
   font-family: var(--font-arabic);
   line-height: 2;

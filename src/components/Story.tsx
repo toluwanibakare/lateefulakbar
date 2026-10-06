@@ -54,7 +54,7 @@ const NEEDS = [
 const REASONS_TO_ATTEND = [
   {
     title: "Come with your desires",
-    desc: "Lay down your heavy burdens, deepest desires, and personal requests in the quiet presence of Allah — trusting Him to grant relief through His gentle kindness.",
+    desc: "Lay down your heavy burdens, deepest desires, and personal requests in the quiet presence of Allah - trusting Him to grant relief through His gentle kindness.",
   },
   {
     title: "Come with your dreams",
@@ -72,13 +72,13 @@ const EXPECT = [
   {
     icon: Volume2,
     t: "Collective Dhikr & Salawāt",
-    d: "The Yaa Lateef recitation rises as one sound — led from the stage, answered by the whole Square.",
+    d: "The Yaa Lateef recitation rises as one sound - led from the stage, answered by the whole Square.",
     img: "/assets/crowd-48.jpg",
   },
   {
     icon: BookOpen,
     t: "Qur’anic Reflection & Guidance",
-    d: "Short, weighty reminders between recitations. No noise — every word placed with care.",
+    d: "Short, weighty reminders between recitations. No noise - every word placed with care.",
     img: "/assets/crowd-54.jpg",
   },
   {
@@ -90,7 +90,7 @@ const EXPECT = [
   {
     icon: Heart,
     t: "Guided Du‘ā for Life Struggles",
-    d: "Sincere supplication, repentance and reliance upon Him — seeking Allah with one voice.",
+    d: "Sincere supplication, repentance and reliance upon Him - seeking Allah with one voice.",
     img: "/assets/crowd-58.jpg",
   },
 ];
@@ -149,7 +149,7 @@ export default function Story() {
               <FadeIn direction="right" delay={0.16}>
                 <p className="mt-6 max-w-xl text-base leading-relaxed text-faded sm:text-lg">
                   What a Gathering is Lateef ul Akbar! Tens of thousands gathered under one banner:{" "}
-                  <strong className="font-semibold text-ink">Yaa Lateef — Intercede for us with Your Grace and Kindness.</strong>
+                  <strong className="font-semibold text-ink">Yaa Lateef - Intercede for us with Your Grace and Kindness.</strong>
                 </p>
               </FadeIn>
               <FadeIn direction="right" delay={0.22}>
@@ -158,7 +158,7 @@ export default function Story() {
                     href="/register"
                     className="bg-vivid px-7 py-3.5 text-sm font-semibold text-white hover:bg-vivid-deep transition-all hover:shadow-lg inline-flex items-center gap-2"
                   >
-                    <span>Reserve your place — Free</span>
+                    <span>Reserve your place - Free</span>
                     <ArrowRight className="h-4 w-4" />
                   </a>
                   <div className="font-mono text-xs text-faded bg-mist px-4 py-3 border border-ink/10">
@@ -206,7 +206,7 @@ export default function Story() {
                       What is Lateeful Akbar?
                     </h2>
                     <p className="mt-5 text-base leading-relaxed text-faded sm:text-lg">
-                      Lateeful Akbar is a large spiritual gathering centred on <strong className="font-semibold text-ink">Du‘ā, Dhikr, Salawāt</strong> and seeking the infinite mercy and subtle kindness of Allah — <strong className="font-semibold text-pine">Al-Lateef</strong>.
+                      Lateeful Akbar is a large spiritual gathering centred on <strong className="font-semibold text-ink">Du‘ā, Dhikr, Salawāt</strong> and seeking the infinite mercy and subtle kindness of Allah - <strong className="font-semibold text-pine">Al-Lateef</strong>.
                     </p>
                   </div>
                   <div className="mt-8 border-t border-ink/10 pt-4 flex items-center gap-3 text-xs text-fern font-medium">
@@ -227,7 +227,7 @@ export default function Story() {
                     </h2>
                     <p lang="ar" className="font-arabic mt-3 text-3xl text-sage">أللَّطِيفُ</p>
                     <p className="mt-4 text-base leading-relaxed text-white/85 sm:text-lg">
-                      <strong className="font-semibold text-white">Al-Lateef</strong> is one of the Beautiful Names of Allah — <strong className="font-semibold text-sage">The Most Subtle, The Most Kind</strong>. He reaches His servants in ways they may never see coming.
+                      <strong className="font-semibold text-white">Al-Lateef</strong> is one of the Beautiful Names of Allah - <strong className="font-semibold text-sage">The Most Subtle, The Most Kind</strong>. He reaches His servants in ways they may never see coming.
                     </p>
                   </div>
                   <div className="mt-8 border-t border-white/20 pt-4 text-xs text-sage italic">
@@ -251,7 +251,7 @@ export default function Story() {
                   Why Do We Gather?
                 </h2>
                 <p className="mt-5 text-lg leading-relaxed text-faded">
-                  Because there are moments when the Ummah must come together with <strong className="font-semibold text-ink">different desires and request</strong>, gathered in a single court before the supreme judge of all judges <strong className="font-semibold text-pine">Lateef Al Lateef</strong> — with <strong className="font-semibold text-ink">one Lord, one hope and one collective Du‘ā.</strong>
+                  Because there are moments when the Ummah must come together with <strong className="font-semibold text-ink">different desires and request</strong>, gathered in a single court before the supreme judge of all judges <strong className="font-semibold text-pine">Lateef Al Lateef</strong> - with <strong className="font-semibold text-ink">one Lord, one hope and one collective Du‘ā.</strong>
                 </p>
               </FadeIn>
 
@@ -261,7 +261,7 @@ export default function Story() {
                   <p className="mt-3 text-base italic text-ink font-medium">
                     Allah says: “And to Allah belong the Most Beautiful Names, so call upon Him by them.”
                   </p>
-                  <p className="mt-1 text-xs font-mono text-faded">— Qur’an 7:180</p>
+                  <p className="mt-1 text-xs font-mono text-faded">- Qur’an 7:180</p>
                   <p className="mt-4 text-sm text-faded leading-relaxed">
                     Lateeful Akbar is built upon remembrance of Allah, sincere supplication, repentance and reliance upon Him.
                   </p>
@@ -347,7 +347,7 @@ export default function Story() {
 
           <FadeIn direction="up" delay={0.3} className="mt-10 text-center">
             <div className="inline-block bg-vivid text-white px-8 py-6 text-base sm:text-lg font-light leading-relaxed max-w-4xl shadow-md">
-              Oh ! You who have fates hanging by supplication! What does that mean? It means that Allah has written for you a specific share in something— of goodness, abundance, success and grace— but it won&apos;t come down to you unless you supplicate, either singularly or by gathering amongst the sublime minds, So when you see that Allah has granted you success in supplicating for certain matters, it means He&apos;s already written a share for you in them! But you won&apos;t attain it unless you supplicate towards them being granted !
+              Oh ! You who have fates hanging by supplication! What does that mean? It means that Allah has written for you a specific share in something- of goodness, abundance, success and grace- but it won&apos;t come down to you unless you supplicate, either singularly or by gathering amongst the sublime minds, So when you see that Allah has granted you success in supplicating for certain matters, it means He&apos;s already written a share for you in them! But you won&apos;t attain it unless you supplicate towards them being granted !
             </div>
           </FadeIn>
         </div>
@@ -382,7 +382,7 @@ export default function Story() {
         <div className="relative mx-auto flex min-h-[80vh] max-w-7xl flex-col justify-end px-5 py-20 sm:px-6 md:py-28">
           <FadeIn direction="up">
             <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-sage">
-              05 — The Atmosphere
+              05 - The Atmosphere
             </p>
           </FadeIn>
           <FadeIn direction="up" delay={0.1} blur>
@@ -392,7 +392,7 @@ export default function Story() {
           </FadeIn>
           <FadeIn direction="up" delay={0.18}>
             <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-white/80">
-              Sisters under the great canopy, brothers filling the hall, water lifted mid-du‘ā —
+              Sisters under the great canopy, brothers filling the hall, water lifted mid-du‘ā -
               this is what Tafawa Balewa Square looks like when a city decides to ask together.
             </p>
           </FadeIn>
@@ -403,7 +403,7 @@ export default function Story() {
       <section className="bg-paper border-b border-ink/10">
         <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
           <FadeIn direction="up">
-            <Eyebrow>06 — What to Expect</Eyebrow>
+            <Eyebrow>06 - What to Expect</Eyebrow>
           </FadeIn>
           <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
             <FadeIn direction="right" delay={0.06}>
@@ -457,7 +457,7 @@ export default function Story() {
             <FadeIn direction="right">
               <p className="flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.28em] text-fern">
                 <span className="inline-block h-px w-10 bg-vivid/70" aria-hidden />
-                07 — Order of the Day
+                07 - Order of the Day
               </p>
             </FadeIn>
             <FadeIn direction="right" delay={0.08}>
@@ -467,7 +467,7 @@ export default function Story() {
             </FadeIn>
             <FadeIn direction="right" delay={0.14}>
               <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-faded">
-                Times are approximate — the dhikr sets the pace, not the clock. Stewards guide
+                Times are approximate - the dhikr sets the pace, not the clock. Stewards guide
                 each section in and out.
               </p>
             </FadeIn>

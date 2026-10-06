@@ -11,7 +11,7 @@ import { EVENT } from "@/lib/site";
 const ORDER = [
   { time: "08:00", title: "Gates & settling", note: "Accreditation, seating by canopy." },
   { time: "09:30", title: "Opening & Bismillah", note: "Welcome from Nadwat, intentions set." },
-  { time: "10:30", title: "Yaa Lateef — first sitting", note: "The long collective dhikr." },
+  { time: "10:30", title: "Yaa Lateef - first sitting", note: "The long collective dhikr." },
   { time: "12:30", title: "Reflection & scholars", note: "Reminders from the convener and guests." },
   { time: "14:00", title: "The grand du‘ā", note: "Tens of thousands asking as one." },
   { time: "15:00", title: "Closing & dispersal", note: "Orderly exit by section." },
@@ -47,7 +47,7 @@ export default function LivePage() {
         eyebrow="Majilis Mubāshir"
         title={<>Majlis Yaa Lateef, live from the Square</>}
         arabic="مجلس مباشر"
-        intro="The live dashboard — Majlis Yaa Lateef as it happens. Watch the Nadwat TV broadcast from the Main Bowl, add your own recitations to the worldwide tasbīh, and follow the order of the day."
+        intro="The live dashboard - Majlis Yaa Lateef as it happens. Watch the Nadwat TV broadcast from the Main Bowl, add your own recitations to the worldwide tasbīh, and follow the order of the day."
         image="/assets/crowd-11.jpg"
       />
 
@@ -61,7 +61,7 @@ export default function LivePage() {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                 </span>
-                Broadcast goes live {EVENT.dateLong} — 08:00 WAT
+                Broadcast goes live {EVENT.dateLong} - 08:00 WAT
               </p>
               <p className="mt-2 text-sm text-white/70">
                 {EVENT.venue} · {EVENT.dressCode} · Entry free with registration

@@ -356,7 +356,7 @@ export default function VendorRegistrationForm() {
                   {/* Step Progress */}
                   <div className="flex items-center justify-between border-b border-ink/10 pb-5">
                     <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-fern">
-                      Vendor Registration — Step {step} of 3
+                      Vendor Registration - Step {step} of 3
                     </span>
                     <div className="flex gap-1.5">
                       {[1, 2, 3].map((s) => (
@@ -463,7 +463,7 @@ export default function VendorRegistrationForm() {
                           >
                             {CATEGORIES.map((c) => (
                               <option key={c.id} value={c.title}>
-                                {c.title} — ₦{c.price.toLocaleString()}
+                                {c.title} - ₦{c.price.toLocaleString()}
                               </option>
                             ))}
                           </select>
@@ -609,7 +609,6 @@ export default function VendorRegistrationForm() {
                           >
                             <option value="1">1 Stall Space</option>
                             <option value="2">2 Stall Spaces (Double)</option>
-                            <option value="3">3 Stall Spaces</option>
                           </select>
                         </div>
 
@@ -636,7 +635,7 @@ export default function VendorRegistrationForm() {
                             onChange={(e) => set("electricity", e.target.value)}
                             className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
                           >
-                            <option value="No">No — Standard Space</option>
+                            <option value="No">No - Standard Space</option>
                             <option value="Yes">Yes (+₦15,000 generator hookup)</option>
                           </select>
                         </div>
@@ -654,6 +653,24 @@ export default function VendorRegistrationForm() {
                             />
                           </div>
                         )}
+                      </div>
+
+                      {/* Live Total Charges Summary Box in Step 2 */}
+                      <div className="mt-6 border border-pine/20 bg-mist/60 p-4 rounded-xl space-y-2 text-sm">
+                        <div className="flex justify-between items-center text-faded">
+                          <span>{form.category} ({form.spaces} Space{form.spaces === "2" ? "s" : ""}):</span>
+                          <span className="font-semibold text-ink">₦{baseStallPrice.toLocaleString()}</span>
+                        </div>
+                        {form.electricity === "Yes" && (
+                          <div className="flex justify-between items-center text-faded">
+                            <span>Power Hookup (Generator):</span>
+                            <span className="font-semibold text-ink">₦15,000</span>
+                          </div>
+                        )}
+                        <div className="border-t border-ink/10 pt-2 flex justify-between items-center font-bold text-ink">
+                          <span>Total Calculated Charges:</span>
+                          <span className="text-vivid text-lg font-mono font-extrabold">₦{totalPrice.toLocaleString()}</span>
+                        </div>
                       </div>
 
                       {/* Compliance Guidelines Accordion/Box */}

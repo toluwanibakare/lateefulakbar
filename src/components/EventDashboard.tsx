@@ -122,7 +122,7 @@ export default function EventDashboard() {
     <section id="live-dashboard" className="border-t border-ink/10 bg-white dark:bg-slate-900">
       <div className="mx-auto max-w-7xl px-5 py-20 sm:px-6 md:py-28">
         <Reveal>
-          <Eyebrow>Live — Tasbīh</Eyebrow>
+          <Eyebrow>Live - Tasbīh</Eyebrow>
         </Reveal>
         <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
           <Reveal delay={0.06}>
@@ -148,7 +148,7 @@ export default function EventDashboard() {
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
                   </span>
-                  {isLiveActive ? "LIVE FROM NADWAT MOSQUE, LAGOS STATE, NIGERIA" : "RECORDING FEED — NADWAT MOSQUE, LAGOS"}
+                  {isLiveActive ? "LIVE FROM NADWAT MOSQUE, LAGOS STATE, NIGERIA" : "RECORDING FEED - NADWAT MOSQUE, LAGOS"}
                 </span>
                 <span className="font-mono text-[11px] text-white/60">Nadwat TV</span>
               </div>

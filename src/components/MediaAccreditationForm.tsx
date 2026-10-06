@@ -213,7 +213,7 @@ export default function MediaAccreditationForm() {
                   {/* Step Progress */}
                   <div className="flex items-center justify-between border-b border-ink/10 pb-5">
                     <span className="text-[12px] font-semibold uppercase tracking-[0.2em] text-fern">
-                      Media Accreditation — Step {step} of 3
+                      Media Accreditation - Step {step} of 3
                     </span>
                     <div className="flex gap-1.5">
                       {[1, 2, 3].map((s) => (
@@ -448,7 +448,7 @@ export default function MediaAccreditationForm() {
                             className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
                           >
                             <option value="No">No</option>
-                            <option value="Yes">Yes — Press Conference / Convener Interview</option>
+                            <option value="Yes">Yes - Press Conference / Convener Interview</option>
                           </select>
                         </div>
                       </div>

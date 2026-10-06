@@ -3,7 +3,7 @@ import FounderSpotlight from "@/components/FounderSpotlight";
 import { Reveal } from "@/components/ui";
 
 export const metadata = {
-  title: "The Convener — Shaikh Dr. Abdur Rahman Ade Lawal",
+  title: "The Convener - Shaikh Dr. Abdur Rahman Ade Lawal",
   description: "The vision behind Lateef ul-il-Akbar-Il-A’azam: Shaikh Dr. Abdur Rahman Ade Lawal, Convener & Chief Missioner of Nadwat Global Assembly.",
 };
 
@@ -12,8 +12,8 @@ export default function FounderPage() {
     <>
       <PageHeader
         eyebrow="The Convener"
-        title={<>Shaikh Dr. Abdur Rahman Ade Lawal — The Convener & Visionary</>}
-        intro="Shaikh Dr. Abdur Rahman Ade Lawal convenes Lateef ul-il-Akbar-Il-A’azam as an act of return — away from noise, toward the quiet power of collective dhikr. Al-Azhar trained, Ph.D in Mass Communication, counsellor and author."
+        title={<>Shaikh Dr. Abdur Rahman Ade Lawal - The Convener & Visionary</>}
+        intro="Shaikh Dr. Abdur Rahman Ade Lawal convenes Lateef ul-il-Akbar-Il-A’azam as an act of return - away from noise, toward the quiet power of collective dhikr. Al-Azhar trained, Ph.D in Mass Communication, counsellor and author."
         image="/assets/crowd-15.jpg"
       />
       <FounderSpotlight />
@@ -28,12 +28,12 @@ export default function FounderPage() {
                 <p>
                   The instruction is deliberate: dress alike so no one stands out, sit together so
                   no one is a stranger, and recite one Name until hardened hearts soften. The
-                  Square&apos;s calm on the day — elders beside youth, first-time guests beside
-                  scholars — is his imprint: disciplined, hospitable, exact about order.
+                  Square&apos;s calm on the day - elders beside youth, first-time guests beside
+                  scholars - is his imprint: disciplined, hospitable, exact about order.
                 </p>
                 <p>
                   Under his leadership Nadwat Global Assembly has grown into a spiritual family
-                  raised on the Qur&apos;an and Sunnah — educated, united, and committed to
+                  raised on the Qur&apos;an and Sunnah - educated, united, and committed to
                   collective du&apos;ā as a civic act. Lateef ul-il-Akbar-Il-A’azam is its largest expression:
                   a city asking with one voice.
                 </p>
@@ -47,9 +47,9 @@ export default function FounderPage() {
                 <ul className="mt-4 space-y-3 text-sm leading-relaxed text-faded">
                   <li><strong className="text-ink">Chief Missioner,</strong> Nadwat Global Assembly</li>
                   <li><strong className="text-ink">Al-Azhar trained,</strong> grounded in classical learning</li>
-                  <li><strong className="text-ink">Ph.D, Mass Communication</strong> — scholarship with clarity</li>
-                  <li><strong className="text-ink">U.S. IVLP alumnus</strong> — faith and civic life, globally</li>
-                  <li><strong className="text-ink">Counsellor & author</strong> — marriages mended, homes guided</li>
+                  <li><strong className="text-ink">Ph.D, Mass Communication</strong> - scholarship with clarity</li>
+                  <li><strong className="text-ink">U.S. IVLP alumnus</strong> - faith and civic life, globally</li>
+                  <li><strong className="text-ink">Counsellor & author</strong> - marriages mended, homes guided</li>
                 </ul>
                 <a href="/gathering" className="mt-6 inline-flex border-b border-pine/40 pb-0.5 text-sm font-semibold text-pine hover:border-pine">
                   Understand the gathering →

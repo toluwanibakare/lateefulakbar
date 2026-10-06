@@ -2105,7 +2105,7 @@ export default function AdminPage() {
                         </button>
                       </div>
                       <p className="text-[11px] text-faded mt-2">
-                        Paste any YouTube video or live URL — automatically updates & formats to embed URL.
+                        Paste any YouTube video or live URL - automatically updates & formats to embed URL.
                       </p>
                     </div>
 

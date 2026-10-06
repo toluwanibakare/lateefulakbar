@@ -196,12 +196,12 @@ export default function SadaqahGiving() {
             </FadeIn>
             <FadeIn delay={0.06}>
               <h2 className="font-display mt-4 text-3xl font-light tracking-tight sm:text-5xl">
-                Equip the assembly — item by item, mat by mat.
+                Equip the assembly - item by item, mat by mat.
               </h2>
             </FadeIn>
             <FadeIn delay={0.12}>
               <p className="mt-4 text-base leading-relaxed text-faded sm:text-lg">
-                You can sponsor specific physical needs for the gathering — water, prayer mats, cooling fans, or broadcast coverage. Each campaign tracks items needed and current progress set by organizers.
+                You can sponsor specific physical needs for the gathering - water, prayer mats, cooling fans, or broadcast coverage. Each campaign tracks items needed and current progress set by organizers.
               </p>
             </FadeIn>
           </div>

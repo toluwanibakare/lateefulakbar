@@ -3,7 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import MediaAccreditationForm from "@/components/MediaAccreditationForm";
 
 export const metadata: Metadata = {
-  title: "Media & Blogger Accreditation — Lateeful Akbar 2027",
+  title: "Media & Blogger Accreditation - Lateeful Akbar 2027",
   description:
     "Apply for official media accreditation, press passes, photographer access, and journalist coverage for Lateeful Akbar 2027 at Tafawa Balewa Square.",
 };

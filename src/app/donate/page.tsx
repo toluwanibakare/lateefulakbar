@@ -4,8 +4,8 @@ import SadaqahGiving from "@/components/SadaqahGiving";
 import { Reveal } from "@/components/ui";
 
 export const metadata = {
-  title: "Support — You can support our needs to host the event",
-  description: "Pick a campaign — mats, water, fans, broadcast, tents — with a live progress target.",
+  title: "Support - You can support our needs to host the event",
+  description: "Pick a campaign - mats, water, fans, broadcast, tents - with a live progress target.",
 };
 
 export default function DonatePage() {
@@ -14,7 +14,7 @@ export default function DonatePage() {
       <PageHeader
         eyebrow="Support & Sadaqah"
         title={<>You can support our needs to host the event</>}
-        intro="Support is targeted giving: choose a campaign with a live target — mats, water, cooling, broadcast, tents — and watch the bar move. For open, voluntary giving of any amount, see Sadaqah."
+        intro="Support is targeted giving: choose a campaign with a live target - mats, water, cooling, broadcast, tents - and watch the bar move. For open, voluntary giving of any amount, see Sadaqah."
         image="/assets/crowd-31.jpg"
       />
       <section className="bg-cream border-b border-ink/10 py-12">

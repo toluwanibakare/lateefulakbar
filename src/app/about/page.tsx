@@ -6,7 +6,7 @@ import { Eyebrow, Reveal } from "@/components/ui";
 import { EVENT } from "@/lib/site";
 
 export const metadata = {
-  title: "About the Event — Lateef ul-il-Akbar-Il-A’azam 2027",
+  title: "About the Event - Lateef ul-il-Akbar-Il-A’azam 2027",
   description:
     "What Lateef ul-il-Akbar-Il-A’azam is, who hosts it, when and where it holds, who should come, and what the day feels like.",
 };
@@ -15,19 +15,19 @@ const FACTS = [
   { icon: CalendarDays, k: "Date", v: EVENT.dateLong },
   { icon: MapPin, k: "Venue", v: EVENT.venue },
   { icon: Shirt, k: "Dress code", v: EVENT.dressCode },
-  { icon: Users, k: "Entry", v: "Free — registration required for accreditation" },
+  { icon: Users, k: "Entry", v: "Free - registration required for accreditation" },
 ];
 
 const PILLARS = [
   {
     icon: Moon,
     t: "Dhikr",
-    d: "The long collective recitation of Yaa Lateef — led from the stage, answered by the whole Square as one sound.",
+    d: "The long collective recitation of Yaa Lateef - led from the stage, answered by the whole Square as one sound.",
   },
   {
     icon: HeartHandshake,
     t: "Du‘ā",
-    d: "One grand supplication in the afternoon — tens of thousands asking together. The peak of the day.",
+    d: "One grand supplication in the afternoon - tens of thousands asking together. The peak of the day.",
   },
   {
     icon: BookOpenText,
@@ -48,7 +48,7 @@ export default function AboutPage() {
         eyebrow="About"
         title={<>About the event</>}
         arabic="لَطِيفُ الْخَبِير"
-        intro="Lateef ul-il-Akbar-Il-A’azam is Nadwat Global Assembly's grand seating of dhikr and du‘ā — one day, one square, tens of thousands in white, gathered under the Name Yaa Lateef, The Most Kind."
+        intro="Lateef ul-il-Akbar-Il-A’azam is Nadwat Global Assembly's grand seating of dhikr and du‘ā - one day, one square, tens of thousands in white, gathered under the Name Yaa Lateef, The Most Kind."
         image="/assets/crowd-49.jpg"
       />
 
@@ -74,9 +74,9 @@ export default function AboutPage() {
                 </p>
                 <p>
                   It is hosted by{" "}
-                  <strong className="font-semibold text-ink">Nadwat Global Assembly</strong> — an
+                  <strong className="font-semibold text-ink">Nadwat Global Assembly</strong> - an
                   Islamic society for spiritual growth, collective du‘ā, dhikr and community
-                  unity upon the Qur’an and Sunnah — and convened by its Chief Missioner,{" "}
+                  unity upon the Qur’an and Sunnah - and convened by its Chief Missioner,{" "}
                   <Link href="/founder" className="font-semibold text-pine underline underline-offset-4 hover:text-fern">
                     Shaikh Dr. Abdur Rahman Ade Lawal
                   </Link>
@@ -98,7 +98,7 @@ export default function AboutPage() {
                 className="img-true object-cover"
               />
             </div>
-            <p className="mt-2 text-xs text-faded italic">Previous seating — the Square in white.</p>
+            <p className="mt-2 text-xs text-faded italic">Previous seating - the Square in white.</p>
           </Reveal>
         </div>
       </section>
@@ -215,10 +215,10 @@ export default function AboutPage() {
               </h2>
               <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-faded">
                 <blockquote className="border-l-2 border-vivid bg-cream p-4 text-ink font-serif italic shadow-sm">
-                  The Messenger of Allah ﷺ said: “Wear white garments, for they are purer and better.” — Sunan an-Nasā’ī 5322; Sunan Ibn Mājah 3567
+                  The Messenger of Allah ﷺ said: “Wear white garments, for they are purer and better.” - Sunan an-Nasā’ī 5322; Sunan Ibn Mājah 3567
                 </blockquote>
                 <p>
-                  At Lateeful Akbar, our gathering in white reflects this Prophetic preference while carrying a beautiful message of purity, simplicity and unity. When thousands gather before Allah dressed alike, distinctions of status, wealth and background fade away—we stand together as servants seeking the mercy and subtle kindness of Al-Lateef.
+                  At Lateeful Akbar, our gathering in white reflects this Prophetic preference while carrying a beautiful message of purity, simplicity and unity. When thousands gather before Allah dressed alike, distinctions of status, wealth and background fade away-we stand together as servants seeking the mercy and subtle kindness of Al-Lateef.
                 </p>
                 <p>
                   The sea of white becomes a reminder that as we beautify and purify our outward appearance, we have come with an even greater purpose: to purify our hearts, humble ourselves before Allah, and unite in Du‘ā, Dhikr and Salawāt.

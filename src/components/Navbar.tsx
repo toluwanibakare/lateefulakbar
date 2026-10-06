@@ -10,11 +10,11 @@ import { EVENT } from "@/lib/site";
 
 import ThemeToggle from "./ThemeToggle";
 
-/* Desktop: Sadaqah is intentionally NOT here — Donate leads instead.
+/* Desktop: Sadaqah is intentionally NOT here - Donate leads instead.
    Sadaqah lives as its own page (/sadaqah), linked from Donate, Home and Footer.
    "About" carries the event story, with a dropdown to the Founder page. */
 const ABOUT_LINKS = [
-  { label: "About the event", href: "/about", desc: "What, when, where — and why it matters" },
+  { label: "About the event", href: "/about", desc: "What, when, where - and why it matters" },
   { label: "The gathering", href: "/gathering", desc: "The day in full: atmosphere & order" },
   { label: "Convener", href: "/founder", desc: "Shaikh Dr. Abdur Rahman Ade Lawal" },
 ];
