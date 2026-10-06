@@ -8,8 +8,8 @@ import { Eyebrow, Reveal, TiltCard } from "./ui";
 
 const CATEGORIES = [
   { id: "food", title: "Food & Drinks", price: 300000, desc: "Prepared meals, snacks, cold drinks, refreshments & confectioneries. (Single space: ₦300k, Double space: ₦500k)" },
-  { id: "retail", title: "Retail products", price: 200000, desc: "Modest wear, caps, books, perfumes, accessories & physical products. (Single space: ₦200k, Double space: ₦350k)" },
-  { id: "services", title: "Services & Tech", price: 200000, desc: "Charging booths, photography, media, IT & technical service booths. (Single space: ₦200k, Double space: ₦350k)" },
+  { id: "retail", title: "Retail products", price: 200000, desc: "Modest wear, caps, books, perfumes, accessories & physical products. (Single space: ₦200k)" },
+  { id: "services", title: "Services & Tech", price: 200000, desc: "Charging booths, photography, media, IT & technical service booths. (Single space: ₦200k)" },
 ];
 
 const RETAIL_SUBCATEGORIES = [
@@ -73,16 +73,13 @@ export default function VendorRegistrationForm() {
 
   const selectedCategoryObj = CATEGORIES.find((c) => c.title === form.category) || CATEGORIES[0];
 
-  const spacesNum = parseInt(form.spaces || "1", 10);
+  const spacesNum = selectedCategoryObj.id === "food" ? parseInt(form.spaces || "1", 10) : 1;
   let baseStallPrice = 0;
   if (selectedCategoryObj.id === "food") {
     if (spacesNum === 1) baseStallPrice = 300000;
-    else if (spacesNum === 2) baseStallPrice = 500000;
-    else baseStallPrice = 500000 + (spacesNum - 2) * 250000;
+    else baseStallPrice = 500000;
   } else {
-    if (spacesNum === 1) baseStallPrice = 200000;
-    else if (spacesNum === 2) baseStallPrice = 350000;
-    else baseStallPrice = 350000 + (spacesNum - 2) * 175000;
+    baseStallPrice = 200000;
   }
 
   const totalPrice = baseStallPrice + (form.electricity === "Yes" ? 15000 : 0);
@@ -603,12 +600,15 @@ export default function VendorRegistrationForm() {
                             Number of Stall Spaces Required *
                           </label>
                           <select
-                            value={form.spaces}
+                            value={selectedCategoryObj.id === "food" ? form.spaces : "1"}
+                            disabled={selectedCategoryObj.id !== "food"}
                             onChange={(e) => set("spaces", e.target.value)}
-                            className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none"
+                            className="w-full mt-1.5 border border-ink/20 bg-mist px-4 py-3 text-sm text-ink rounded focus:border-pine focus:bg-white focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
                           >
                             <option value="1">1 Stall Space</option>
-                            <option value="2">2 Stall Spaces (Double)</option>
+                            {selectedCategoryObj.id === "food" && (
+                              <option value="2">2 Stall Spaces (Double)</option>
+                            )}
                           </select>
                         </div>
 
