@@ -7,9 +7,9 @@ import { EVENT } from "@/lib/site";
 import { Eyebrow, Reveal, TiltCard } from "./ui";
 
 const CATEGORIES = [
-  { id: "food", title: "Food & Drinks", price: 65000, desc: "Prepared meals, snacks, cold drinks, refreshments & confectioneries." },
-  { id: "retail", title: "Retail products", price: 50000, desc: "Modest wear, caps, books, perfumes, accessories & physical products." },
-  { id: "services", title: "Services & Tech", price: 55000, desc: "Charging booths, photography, media, IT & technical service booths." },
+  { id: "food", title: "Food & Drinks", price: 300000, desc: "Prepared meals, snacks, cold drinks, refreshments & confectioneries. (Single space: ₦300k, Double space: ₦500k)" },
+  { id: "retail", title: "Retail products", price: 200000, desc: "Modest wear, caps, books, perfumes, accessories & physical products. (Single space: ₦200k, Double space: ₦350k)" },
+  { id: "services", title: "Services & Tech", price: 200000, desc: "Charging booths, photography, media, IT & technical service booths. (Single space: ₦200k, Double space: ₦350k)" },
 ];
 
 const RETAIL_SUBCATEGORIES = [
@@ -72,7 +72,20 @@ export default function VendorRegistrationForm() {
   const set = (k: keyof typeof form, v: any) => setForm((f) => ({ ...f, [k]: v }));
 
   const selectedCategoryObj = CATEGORIES.find((c) => c.title === form.category) || CATEGORIES[0];
-  const totalPrice = selectedCategoryObj.price * parseInt(form.spaces || "1", 10) + (form.electricity === "Yes" ? 15000 : 0);
+
+  const spacesNum = parseInt(form.spaces || "1", 10);
+  let baseStallPrice = 0;
+  if (selectedCategoryObj.id === "food") {
+    if (spacesNum === 1) baseStallPrice = 300000;
+    else if (spacesNum === 2) baseStallPrice = 500000;
+    else baseStallPrice = 500000 + (spacesNum - 2) * 250000;
+  } else {
+    if (spacesNum === 1) baseStallPrice = 200000;
+    else if (spacesNum === 2) baseStallPrice = 350000;
+    else baseStallPrice = 350000 + (spacesNum - 2) * 175000;
+  }
+
+  const totalPrice = baseStallPrice + (form.electricity === "Yes" ? 15000 : 0);
 
   const [logoUploading, setLogoUploading] = useState(false);
 
