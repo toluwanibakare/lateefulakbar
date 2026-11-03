@@ -30,6 +30,11 @@ const RULES = [
 const VENUE_LAT = 6.4475;
 const VENUE_LNG = 3.398;
 
+// No origin param: Google Maps starts from the user's current location.
+const DIRECTIONS_URL = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
+  "Tafawa Balewa Square, Lagos, Nigeria"
+)}&travelmode=driving`;
+
 export default function VenueMapAndRules() {
   const [openRule, setOpenRule] = useState<number | null>(0);
   const [dist, setDist] = useState<number | null>(null);
@@ -168,7 +173,7 @@ export default function VenueMapAndRules() {
                   </div>
                   <div>
                     <a
-                      href="https://maps.app.goo.gl/Pku9tkKwuK1DBSF8A?g_st=ic"
+                      href={DIRECTIONS_URL}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-2 bg-vivid px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white shadow-md hover:bg-vivid-deep transition-all hover:scale-105 rounded-lg"
