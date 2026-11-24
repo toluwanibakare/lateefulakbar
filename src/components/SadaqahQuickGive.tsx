@@ -12,9 +12,9 @@ function fmt(n: number) {
 }
 
 const DEFAULT_IMPACT = [
-  { amount: "₦1,000", text: "Cold water for a row of guests through the morning dhikr." },
-  { amount: "₦5,000", text: "A share in mats, shade and sound for the Square." },
-  { amount: "₦25,000", text: "A full cooling fan hour - relief for hundreds at midday." },
+  { title: "Water Supply", text: "Cold water for worshippers through the morning dhikr." },
+  { title: "Mats & Shade", text: "A share in white mats, shade and sound for the Square." },
+  { title: "Cooling Relief", text: "Cooling fan relief for hundreds at midday." },
 ];
 
 /**
@@ -22,7 +22,7 @@ const DEFAULT_IMPACT = [
  * Simple amount → Paystack. Separate from Donate (targeted campaigns).
  */
 export default function SadaqahQuickGive() {
-  const [impactList, setImpactList] = useState<{ amount: string; text: string }[]>(DEFAULT_IMPACT);
+  const [impactList, setImpactList] = useState<{ title: string; text: string }[]>(DEFAULT_IMPACT);
   const [amount, setAmount] = useState<number | null>(5000);
   const [custom, setCustom] = useState("");
   const [name, setName] = useState("");
@@ -52,8 +52,8 @@ export default function SadaqahQuickGive() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.campaigns) && data.campaigns.length > 0) {
-          const dynamicImpact = data.campaigns.map((c: any) => ({
-            amount: `₦${Number(c.unit_price || 0).toLocaleString('en-NG')}`,
+          const dynamicImpact = data.campaigns.slice(0, 4).map((c: any) => ({
+            title: c.title,
             text: c.description || c.title,
           }));
           setImpactList(dynamicImpact);
@@ -168,10 +168,10 @@ export default function SadaqahQuickGive() {
           </Reveal>
           <div className="mt-8 space-y-0 border-y border-ink/10">
             {impactList.map((r, i) => (
-              <Reveal key={r.amount + i} delay={i * 0.05}>
-                <div className="flex gap-5 border-b border-ink/10 py-5 last:border-0">
-                  <span className="font-display w-24 shrink-0 text-xl text-pine">{r.amount}</span>
-                  <p className="text-sm leading-relaxed text-faded">{r.text}</p>
+              <Reveal key={r.title + i} delay={i * 0.05}>
+                <div className="flex flex-col sm:flex-row sm:gap-5 border-b border-ink/10 py-5 last:border-0">
+                  <span className="font-display w-36 shrink-0 text-base font-semibold text-pine">{r.title}</span>
+                  <p className="text-sm leading-relaxed text-faded mt-1 sm:mt-0">{r.text}</p>
                 </div>
               </Reveal>
             ))}

@@ -39,17 +39,11 @@ function fmt(n: number) {
 export default function SadaqahGiving() {
   const [campaigns, setCampaigns] = useState<Campaign[]>(INITIAL);
   const [open, setOpen] = useState<Campaign | null>(null);
-  const [qty, setQty] = useState(1);
   const [amount, setAmount] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  // Transactions Monitor Modal State
-  const [showTransactionsModal, setShowTransactionsModal] = useState(false);
-  const [transactionsList, setTransactionsList] = useState<any[]>([]);
-  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("All");
 
   useEffect(() => {
     // Check if user returned from Paystack redirect with reference/trxref
@@ -106,8 +100,7 @@ export default function SadaqahGiving() {
       });
   }, []);
 
-  const hasFixedUnitPrice = open?.target ? open.target > 0 && Boolean(open.unitPrice) : false;
-  const totalPay = hasFixedUnitPrice ? (open?.unitPrice! * Math.max(1, qty)) : (Number(amount) || 0);
+  const totalPay = Number(amount) || 0;
 
   const pay = async () => {
     if (!open || !totalPay) return;
@@ -167,7 +160,7 @@ export default function SadaqahGiving() {
 
               setDone(true);
               setCampaigns((list) =>
-                list.map((c) => (c.id === open.id ? { ...c, raised: c.raised + (open.unitPrice ? qty : 1) } : c))
+                list.map((c) => (c.id === open.id ? { ...c, raised: c.raised + 1 } : c))
               );
               setSubmitting(false);
             },
@@ -211,9 +204,7 @@ export default function SadaqahGiving() {
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {campaigns.map((c) => {
-            const Icon = c.icon;
             const hasTargetQty = c.target > 0;
-            const isPriceThreshold = !hasTargetQty && Boolean(c.unitPrice);
             const pct = hasTargetQty ? Math.min(100, Math.round((c.raised / c.target) * 100)) : 0;
 
             return (
@@ -242,25 +233,13 @@ export default function SadaqahGiving() {
                         <div>
                           <div className="flex justify-between text-xs font-semibold">
                             <span className="text-ink">
-                              {fmt(c.raised)} / {fmt(c.target)} {c.unit || "raised"}
+                              Progress
                             </span>
                             <span className="text-vivid font-bold">{pct}%</span>
                           </div>
                           <div className="mt-2 h-2 w-full overflow-hidden bg-mist rounded-full">
                             <div className="h-full bg-vivid transition-all duration-500" style={{ width: `${pct}%` }} />
                           </div>
-                          {Boolean(c.unitPrice) && (
-                            <div className="mt-2 text-xs font-bold text-pine">
-                              ₦{fmt(c.unitPrice!)} per item
-                            </div>
-                          )}
-                        </div>
-                      ) : isPriceThreshold ? (
-                        <div className="space-y-1">
-                          <div className="text-xs font-semibold text-vivid bg-emerald-50 px-3 py-1.5 rounded-md border border-emerald-200/60 inline-block font-bold">
-                            Target Threshold: ₦{fmt(c.unitPrice!)}
-                          </div>
-                          <p className="text-[11px] text-faded">Deposit any amount towards reaching this ₦ target.</p>
                         </div>
                       ) : (
                         <div className="text-xs font-semibold text-pine bg-emerald-50 px-3 py-1.5 rounded-md border border-emerald-200/60 inline-block">
@@ -271,7 +250,6 @@ export default function SadaqahGiving() {
                       <button
                         onClick={() => {
                           setOpen(c);
-                          setQty(1);
                           setAmount("");
                           setDone(false);
                         }}
@@ -321,41 +299,19 @@ export default function SadaqahGiving() {
                   <p className="mt-1 text-xs text-faded">{open.text}</p>
 
                   <div className="mt-6 space-y-4">
-                    {open.target > 0 && open.unitPrice ? (
-                      <div>
-                        <label className="text-xs font-semibold uppercase tracking-wider text-faded">
-                          Number of items (₦{fmt(open.unitPrice)} each)
-                        </label>
-                        <div className="mt-2 flex items-center gap-3">
-                          <button
-                            onClick={() => setQty((q) => Math.max(1, q - 1))}
-                            className="flex h-10 w-10 items-center justify-center border border-ink/20 font-bold"
-                          >
-                            -
-                          </button>
-                          <span className="font-mono text-lg font-bold">{qty}</span>
-                          <button
-                            onClick={() => setQty((q) => q + 1)}
-                            className="flex h-10 w-10 items-center justify-center border border-ink/20 font-bold"
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div>
-                        <label className="text-xs font-semibold uppercase tracking-wider text-faded">
-                          Custom Donation Amount (₦) {open.target === 0 && open.unitPrice ? `(Target: ₦${fmt(open.unitPrice)})` : ''}
-                        </label>
-                        <input
-                          type="number"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                          placeholder="e.g. 50000"
-                          className="mt-2 w-full border border-ink/20 p-3 font-mono text-base"
-                        />
-                      </div>
-                    )}
+                    <div>
+                      <label className="text-xs font-semibold uppercase tracking-wider text-faded">
+                        Donation Amount (₦)
+                      </label>
+                      <input
+                        type="number"
+                        min="100"
+                        value={amount}
+                        onChange={(e) => setAmount(e.target.value)}
+                        placeholder="Enter amount to donate (e.g. 5000)"
+                        className="mt-2 w-full border border-ink/20 p-3 font-mono text-base"
+                      />
+                    </div>
 
                     <div>
                       <label className="text-xs font-semibold uppercase tracking-wider text-faded">
@@ -423,103 +379,6 @@ export default function SadaqahGiving() {
                   </button>
                 </div>
               )}
-            </motion.div>
-          </div>
-        )}
-
-        {/* Transactions Monitor Modal */}
-        {showTransactionsModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowTransactionsModal(false)}
-              className="absolute inset-0 bg-ink/60 backdrop-blur-xs"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto border border-ink/15 bg-white p-6 shadow-2xl sm:p-8 rounded-2xl space-y-6"
-            >
-              <button
-                onClick={() => setShowTransactionsModal(false)}
-                className="absolute top-4 right-4 text-faded hover:text-ink"
-              >
-                <X className="h-5 w-5" />
-              </button>
-
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-ink/10 pb-4">
-                <div>
-                  <Eyebrow>Transparency & Verification</Eyebrow>
-                  <h3 className="font-display mt-1 text-2xl font-light text-pine">
-                    Recent Donation Transactions
-                  </h3>
-                </div>
-
-                {/* Item Filter Dropdown */}
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-bold text-faded uppercase tracking-wider">Filter by Item:</label>
-                  <select
-                    value={selectedCategoryFilter}
-                    onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                    className="bg-cream border border-ink/15 rounded-xl px-3 py-1.5 text-xs text-ink font-semibold focus:outline-none focus:border-vivid"
-                  >
-                    <option value="All">All Items ({transactionsList.length})</option>
-                    {Array.from(new Set(transactionsList.map((t) => t.category))).map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Transactions Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="border-b border-ink/15 text-faded uppercase text-[10px] tracking-wider">
-                      <th className="py-3 px-3">Donor</th>
-                      <th className="py-3 px-3">Item / Category</th>
-                      <th className="py-3 px-3">Amount</th>
-                      <th className="py-3 px-3">Mode</th>
-                      <th className="py-3 px-3">Date & Time</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-ink/10">
-                    {transactionsList
-                      .filter((t) => selectedCategoryFilter === "All" || t.category === selectedCategoryFilter)
-                      .map((t, idx) => (
-                        <tr key={idx} className="hover:bg-cream/60">
-                          <td className="py-3.5 px-3 font-bold text-ink">{t.donor_name || "Anonymous"}</td>
-                          <td className="py-3.5 px-3 font-semibold text-pine">{t.category}</td>
-                          <td className="py-3.5 px-3 font-extrabold text-vivid">₦{Number(t.amount).toLocaleString()}</td>
-                          <td className="py-3.5 px-3">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              t.mode === 'live'
-                                ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                : 'bg-amber-100 text-amber-800 border border-amber-300'
-                            }`}>
-                              {t.mode === 'live' ? 'LIVE' : 'TEST'}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-3 text-faded font-mono">
-                            {new Date(t.created_at).toLocaleDateString()} {new Date(t.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </td>
-                        </tr>
-                      ))}
-                    {transactionsList.filter((t) => selectedCategoryFilter === "All" || t.category === selectedCategoryFilter).length === 0 && (
-                      <tr>
-                        <td colSpan={5} className="py-8 text-center text-faded">
-                          No transactions found for &quot;{selectedCategoryFilter}&quot;.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
             </motion.div>
           </div>
         )}
